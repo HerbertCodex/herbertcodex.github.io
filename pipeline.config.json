@@ -160,7 +160,14 @@
     "prompt_adapter": "portable",
     "interactive_input": false,
     "runs_dir": "pipeline/runs",
-    "progress_interval_seconds": 20
+    "progress_interval_seconds": 20,
+    "command": "claude",
+    "args": [
+      "-p",
+      "--permission-mode",
+      "acceptEdits",
+      "Tu es le rôle {role} du pipeline. Lis le task package JSON : {package}. Ses champs `prompt` et `brief` désignent ton prompt de rôle et ton brief compilé : lis-les intégralement et suis-les. Le champ `record` est ton issue. Termine par ton handoff JSON entre AGENT_HANDOFF_START et AGENT_HANDOFF_END, sans aucun texte après la balise de fermeture."
+    ]
   },
   "workflow": {
     "max_transitions_per_run": 4,

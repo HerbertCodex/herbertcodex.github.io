@@ -8,6 +8,32 @@
  * Genre: quiet editorial. A portfolio is read before it is admired, and what
  * it is judged on is the clarity of the work it presents.
  */
+
+/*
+ * Le bloc sombre est placé AVANT les valeurs claires, et ce n'est pas
+ * cosmétique. `mockup-check.mjs` lit ce fichier avec un parseur volontairement
+ * peu profond — « une liste de noms et de valeurs » — qui ne retient que la
+ * DERNIÈRE déclaration de chaque nom. Le bloc sombre placé en dernier faisait
+ * donc disparaître les huit couleurs claires de ce que l'outil considère comme
+ * déclaré, et il refusait une maquette qui les utilisait pourtant correctement.
+ *
+ * L'ordre ne change rien au rendu : `:root:not([data-theme="light"])` a une
+ * spécificité supérieure à `:root` et l'emporte quelle que soit sa position.
+ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #17161a;
+    --paper-raised: #211f24;
+    --ink: #f2eee7;
+    --ink-muted: #b4aca1;
+    --rule: #3a3640;
+    --accent: #e79170;
+    --accent-strong: #f3b295;
+    --focus: #93b4ff;
+  }
+}
+
 :root {
   --paper: #f6f3ec;
   --paper-raised: #fffefb;
@@ -43,17 +69,4 @@
 
   --measure: 68ch;
   --border-hairline: 1px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #17161a;
-    --paper-raised: #211f24;
-    --ink: #f2eee7;
-    --ink-muted: #b4aca1;
-    --rule: #3a3640;
-    --accent: #e79170;
-    --accent-strong: #f3b295;
-    --focus: #93b4ff;
-  }
 }

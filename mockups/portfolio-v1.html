@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette — portfolio s-0001</title>
+    <style>
+      /*
+       * Les jetons sont recopiés depuis src/shared/tokens.css, qui reste la
+       * source de vérité : mockup-check.mjs confronte ce fichier à celui-là et
+       * refuse toute valeur qui n'y figure pas. Une maquette qui dériverait
+       * des jetons serait détectée par une commande, pas par une relecture.
+       */
+      :root {
+        --paper: #f6f3ec;
+        --paper-raised: #fffefb;
+        --ink: #1b1917;
+        --ink-muted: #56504a;
+        --rule: #d8d0c2;
+        --accent: #8a3a1e;
+        --accent-strong: #6b2c16;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --font-sans: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 21px;
+        --text-xl: 28px;
+        --text-2xl: 40px;
+        --leading-tight: 1.2;
+        --leading-body: 1.6;
+        --radius-1: 2px;
+        --radius-2: 6px;
+        --measure: 68ch;
+        --border-hairline: 1px;
+      }
+
+      /*
+       * Pas de bloc sombre ici : une maquette montre un assemblage, pas deux
+       * thèmes. Le mode sombre est porté par src/shared/tokens.css, seule
+       * source de vérité, et se vérifie dans l'application — pas sur ce
+       * document de revue.
+       */
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+      }
+
+      .sheet {
+        max-width: var(--measure);
+        margin: 0 auto;
+        padding: var(--space-5) var(--space-4) var(--space-7);
+      }
+
+      .note {
+        font-size: var(--text-sm);
+        color: var(--ink-muted);
+        border-left: var(--border-hairline) solid var(--rule);
+        padding-left: var(--space-3);
+        margin: 0 0 var(--space-6);
+      }
+
+      /* Primitive : la barre de navigation, avec le sélecteur de langue. */
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        align-items: baseline;
+        justify-content: space-between;
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-hairline) solid var(--rule);
+        margin-bottom: var(--space-6);
+      }
+
+      .bar nav {
+        display: flex;
+        gap: var(--space-3);
+      }
+
+      a {
+        color: var(--accent);
+        text-underline-offset: var(--space-1);
+      }
+
+      a:hover {
+        color: var(--accent-strong);
+      }
+
+      :focus-visible {
+        outline: var(--space-1) solid var(--focus);
+        outline-offset: var(--space-1);
+      }
+
+      /* Primitive : le sélecteur de langue. La langue active est marquée par
+         le poids et la couleur d'encre, jamais par la couleur seule. */
+      .langs {
+        display: flex;
+        gap: var(--space-2);
+        font-size: var(--text-sm);
+      }
+
+      .langs [aria-current="true"] {
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      h1 {
+        font-size: var(--text-2xl);
+        line-height: var(--leading-tight);
+        margin: 0 0 var(--space-3);
+      }
+
+      .lede {
+        font-size: var(--text-lg);
+        color: var(--ink-muted);
+        margin: 0 0 var(--space-4);
+      }
+
+      h2 {
+        font-size: var(--text-xl);
+        line-height: var(--leading-tight);
+        margin: var(--space-7) 0 var(--space-4);
+      }
+
+      /* Primitive : l'appel à l'action principal, unique, orienté recrutement. */
+      .cta {
+        display: inline-block;
+        padding: var(--space-2) var(--space-4);
+        background: var(--accent);
+        color: var(--paper-raised);
+        border-radius: var(--radius-2);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .cta:hover {
+        background: var(--accent-strong);
+        color: var(--paper-raised);
+      }
+
+      /* Moyens de contact secondaires : accessibles, sans occuper le même rang. */
+      .secondary {
+        display: flex;
+        gap: var(--space-3);
+        font-size: var(--text-sm);
+        margin-top: var(--space-3);
+        color: var(--ink-muted);
+      }
+
+      /* Primitive : la fiche d'un projet. Elle tient sans image. */
+      .project {
+        border-top: var(--border-hairline) solid var(--rule);
+        padding: var(--space-4) 0;
+      }
+
+      .project h3 {
+        font-size: var(--text-lg);
+        margin: 0 0 var(--space-1);
+      }
+
+      .project p {
+        margin: 0 0 var(--space-2);
+      }
+
+      .role {
+        color: var(--ink-muted);
+        font-size: var(--text-sm);
+      }
+
+      .links {
+        display: flex;
+        gap: var(--space-3);
+        font-size: var(--text-sm);
+      }
+
+      /* Un projet sans lien consultable le dit, au lieu d'exposer un lien mort. */
+      .unavailable {
+        color: var(--ink-muted);
+        font-style: italic;
+      }
+
+      .stack {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--ink-muted);
+        margin-top: var(--space-2);
+      }
+
+      .timeline {
+        border-left: var(--border-hairline) solid var(--rule);
+        padding-left: var(--space-4);
+        margin: 0;
+      }
+
+      .timeline li {
+        list-style: none;
+        margin-bottom: var(--space-4);
+      }
+
+      .when {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--ink-muted);
+      }
+
+      .cv {
+        background: var(--paper-raised);
+        border: var(--border-hairline) solid var(--rule);
+        border-radius: var(--radius-2);
+        padding: var(--space-3) var(--space-4);
+        margin-top: var(--space-4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sheet">
+      <p class="note">
+        Maquette de la spec s-0001, en français, langue par défaut. Elle assemble les primitives à écrire — barre,
+        sélecteur de langue, fiche projet, appel à l'action, entrée de parcours — à partir des jetons déjà déclarés. La
+        version anglaise est identique en structure : seul le texte change, et l'adresse passe de /fr à /en.
+      </p>
+
+      <header class="bar">
+        <nav aria-label="Navigation principale">
+          <a href="/fr/projets">Projets</a>
+          <a href="/fr/a-propos">À propos</a>
+          <a href="/fr/contact">Contact</a>
+        </nav>
+        <div class="langs">
+          <a href="/fr/projets" aria-current="true">FR</a>
+          <a href="/en/projects" hreflang="en">EN</a>
+        </div>
+      </header>
+
+      <main>
+        <h1>Herbert Koffi</h1>
+        <p class="lede">Développeur web. Je construis des interfaces qui restent lisibles quand le contenu grandit.</p>
+        <a class="cta" href="mailto:contact@exemple.fr">Me contacter pour un poste</a>
+        <div class="secondary">
+          <a href="#">LinkedIn</a>
+          <a href="#">GitHub</a>
+        </div>
+
+        <h2>Projets</h2>
+
+        <article class="project">
+          <h3>Application de gestion de compost</h3>
+          <p>Suivi des apports et de la maturation pour une collectivité, utilisée par une trentaine de foyers.</p>
+          <p class="role">Conception de l'interface et du modèle de données, seul sur le projet.</p>
+          <div class="links">
+            <a href="#">Voir la démonstration</a>
+            <a href="#">Code source</a>
+          </div>
+          <p class="stack">SolidStart · TypeScript · PostgreSQL</p>
+        </article>
+
+        <article class="project">
+          <h3>Outil interne de facturation</h3>
+          <p>Génération et suivi des factures pour une PME, en remplacement d'un tableur partagé.</p>
+          <p class="role">Reprise de l'existant, migration des données, formation des utilisateurs.</p>
+          <div class="links">
+            <span class="unavailable">Projet sous accord de confidentialité — ni démonstration ni code publics.</span>
+          </div>
+          <p class="stack">TypeScript · Node · SQLite</p>
+        </article>
+
+        <h2>Parcours</h2>
+        <ul class="timeline">
+          <li>
+            <p class="when">2024 — aujourd'hui</p>
+            <p>Développeur web indépendant. Interfaces et outils métier pour des structures de petite taille.</p>
+          </li>
+          <li>
+            <p class="when">2022 — 2024</p>
+            <p>Formation en développement web, puis alternance sur une application de gestion.</p>
+          </li>
+        </ul>
+
+        <div class="cv">
+          <p>Le parcours complet, en un document transmissible.</p>
+          <a href="/cv/herbert-koffi-fr.pdf">Télécharger le CV (français, PDF)</a>
+          <div class="secondary"><a href="/cv/herbert-koffi-en.pdf">English version</a></div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

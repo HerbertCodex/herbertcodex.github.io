@@ -43,10 +43,11 @@
   "design_system": {
     "tokens": "src/shared/tokens.css",
     "primitives": "own",
-    "decided_at": "2026-09-04",
+    "decided_at": "2026-09-05",
+    "mockup": "mockups/portfolio-v1.html",
     "direction": {
-      "genre": "éditorial sobre",
-      "because": "un portfolio est lu avant d'être admiré : ce qui doit ressortir est le travail présenté, pas l'interface qui le présente. Le genre éditorial fait porter la hiérarchie par la typographie et le blanc, ce qui reste lisible quand le contenu grandit, et il écarte le rendu par défaut vers lequel un agent converge sans direction nommée."
+      "genre": "studio suisse",
+      "because": "le produit est un inventaire de réalisations et de compétences, et la grille suisse est faite pour ordonner un inventaire sans l'uniformiser : la hiérarchie passe par l'échelle typographique et la position, pas par la couleur ni par l'effet. Retenue par l'opérateur après avoir écarté huit autres directions, ce qui rend le choix éprouvé plutôt que par défaut."
     }
   },
   "test_suites": {

@@ -153,6 +153,26 @@ function main() {
     process.exit(1);
   }
 
+  const dangling = [];
+  for (const path of stylesheets) {
+    const source = strip(readFileSync(path, "utf8"));
+    source.split("\n").forEach((line, index) => {
+      for (const match of line.matchAll(/var\(\s*(--[a-z0-9-]+)/g)) {
+        if (!declared.includes(match[1])) dangling.push(`${path}:${index + 1}  ${match[1]}`);
+      }
+    });
+  }
+
+  if (dangling.length > 0) {
+    console.error(`design tokens: ${dangling.length} référence(s) vers un jeton qui n'existe pas.\n`);
+    console.error("Une var() vers un jeton disparu ne casse rien de visible : la propriété est simplement");
+    console.error("ignorée, et la page reprend un défaut du navigateur. C'est le seul défaut de cette");
+    console.error("famille qu'aucune capture ne révèle, parce qu'il ne produit pas une mauvaise couleur");
+    console.error("mais une absence de couleur.\n");
+    for (const entry of dangling) console.error(`  ${entry}`);
+    process.exit(1);
+  }
+
   if (stylesheets.length > 0 && references === 0) {
     console.error(
       `${stylesheets.length} stylesheet(s) reference no token at all. A file with no styling passes a naive ` +

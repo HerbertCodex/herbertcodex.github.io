@@ -4,7 +4,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-grotesk);
   font-size: var(--text-base);
   line-height: var(--leading-body);
 }

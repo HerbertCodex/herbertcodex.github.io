@@ -67,6 +67,18 @@ Inside a function, a comment carries a reason — why this order, why this excep
 never a restatement of the line below it. A comment that narrates goes stale at the
 first edit, and a stale comment is believed. (`comment_policy`)
 
+## Écriture du contenu
+
+**Pas de tiret cadratin.** Ni dans le contenu du site, ni dans les libellés
+d'interface. Quand deux idées sont séparées par un tiret cadratin, c'est presque
+toujours qu'elles auraient dû être deux éléments distincts : l'employeur et le
+poste occupé ne sont pas une phrase, ce sont deux informations que la mise en
+forme sépare mieux qu'une ponctuation. Ailleurs, une virgule, un deux-points ou
+un point font le travail.
+
+Le demi-cadratin reste utilisé pour ce à quoi il sert : une plage de valeurs,
+`2024–2026`. Aucun gate ne vérifie cette règle ; elle se lit en revue.
+
 ## Dependencies
 
 Installing one is the operator's decision, not an agent's. The lockfile is pnpm's and is

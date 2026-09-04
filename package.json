@@ -1,0 +1,58 @@
+{
+  "name": "example-basic",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "node scripts/clean-output.mjs && vite build && node scripts/check-build.mjs",
+    "start": "node .output/server/index.mjs",
+    "preview": "vite preview",
+    "check": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test --grep @a11y",
+    "test:smoke": "node scripts/smoke.mjs",
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "check:dead-code": "knip",
+    "check:duplication": "node agent-pipeline/scripts/duplication.mjs",
+    "check:design-limits": "eslint --config eslint.design-limits.config.js .",
+    "check:comments": "node scripts/comment-policy.mjs",
+    "check:docs": "node agent-pipeline/scripts/doc-lint.mjs",
+    "check:security": "node agent-pipeline/scripts/sast.mjs",
+    "scan:secrets": "node scripts/scan-secrets.mjs",
+    "project-map": "node scripts/project-map.mjs"
+  },
+  "dependencies": {
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^1.0.0",
+    "@solidjs/start": "^2.0.0",
+    "nitro": "^3.0.260610-beta",
+    "solid-js": "^1.9.14",
+    "vite": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
+    "@solidjs/testing-library": "^0.8.10",
+    "@types/node": "^26.4.1",
+    "@vitest/coverage-v8": "^5.0.0",
+    "eslint": "^10.9.1",
+    "globals": "^17.12.0",
+    "jsdom": "^30.0.1",
+    "knip": "^6.34.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.69.0",
+    "vite-plugin-solid": "^2.11.14",
+    "vitest": "^5.0.0"
+  },
+  "packageManager": "pnpm@11.25.0"
+}

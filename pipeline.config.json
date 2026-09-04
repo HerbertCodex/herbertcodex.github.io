@@ -1,0 +1,184 @@
+{
+  "profile": "frontend-typescript",
+  "language": "fr",
+  "default_mode": "pipeline",
+  "commands": {
+    "check": "pnpm run check",
+    "lint": "pnpm run lint",
+    "format": "pnpm run format:check",
+    "build": "pnpm run build",
+    "test_unit": "pnpm run test:unit",
+    "test_e2e": "pnpm run test:e2e",
+    "coverage": "pnpm run test:coverage",
+    "smoke": "pnpm run test:smoke",
+    "accessibility": "pnpm run test:a11y",
+    "architecture": "pnpm run check:architecture",
+    "design_tokens": "pnpm run check:tokens",
+    "dead_code": "pnpm run check:dead-code",
+    "duplication": "pnpm run check:duplication",
+    "design_limits": "pnpm run check:design-limits",
+    "comment_policy": "pnpm run check:comments",
+    "doc_lint": "pnpm run check:docs",
+    "sast": "pnpm run check:security",
+    "secrets_scan": "pnpm run scan:secrets",
+    "audit": "pnpm audit --audit-level high",
+    "tracker_sync": "node agent-pipeline/scripts/tracker-sync.mjs",
+    "project_map": "pnpm run project-map -- --check",
+    "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs"
+  },
+  "architecture": {
+    "id": "feature-modules",
+    "project_type": "frontend",
+    "decided_at": "2026-09-04",
+    "layers": {
+      "shared": ["src/shared/**"],
+      "features": ["src/*/**"]
+    },
+    "allowed": {
+      "features": ["shared"],
+      "shared": []
+    },
+    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possède déjà src/routes, et une couche pages supplémentaire dupliquerait cette frontière sans rien refuser de plus. Deux couches, une seule direction autorisée."
+  },
+  "design_system": {
+    "tokens": "src/shared/tokens.css",
+    "primitives": "own",
+    "decided_at": "2026-09-04",
+    "direction": {
+      "genre": "éditorial sobre",
+      "because": "un portfolio est lu avant d'être admiré : ce qui doit ressortir est le travail présenté, pas l'interface qui le présente. Le genre éditorial fait porter la hiérarchie par la typographie et le blanc, ce qui reste lisible quand le contenu grandit, et il écarte le rendu par défaut vers lequel un agent converge sans direction nommée."
+    }
+  },
+  "test_suites": {
+    "unit": {
+      "gate": "test_unit",
+      "replay": "per_issue"
+    },
+    "browser": {
+      "gate": "test_e2e",
+      "replay": "closure"
+    }
+  },
+  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit"],
+  "project_map": {
+    "out": "docs/project-map.md",
+    "roots": ["src"],
+    "skip": "(^|/)(dist|build|coverage|\\.output)/|\\.generated\\.",
+    "regenerate": "pnpm run project-map"
+  },
+  "duplication": {
+    "roots": ["src", "tests"],
+    "min_lines": 6,
+    "skip": "\\.generated\\."
+  },
+  "doc_policy": {
+    "roots": ["src", "tests"],
+    "skip": "\\.generated\\.|\\.d\\.ts$"
+  },
+  "comment_policy": {
+    "roots": ["src", "tests", "scripts"],
+    "skip": "\\.generated\\."
+  },
+  "file_policy": {
+    "orchestrator": {
+      "allow": ["pipeline/store/**", "docs/project-map.md", ".sudocode/**"],
+      "deny": ["src/**", "tests/**", "scripts/**"]
+    },
+    "product": {
+      "allow": [".sudocode/**"],
+      "deny": [
+        "src/**",
+        "tests/**",
+        "scripts/**",
+        "public/**",
+        "pipeline/**",
+        "agent-pipeline/**",
+        "pipeline.config.json",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".github/**"
+      ]
+    },
+    "implementer": {
+      "allow": ["src/**", "tests/**", "public/**", "mockups/**", "docs/**"],
+      "deny": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        "pipeline.config.json",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".github/**",
+        "agent-pipeline/**",
+        "pipeline/**",
+        "docs/decisions/**"
+      ]
+    },
+    "qa": {
+      "allow": [],
+      "deny": ["**"]
+    }
+  },
+  "human_review_paths": [
+    "src/shared/tokens.css",
+    "pipeline.config.json",
+    "docs/decisions/**",
+    ".github/**",
+    "scripts/**"
+  ],
+  "profiles_dir": "pipeline/profiles",
+  "docs_dirs": ["agent-pipeline/docs", "docs/stack"],
+  "briefs_dir": "pipeline/briefs",
+  "prompts_dir": "pipeline/agents",
+  "skills_dir": "pipeline/skills",
+  "rules_path": "pipeline/rules.json",
+  "project_context": "pipeline/project-context.md",
+  "store_dir": "pipeline/store",
+  "decisions_dir": "docs/decisions",
+  "pages_dir": "pipeline/pages",
+  "handoffs_dir": "pipeline/handoffs",
+  "issue_tracker": {
+    "provider": "sudocode",
+    "enabled": true,
+    "root": ".sudocode",
+    "issues_file": "issues.jsonl",
+    "specs_file": "specs.jsonl",
+    "command": "sudocode",
+    "args": [],
+    "managed_tag": "agent-pipeline",
+    "status_map": {
+      "planned": "open",
+      "in_progress": "in_progress",
+      "ready_for_qa": "needs_review",
+      "qa_in_progress": "needs_review",
+      "closed": "closed",
+      "blocked_*": "blocked",
+      "operator_escalation": "blocked"
+    }
+  },
+  "agent_runtime": {
+    "prompt_adapter": "portable",
+    "interactive_input": false,
+    "runs_dir": "pipeline/runs",
+    "progress_interval_seconds": 20
+  },
+  "workflow": {
+    "max_transitions_per_run": 4,
+    "gates": {
+      "low": ["check", "lint", "test_unit"],
+      "normal": ["check", "lint", "test_unit", "design_limits", "architecture", "smoke"],
+      "high": "all"
+    }
+  },
+  "findings_path": "pipeline/findings.md",
+  "ci": {
+    "provider": "github",
+    "install": "corepack enable && pnpm install --frozen-lockfile",
+    "runtime_setup": {
+      "uses": "actions/setup-node@v6",
+      "with": {
+        "node-version": "24"
+      }
+    }
+  }
+}

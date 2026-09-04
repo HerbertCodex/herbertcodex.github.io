@@ -1,0 +1,16 @@
+agent-pipeline/
+pipeline/
+node_modules/
+.output/
+dist/
+coverage/
+test-results/
+playwright-report/
+pnpm-lock.yaml
+docs/project-map.md
+
+# Generated targets (apply-profile / sudocode own these)
+AGENTS.md
+CLAUDE.md
+.github/
+.sudocode/

@@ -1,0 +1,112 @@
+name: ci
+
+# Chaque cle de `commands` devient une etape ci-dessous, `secrets_scan` compris :
+# ce template ne nomme donc aucun outil, et le scan de secrets est celui que le
+# projet a declare. `fetch-depth: 0` lui laisse l'historique complet s'il en veut.
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: gates (frontend-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: install
+        run: corepack enable && pnpm install --frozen-lockfile
+
+      - name: check
+        run: pnpm run check
+
+      - name: lint
+        run: pnpm run lint
+
+      - name: format
+        run: pnpm run format:check
+
+      - name: build
+        run: pnpm run build
+
+      - name: test-unit
+        run: pnpm run test:unit
+
+      - name: test-e2e
+        run: pnpm run test:e2e
+
+      - name: coverage
+        run: pnpm run test:coverage
+
+      - name: smoke
+        run: pnpm run test:smoke
+
+      - name: accessibility
+        run: pnpm run test:a11y
+
+      - name: architecture
+        run: pnpm run check:architecture
+
+      - name: design-tokens
+        run: pnpm run check:tokens
+
+      - name: dead-code
+        run: pnpm run check:dead-code
+
+      - name: duplication
+        run: pnpm run check:duplication
+
+      - name: design-limits
+        run: pnpm run check:design-limits
+
+      - name: comment-policy
+        run: pnpm run check:comments
+
+      - name: doc-lint
+        run: pnpm run check:docs
+
+      - name: sast
+        run: pnpm run check:security
+
+      - name: secrets-scan
+        run: pnpm run scan:secrets
+
+      - name: audit
+        run: pnpm audit --audit-level high
+
+      - name: tracker-sync
+        run: node agent-pipeline/scripts/tracker-sync.mjs
+
+      - name: project-map
+        if: ${{ github.event_name == 'pull_request' }}
+        run: pnpm run project-map -- --check
+
+      - name: map-coverage
+        if: ${{ github.event_name == 'pull_request' }}
+        run: node agent-pipeline/scripts/map-coverage.mjs
+
+      - name: core-tests
+        run: node --test "agent-pipeline/test/**/*.test.mjs"
+
+      - name: briefs-sync
+        run: node agent-pipeline/scripts/sync-briefs.mjs --check
+
+      - name: profile-sync
+        run: node agent-pipeline/scripts/apply-profile.mjs --check
+
+      - name: store-invariants
+        run: node agent-pipeline/scripts/store-verify.mjs

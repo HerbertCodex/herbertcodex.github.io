@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/entry-client.tsx",
+    "src/entry-server.tsx",
+    "src/app.tsx",
+    "src/routes/**/*.{ts,tsx}",
+    "scripts/*.mjs",
+    "tests/unit/**/*.test.{ts,tsx}",
+    "tests/e2e/**/*.spec.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "tests/**/*.{ts,tsx}"]
+}

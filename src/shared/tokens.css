@@ -100,6 +100,14 @@
    */
   --page-max: 1440px;
   --bp-md: 768px;
+  --bp-lg: 1024px;
+
+  /*
+   * La cible tactile minimale. 24px est le seuil que WCAG 2.5.8 demande : en
+   * dessous, un lien se rate au doigt, et c'est un défaut qu'aucune relecture
+   * sur écran d'ordinateur ne révèle.
+   */
+  --tap-min: 24px;
 
   --measure: 64ch;
   --border-hairline: 1px;
@@ -119,6 +127,35 @@
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
 
+  /* Le volet qui découvre un bloc : plus lent qu'une transition, plus court qu'un balayage. */
+  --motion-wipe: 900ms;
+
+  /*
+   * Les formes de fond. Carré, cercle, barre : le vocabulaire de l'école, pas
+   * des particules ni des orbes. Leurs tailles sont des jetons parce qu'une
+   * forme choisie à l'œil est une échelle de plus à maintenir.
+   */
+  --shape-lg: 420px;
+  --shape-md: 260px;
+  --shape-bar: 620px;
+  --motion-float: 32000ms;
+  --motion-turn: 44000ms;
+
+  /* Le balayage de fond : lent, parce qu'il ne doit jamais attirer l'œil. */
+  --motion-sweep: 18000ms;
+
   /* Distance parcourue par un bloc révélé. Faible : le mouvement signale, il ne performe pas. */
+  /*
+   * Les schémas de flux. Ce sont eux qui remplacent les captures d'écran :
+   * un service back-end n'a pas d'interface à montrer, il a des échanges.
+   * Leurs mesures sont des jetons pour que tous les schémas du site aient
+   * exactement le même trait et le même rythme.
+   */
+  --flow-stroke: 2px;
+  --flow-node: 3px;
+  --flow-dash: 6;
+  --motion-flow: 3200ms;
+  --motion-flow-slow: 5200ms;
+
   --lift: 18px;
 }

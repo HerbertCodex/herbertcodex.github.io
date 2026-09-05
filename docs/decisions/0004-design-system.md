@@ -1,7 +1,7 @@
 # 0004 — Studio suisse, jetons possédés, primitives écrites ici
 
 - **Date** : 2026-09-05 (remplace la version du 2026-09-04, qui retenait « éditorial sobre »)
-- **Statut** : accepté, validé par l'opérateur comme base de travail
+- **Statut** : accepté. Direction validée comme base le 2026-09-05, maquette validée le 2026-09-05
 
 ## Contexte
 
@@ -60,11 +60,29 @@ et il faudra refaire le chemin. Deux enseignements en sont sortis :
 
 - `src/shared/tokens.css` est dans `human_review_paths` : une modification de la palette
   ou de l'échelle n'est pas approuvée par une machine seule.
-- La maquette `mockups/portfolio-v1.html` est déclarée dans `design_system.mockup` et
-  vérifiée par `mockup-check` : 271 valeurs contrôlées contre 48 jetons, aucune valeur
-  inventée. Elle est la référence des écrans à venir.
+- La maquette `mockups/portfolio-v1.html` est déclarée dans `design_system.mockup`,
+  validée par l'opérateur, et vérifiée par `mockup-check` : 315 valeurs contrôlées contre
+  62 jetons, aucune valeur inventée. Elle est la référence des écrans à venir : un écran
+  qui s'en écarte est un écart à justifier, pas une variante.
 - Le bloc sombre du fichier de jetons est placé **avant** les valeurs claires, pour une
   raison technique documentée dans le fichier lui-même et dans `pitfalls.md`.
-- Ce qui manque pour que la base soit complète n'est pas du design : quatre captures
-  d'écran et quatre résultats chiffrés. Les emplacements sont visibles dans la maquette
-  plutôt que comblés par du texte creux.
+- Ce qui manque pour que la base soit complète n'est pas du design, c'est du contenu :
+  l'expérience 2024-2026, la certification, les quatre résultats chiffrés et les vraies
+  adresses des liens. Les emplacements portent « à renseigner » dans la maquette plutôt
+  que d'être comblés par du texte creux, pour qu'un trou reste visible tant qu'il existe.
+
+## Ce que la maquette validée a fixé au-delà du genre
+
+Trois partis pris ont été tranchés pendant l'itération et valent d'être nommés, parce
+qu'ils ne se déduisent pas du genre et qu'un écran futur doit les respecter :
+
+- **Le schéma remplace la capture.** Un ingénieur back-end n'a pas d'écran à montrer.
+  Plutôt que de subir ce manque, chaque réalisation est représentée par le schéma animé
+  de ce qu'elle fait : les services, les files, le chemin d'une donnée. Le mouvement y
+  est l'information, pas une décoration, ce qui interdit de l'ajouter ailleurs « pour
+  faire vivant ».
+- **Les technologies sont des étiquettes, pas des phrases.** Écrites en prose, elles
+  obligent à lire là où un recruteur balaye, et un filtre automatique les lit aussi. Une
+  technologie par réalisation est en vermillon : celle qui porte le projet.
+- **Les conditions sont écrites.** Contrat, lieu et début figurent en clair dans le bloc
+  contact. Un titre seul laissait deviner si une proposition avait une chance.

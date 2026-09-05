@@ -6,13 +6,15 @@
     <title>Maquette portfolio s-0001</title>
     <style>
       /*
-       * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité :
-       * mockup-check.mjs confronte ce fichier à celui-là et refuse toute valeur
-       * qui n'y figure pas.
+       * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité.
        *
-       * Pas de bloc sombre ici : une maquette montre un assemblage, pas deux
-       * thèmes. Le mode sombre est porté par les jetons et se vérifie dans
-       * l'application.
+       * L'IDÉE DE CETTE PAGE : un ingénieur back-end n'a pas de captures
+       * d'écran parce que ce qu'il construit n'a pas d'écran. Plutôt que de
+       * subir ce manque, la page en fait son sujet : chaque réalisation est
+       * montrée par le SCHÉMA DE CE QU'ELLE FAIT : les services, les files,
+       * les données qui circulent. Le mouvement n'est pas décoratif, il EST
+       * l'information : ce point qui avance, c'est une commande qui traverse
+       * le système.
        */
       :root {
         --paper: #eeece6;
@@ -52,6 +54,8 @@
         --radius-2: 2px;
         --page-max: 1440px;
         --bp-md: 768px;
+        --bp-lg: 1024px;
+        --tap-min: 24px;
         --measure: 64ch;
         --border-hairline: 1px;
         --border-heavy: 3px;
@@ -62,6 +66,18 @@
         --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
         --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
         --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --flow-stroke: 2px;
+        --flow-node: 3px;
+        --flow-dash: 6;
+        --motion-flow: 3200ms;
+        --motion-flow-slow: 5200ms;
         --lift: 18px;
       }
 
@@ -81,119 +97,9 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      /* ---- La grille, et elle se voit -------------------------------- */
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: var(--space-3);
-        padding: 0 var(--space-4);
-        max-width: var(--page-max);
-        margin: 0 auto;
-      }
-
-      @media (min-width: 768px) {
-        .grid {
-          grid-template-columns: repeat(12, 1fr);
-          gap: var(--space-4);
-          padding: 0 var(--space-6);
-        }
-      }
-
-      /* Les filets de colonne : la grille est un élément graphique, pas un outil caché. */
-      .rules {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        display: none;
-        max-width: var(--page-max);
-        margin: 0 auto;
-        padding: 0 var(--space-6);
-        opacity: 0.5;
-      }
-
-      @media (min-width: 768px) {
-        .rules {
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          gap: var(--space-4);
-        }
-        .rules span {
-          border-left: var(--border-hairline) solid var(--rule);
-        }
-      }
-
-      /* ---- Barre : marque, navigation, langue ------------------------- */
-
-      .bar {
-        grid-column: 1 / -1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-4);
-        justify-content: space-between;
-        align-items: baseline;
-        padding: var(--space-4) 0;
-        border-bottom: var(--border-heavy) solid var(--ink);
-        margin-bottom: var(--space-7);
-      }
-
-      .bar nav,
-      .langs {
-        display: flex;
-        gap: var(--space-4);
-      }
-
-      .mark {
-        font-size: var(--text-sm);
-        font-weight: var(--weight-bold);
-        letter-spacing: var(--track-wide);
-        text-transform: uppercase;
-      }
-
       a {
         color: var(--ink);
         text-decoration: none;
-      }
-
-      /* Le soulignement se déploie : mécanique, pas un fondu. */
-      .bar a,
-      .links a {
-        position: relative;
-        font-size: var(--text-sm);
-        letter-spacing: var(--track-wide);
-        text-transform: uppercase;
-      }
-
-      .bar a::after,
-      .links a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: calc(var(--space-1) * -1);
-        height: var(--border-heavy);
-        background: var(--accent);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform var(--motion-base) var(--ease-out-expo);
-      }
-
-      .bar a:hover::after,
-      .bar a:focus-visible::after,
-      .links a:hover::after,
-      .links a:focus-visible::after {
-        transform: scaleX(1);
-      }
-
-      .langs [aria-current="true"] {
-        color: var(--ink-inverse);
-        background: var(--ink);
-        padding: var(--space-1) var(--space-2);
-      }
-
-      :focus-visible {
-        outline: var(--border-heavy) solid var(--focus);
-        outline-offset: var(--space-1);
       }
 
       ::selection {
@@ -201,39 +107,142 @@
         color: var(--ink-inverse);
       }
 
-      /* ---- Titrage ---------------------------------------------------- */
-
-      .hero {
-        grid-column: 1 / -1;
-        margin-bottom: var(--space-8);
+      :focus-visible {
+        outline: var(--border-heavy) solid var(--focus);
+        outline-offset: var(--space-1);
       }
 
-      h1 {
-        font-size: var(--text-3xl);
-        line-height: var(--leading-tight);
-        letter-spacing: var(--track-tight);
-        font-weight: var(--weight-bold);
-        margin: 0;
+      .skip {
+        position: absolute;
+        left: var(--space-3);
+        top: calc(var(--space-8) * -1);
+        z-index: 3;
+        padding: var(--space-2) var(--space-3);
+        background: var(--paper-raised);
+        border: var(--border-heavy) solid var(--accent);
+        transition: top var(--motion-base) var(--ease-out-expo);
+      }
+
+      .skip:focus {
+        top: var(--space-3);
+      }
+
+      .sheet {
+        max-width: var(--page-max);
+        width: 100%;
+        margin: 0 auto;
+        padding: var(--space-4) var(--space-4) var(--space-6);
+      }
+
+      @media (min-width: 768px) {
+        .sheet {
+          padding: var(--space-5) var(--space-5) var(--space-7);
+        }
+      }
+
+      /* ---- Barre ------------------------------------------------------- */
+
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-4);
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        margin-bottom: var(--space-5);
+      }
+
+      .bar > *,
+      .section-head > * {
+        min-width: 0;
+      }
+
+      .bar nav,
+      .langs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+      }
+
+      .mark,
+      .bar a {
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
         text-transform: uppercase;
       }
 
-      .hero p {
+      .mark {
+        font-weight: var(--weight-bold);
+      }
+
+      .bar a,
+      .langs a,
+      .links a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+      }
+
+      .langs [aria-current="true"] {
+        color: var(--ink-inverse);
+        background: var(--ink);
+        padding: 0 var(--space-2);
+      }
+
+      /* ---- Ouverture --------------------------------------------------- */
+
+      h1 {
+        font-size: clamp(var(--text-2xl), 10vw, var(--text-3xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        overflow-wrap: break-word;
+        margin: 0 0 var(--space-3);
+      }
+
+      .lede {
         font-size: var(--text-lg);
         line-height: var(--leading-snug);
+        color: var(--ink-muted);
         max-width: var(--measure);
-        margin: var(--space-4) 0 0;
+        margin: 0 0 var(--space-4);
+      }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        margin-bottom: var(--space-6);
+      }
+
+      .facts span {
+        border: var(--border-hairline) solid var(--rule);
+        padding: var(--space-1) var(--space-2);
         color: var(--ink-muted);
       }
 
-      /* Le numéro de section : marque de fabrique du genre. */
+      .facts .now {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--ink-inverse);
+      }
+
+      /* ---- Section ----------------------------------------------------- */
+
       .section-head {
-        grid-column: 1 / -1;
         display: flex;
-        gap: var(--space-4);
+        flex-wrap: wrap;
+        gap: var(--space-2) var(--space-4);
         align-items: baseline;
         border-top: var(--border-heavy) solid var(--ink);
-        padding-top: var(--space-3);
-        margin-bottom: var(--space-5);
+        padding-top: var(--space-2);
+        margin: var(--space-6) 0 var(--space-4);
       }
 
       .num {
@@ -244,8 +253,7 @@
       }
 
       h2 {
-        font-size: var(--text-xl);
-        line-height: var(--leading-snug);
+        font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
         letter-spacing: var(--track-wide);
         text-transform: uppercase;
         font-weight: var(--weight-bold);
@@ -254,138 +262,62 @@
 
       .count {
         margin-left: auto;
+        flex: none;
         font-family: var(--font-mono);
         font-size: var(--text-sm);
         color: var(--ink-muted);
       }
 
-      /* ---- Bandeau d'identité : dense, tabulaire ---------------------- */
+      /* ---- Une réalisation : le schéma d'abord, le récit ensuite -------- */
 
-      .facts {
-        grid-column: 1 / -1;
+      .work {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-3);
+        gap: var(--space-5);
         border-top: var(--border-hairline) solid var(--rule);
-        border-bottom: var(--border-hairline) solid var(--rule);
-        padding: var(--space-3) 0;
-        margin-bottom: var(--space-7);
-        font-family: var(--font-mono);
-        font-size: var(--text-xs);
-        text-transform: uppercase;
-        letter-spacing: var(--track-wide);
+        padding-top: var(--space-4);
+        margin-bottom: var(--space-5);
       }
 
       @media (min-width: 768px) {
-        .facts {
-          grid-template-columns: repeat(4, 1fr);
+        .work {
+          grid-template-columns: 7fr 5fr;
+          gap: var(--space-6);
+          align-items: start;
         }
       }
 
-      .facts dt {
-        color: var(--ink-muted);
-      }
-
-      .facts dd {
-        margin: var(--space-1) 0 0;
-        color: var(--ink);
-      }
-
-      .status {
-        display: inline-block;
-        background: var(--accent);
-        color: var(--ink-inverse);
-        padding: var(--space-1) var(--space-2);
-      }
-
-      /* ---- Réalisations : le visuel a une vraie place ------------------ */
-
-      .piece {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: subgrid;
-        border-top: var(--border-hairline) solid var(--rule);
-        padding: var(--space-5) 0;
-      }
-
-      @media (min-width: 768px) {
-        .piece > .shot {
-          grid-column: 1 / 6;
-        }
-        .piece > .body {
-          grid-column: 6 / -1;
-        }
-        .piece.no-shot > .body {
-          grid-column: 1 / 10;
-        }
-      }
-
-      .shot {
-        grid-column: 1 / -1;
-        aspect-ratio: 4 / 3;
-        background: var(--rule);
-        position: relative;
-        overflow: hidden;
-      }
-
-      /* Le visuel se dévoile par un volet, jamais par un fondu. */
-      .shot::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: var(--accent);
-        transform-origin: right;
-        transition: transform var(--motion-slow) var(--ease-in-out);
-      }
-
-      .reveal.is-in .shot::after {
-        transform: scaleX(0);
-      }
-
-      .shot span {
-        position: absolute;
-        left: var(--space-3);
-        bottom: var(--space-3);
-        font-family: var(--font-mono);
-        font-size: var(--text-xs);
-        color: var(--ink-muted);
-      }
-
-      .body {
-        grid-column: 1 / -1;
-        margin-top: var(--space-3);
+      .work > * {
+        min-width: 0;
       }
 
       .kind {
         font-family: var(--font-mono);
         font-size: var(--text-xs);
-        letter-spacing: var(--track-wide);
         text-transform: uppercase;
+        letter-spacing: var(--track-wide);
         color: var(--accent);
         display: block;
         margin-bottom: var(--space-2);
       }
 
-      .piece h3 {
-        font-size: var(--text-lg);
+      .work h3 {
+        font-size: var(--text-xl);
         line-height: var(--leading-snug);
         letter-spacing: var(--track-tight);
-        margin: 0 0 var(--space-3);
         font-weight: var(--weight-bold);
+        margin: 0 0 var(--space-3);
       }
 
-      /* Le récit en trois temps : problème, action, résultat. */
       .story dt {
         font-family: var(--font-mono);
         font-size: var(--text-xs);
-        letter-spacing: var(--track-wide);
         text-transform: uppercase;
+        letter-spacing: var(--track-wide);
         color: var(--ink-muted);
-        margin-bottom: var(--space-1);
       }
 
       .story dd {
-        margin: 0 0 var(--space-3);
+        margin: var(--space-1) 0 var(--space-3);
         max-width: var(--measure);
       }
 
@@ -393,206 +325,433 @@
         color: var(--accent);
       }
 
-      .stack {
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
         font-family: var(--font-mono);
-        font-size: var(--text-xs);
-        color: var(--ink-muted);
-        margin-top: var(--space-3);
+        font-size: var(--text-sm);
         text-transform: uppercase;
         letter-spacing: var(--track-wide);
+        margin: var(--space-3) 0 0;
       }
 
       .links {
         display: flex;
+        flex-wrap: wrap;
         gap: var(--space-4);
-        margin-top: var(--space-3);
+        margin-top: var(--space-2);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
       }
 
-      .unavailable {
+      .links a {
+        border-bottom: var(--border-heavy) solid var(--accent);
+      }
+
+      /* ---- LE SCHÉMA : ce qui remplace la capture d'écran -------------- */
+
+      .diagram {
+        border: var(--border-hairline) solid var(--rule);
+        background: var(--paper-raised);
+        padding: var(--space-3);
+      }
+
+      .diagram figcaption {
         font-family: var(--font-mono);
         font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
         color: var(--ink-muted);
-        border-left: var(--border-heavy) solid var(--rule);
-        padding-left: var(--space-2);
-        margin-top: var(--space-3);
+        margin-top: var(--space-2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        justify-content: space-between;
       }
 
-      /* ---- Parcours : une frise compacte ------------------------------- */
+      .diagram svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
 
-      .entry {
-        grid-column: 1 / -1;
+      .node {
+        fill: var(--paper);
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .node-fill {
+        fill: var(--ink);
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .node-accent {
+        fill: var(--accent);
+        stroke: var(--accent);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .edge {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      /* L'arête en pointillés : le chemin qu'une donnée peut prendre. */
+      .edge-dash {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: var(--flow-stroke);
+        stroke-dasharray: var(--flow-dash);
+      }
+
+      .edge-dead {
+        stroke: var(--rule);
+      }
+
+      .cap {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        fill: var(--ink);
+        text-transform: uppercase;
+      }
+
+      .cap-invert {
+        fill: var(--ink-inverse);
+      }
+
+      .cap-muted {
+        fill: var(--ink-muted);
+      }
+
+      /*
+       * Le point qui circule EST l'information : c'est une requête qui
+       * traverse le système. Il ne tourne que lorsque le schéma est visible,
+       * pour ne pas animer une page qu'on ne regarde pas.
+       */
+      .packet {
+        fill: var(--accent);
+        offset-distance: 0%;
+        animation: travel var(--motion-flow) linear infinite;
+        animation-play-state: paused;
+      }
+
+      .is-in .packet {
+        animation-play-state: running;
+      }
+
+      .packet-2 {
+        animation-delay: calc(var(--motion-flow) / 3);
+      }
+
+      .packet-3 {
+        animation-delay: calc(var(--motion-flow) / 3 * 2);
+      }
+
+      .packet-slow {
+        animation-duration: var(--motion-flow-slow);
+      }
+
+      @keyframes travel {
+        to {
+          offset-distance: 100%;
+        }
+      }
+
+      /* Le trait se dessine quand le schéma entre à l'écran. */
+      .draw {
+        stroke-dasharray: var(--shape-bar);
+        stroke-dashoffset: var(--shape-bar);
+        transition: stroke-dashoffset var(--motion-flow) var(--ease-in-out);
+      }
+
+      .is-in .draw {
+        stroke-dashoffset: 0;
+      }
+
+      /* ---- Parcours et compétences, compacts --------------------------- */
+
+      .rows {
         display: grid;
-        grid-template-columns: subgrid;
-        border-top: var(--border-hairline) solid var(--rule);
-        padding: var(--space-4) 0;
+      }
+
+      .row {
+        display: grid;
+        gap: var(--space-2) var(--space-4);
+        padding: var(--space-3) 0;
+        border-bottom: var(--border-hairline) solid var(--rule);
+      }
+
+      /*
+       * Quatre colonnes plutôt que deux : la date, le rail, le poste, et ce
+       * qui y a été employé. La version à deux colonnes laissait les deux
+       * tiers droits de la page vides, ce qui se lit comme un contenu absent
+       * plutôt que comme une respiration.
+       */
+      @media (min-width: 768px) {
+        .row {
+          grid-template-columns: var(--space-8) var(--space-4) 1fr minmax(0, 1fr);
+          align-items: start;
+        }
+      }
+
+      .row > * {
+        min-width: 0;
+      }
+
+      /*
+       * Le rail reprend le trait des schémas : un nœud sur une ligne. Le
+       * parcours devient lui aussi un flux, et la page garde un seul
+       * vocabulaire graphique.
+       */
+      .rail {
+        display: none;
+        position: relative;
+        align-self: stretch;
       }
 
       @media (min-width: 768px) {
-        .entry > .when {
-          grid-column: 1 / 3;
-        }
-        .entry > .what {
-          grid-column: 3 / 10;
+        .rail {
+          display: block;
         }
       }
 
+      .rail::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: calc(var(--space-4) * -1);
+        width: var(--flow-stroke);
+        background: var(--rule);
+        transform: translateX(calc(var(--flow-stroke) / -2));
+      }
+
+      .row:last-child .rail::before {
+        bottom: 50%;
+      }
+
+      .rail::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: var(--space-2);
+        width: var(--space-2);
+        height: var(--space-2);
+        background: var(--paper);
+        border: var(--flow-stroke) solid var(--ink);
+        transform: translateX(-50%);
+        transition: background var(--motion-base) var(--ease-out-quart);
+      }
+
+      /* Le poste en cours porte un nœud plein : on voit où on en est. */
+      .row.current .rail::after {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .row:hover .rail::after {
+        background: var(--ink);
+      }
+
+      /* La colonne de droite : ce qui a été employé, en petites capitales. */
+      .used {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      /*
+       * Les technologies sortent du gris. C'est la première chose qu'un
+       * lecteur technique cherche, et un filtre automatique de recrutement
+       * les lit aussi : les laisser en gris clair les rendait moins visibles
+       * que la ponctuation autour.
+       */
+      .used span,
+      .tools span {
+        border: var(--border-hairline) solid var(--ink);
+        background: var(--paper-raised);
+        color: var(--ink);
+        padding: var(--space-1) var(--space-2);
+        transition:
+          background var(--motion-fast) var(--ease-out-quart),
+          color var(--motion-fast) var(--ease-out-quart);
+      }
+
+      /* Survolée, la ligne inverse ses étiquettes : elles deviennent l'aplat. */
+      .row:hover .used span,
+      .work:hover .tools span {
+        background: var(--ink);
+        color: var(--ink-inverse);
+      }
+
+      /* Celle qui porte la réalisation est pleine dès le départ. */
+      .used span.key,
+      .tools span.key {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--ink-inverse);
+      }
+
+      .row:hover .used span.key,
+      .work:hover .tools span.key {
+        background: var(--accent-strong);
+        border-color: var(--accent-strong);
+      }
+
+      .row:last-child {
+        border-bottom: 0;
+      }
+
       .when {
-        grid-column: 1 / -1;
         font-family: var(--font-mono);
         font-size: var(--text-sm);
         color: var(--accent);
       }
 
-      .what {
-        grid-column: 1 / -1;
-      }
-
-      .what strong {
+      .row strong {
         display: block;
-        font-size: var(--text-lg);
         letter-spacing: var(--track-tight);
       }
 
-      .what p {
+      .row p {
         margin: var(--space-1) 0 0;
-        max-width: var(--measure);
         color: var(--ink-muted);
+        max-width: var(--measure);
       }
 
-      /* ---- Le panneau de contact : un aplat plein ---------------------- */
+      /*
+       * Une seule colonne sur petit écran. À deux colonnes, une case est trop
+       * étroite : chaque étiquette occupe sa propre ligne et « intégration
+       * continue » se coupe en deux. Une colonne pleine laisse les étiquettes
+       * se ranger côte à côte, ce qui est le but même de la mise en
+       * étiquettes.
+       */
+      .skills {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--border-hairline);
+        background: var(--rule);
+        border: var(--border-hairline) solid var(--rule);
+      }
+
+      @media (min-width: 768px) {
+        .skills {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .skill {
+        background: var(--paper);
+        padding: var(--space-3);
+        min-width: 0;
+      }
+
+      .skill h4 {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: 0 0 var(--space-2);
+      }
+
+      /*
+       * Les compétences étaient écrites en phrases : « Kafka, API REST, files
+       * de messages ». Un recruteur qui cherche une technologie précise doit
+       * alors LIRE au lieu de BALAYER. Le même vocabulaire d'étiquettes que
+       * dans les réalisations rend chaque nom repérable d'un coup d'œil.
+       */
+      .skill .used {
+        gap: var(--space-1);
+      }
+
+      /* ---- Contact ----------------------------------------------------- */
 
       .panel {
-        grid-column: 1 / -1;
         background: var(--accent);
         color: var(--ink-inverse);
-        padding: var(--space-7) var(--space-5);
-        margin-top: var(--space-8);
+        padding: var(--space-5);
+        margin-top: var(--space-6);
       }
 
-      .panel h2,
+      /*
+       * Le titre de section reprenait sa marge et son filet d'encre alors
+       * qu'il est ici POSÉ SUR l'aplat : il ouvrait une bande rouge vide en
+       * haut du bloc, et le « 05 », coloré en vermillon comme les autres
+       * numéros, disparaissait dans le fond. Sur l'aplat, tout passe en
+       * encre inverse.
+       */
+      .panel .section-head {
+        margin-top: 0;
+        border-top-color: var(--ink-inverse);
+      }
+
       .panel .num {
         color: var(--ink-inverse);
       }
 
-      .panel .section-head {
-        border-top-color: var(--ink-inverse);
-        margin-bottom: var(--space-6);
+      /*
+       * Les conditions sont écrites, pas sous-entendues. Un titre seul
+       * laissait un chargé de recrutement deviner si sa proposition avait une
+       * chance. La ligne CONTRAT nomme les formes acceptées, ce qui fait
+       * gagner un échange aux deux côtés.
+       */
+      .terms {
+        display: grid;
+        gap: var(--space-2) var(--space-4);
+        margin: 0 0 var(--space-4);
+        max-width: var(--measure);
+      }
+
+      @media (min-width: 768px) {
+        .terms {
+          grid-template-columns: auto 1fr;
+        }
+      }
+
+      .terms dt {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        align-self: baseline;
+      }
+
+      /*
+       * Les valeurs restent en graisse normale. Le contrat est déjà annoncé en
+       * grand juste au-dessus ; répéter du gras sur trois lignes ferait de la
+       * mobilité une revendication alors que c'est une simple précision.
+       */
+      .terms dd {
+        margin: 0;
       }
 
       .panel-title {
-        font-size: var(--text-2xl);
+        font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
         line-height: var(--leading-tight);
         letter-spacing: var(--track-tight);
         text-transform: uppercase;
         font-weight: var(--weight-bold);
-        margin: 0 0 var(--space-5);
-        max-width: var(--measure);
-      }
-
-      .cta {
-        display: inline-block;
-        background: var(--ink-inverse);
-        color: var(--accent);
-        padding: var(--space-3) var(--space-5);
-        font-size: var(--text-sm);
-        font-weight: var(--weight-bold);
-        letter-spacing: var(--track-wide);
-        text-transform: uppercase;
-        border-radius: var(--radius-1);
-        transition:
-          background var(--motion-fast) var(--ease-out-quart),
-          color var(--motion-fast) var(--ease-out-quart),
-          transform var(--motion-fast) var(--ease-out-expo);
-      }
-
-      .cta:hover,
-      .cta:focus-visible {
-        background: var(--accent-strong);
-        color: var(--ink-inverse);
-        transform: translateY(calc(var(--space-1) * -1));
-      }
-
-      .secondary {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-5);
-        margin-top: var(--space-5);
-        font-family: var(--font-mono);
-        font-size: var(--text-sm);
-        text-transform: uppercase;
-        letter-spacing: var(--track-wide);
+        overflow-wrap: break-word;
+        margin: 0 0 var(--space-4);
       }
 
       .panel a {
         color: var(--ink-inverse);
       }
 
-      .panel .secondary a::after {
-        background: var(--ink-inverse);
+      .panel .links a {
+        border-bottom-color: var(--ink-inverse);
       }
-
-      /* ---- Technologies ------------------------------------------------ */
-
-      .stack-grid {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--border-hairline);
-        background: var(--rule);
-        border: var(--border-hairline) solid var(--rule);
-        margin-bottom: var(--space-6);
-      }
-
-      @media (min-width: 768px) {
-        .stack-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-
-      .cell {
-        background: var(--paper);
-        padding: var(--space-3);
-        transition:
-          background var(--motion-fast) var(--ease-out-quart),
-          color var(--motion-fast) var(--ease-out-quart);
-      }
-
-      .cell:hover {
-        background: var(--ink);
-        color: var(--ink-inverse);
-      }
-
-      .cell h4 {
-        font-family: var(--font-mono);
-        font-size: var(--text-xs);
-        text-transform: uppercase;
-        letter-spacing: var(--track-wide);
-        color: var(--accent);
-        margin: 0 0 var(--space-2);
-      }
-
-      .cell:hover h4 {
-        color: var(--ink-inverse);
-      }
-
-      .cell p {
-        margin: 0 0 var(--space-2);
-        font-size: var(--text-sm);
-      }
-
-      .cell ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        font-size: var(--text-sm);
-        line-height: var(--leading-snug);
-      }
-
-      .cell li {
-        padding: var(--space-1) 0;
-      }
-
-      /* ---- Mouvement : révélation au défilement, en cascade ------------ */
 
       .reveal {
         opacity: 0;
@@ -600,7 +759,6 @@
         transition:
           opacity var(--motion-base) var(--ease-out-quart),
           transform var(--motion-slow) var(--ease-out-expo);
-        transition-delay: calc(var(--motion-stagger) * var(--i, 0));
       }
 
       .reveal.is-in {
@@ -613,65 +771,49 @@
         *::before,
         *::after {
           transition-duration: var(--motion-fast) !important;
-          transition-delay: 0ms !important;
+          animation: none !important;
         }
         .reveal {
           opacity: 1;
           transform: none;
         }
-        .shot::after {
-          transform: scaleX(0);
+        .draw {
+          stroke-dashoffset: 0;
         }
       }
 
       .note {
-        grid-column: 1 / -1;
         font-family: var(--font-mono);
         font-size: var(--text-xs);
         color: var(--ink-muted);
         border-left: var(--border-heavy) solid var(--accent);
         padding-left: var(--space-3);
-        margin: var(--space-5) 0 var(--space-6);
+        margin: 0 0 var(--space-5);
         max-width: var(--measure);
       }
 
       footer {
-        grid-column: 1 / -1;
-        border-top: var(--border-heavy) solid var(--ink);
-        margin-top: var(--space-7);
-        padding: var(--space-4) 0 var(--space-8);
         display: flex;
         flex-wrap: wrap;
-        gap: var(--space-4);
+        gap: var(--space-3);
         justify-content: space-between;
+        margin-top: var(--space-5);
+        padding-top: var(--space-3);
+        border-top: var(--border-heavy) solid var(--ink);
         font-family: var(--font-mono);
         font-size: var(--text-xs);
         text-transform: uppercase;
         letter-spacing: var(--track-wide);
         color: var(--ink-muted);
       }
-
-      @media print {
-        .rules,
-        .note {
-          display: none;
-        }
-        .piece,
-        .entry {
-          break-inside: avoid;
-        }
-      }
     </style>
   </head>
   <body>
-    <div class="rules" aria-hidden="true">
-      <span></span><span></span><span></span><span></span><span></span><span></span> <span></span><span></span
-      ><span></span><span></span><span></span><span></span>
-    </div>
+    <a class="skip" href="#realisations">Aller aux réalisations</a>
 
-    <div class="grid">
+    <div class="sheet">
       <header class="bar">
-        <span class="mark">Donatien Koffi, ingénieur logiciel</span>
+        <span class="mark">Donatien Koffi</span>
         <nav aria-label="Navigation principale">
           <a href="/fr/realisations">Réalisations</a>
           <a href="/fr/parcours">Parcours</a>
@@ -684,71 +826,119 @@
       </header>
 
       <p class="note">
-        Maquette s-0001, genre studio suisse. Les visuels et les résultats chiffrés restent à fournir : ce sont eux qui
-        font la différence entre un portfolio et une liste. La période 2024–2026 attend vos expériences.
+        Maquette s-0001. Les schémas remplacent les captures d'écran, et c'est le parti pris de cette page. Les
+        résultats chiffrés et la période 2024–2026 restent à renseigner.
       </p>
 
-      <div class="hero reveal" style="--i: 0">
-        <h1>Ingénieur<br />logiciel</h1>
-        <p>
-          Je construis ce qui fait tourner une application quand personne ne regarde : le traitement des données, les
-          échanges entre services, la mise en production.
-        </p>
+      <h1>Ingénieur logiciel</h1>
+      <p class="lede">
+        Ce que je construis n'a pas d'écran. Alors plutôt que de vous montrer des interfaces que je n'ai pas faites,
+        voici ce qui se passe en dessous : les services, les files d'attente, et le chemin que prend une donnée quand
+        tout fonctionne.
+      </p>
+      <div class="facts">
+        <span class="now">CDI ou freelance</span>
+        <span>Rennes, mobile en France</span>
+        <span>Master MIAGE</span>
+        <span>FR · EN</span>
       </div>
 
-      <dl class="facts reveal" style="--i: 1">
-        <div>
-          <dt>Statut</dt>
-          <dd><span class="status">Recherche CDI</span></dd>
-        </div>
-        <div>
-          <dt>Base</dt>
-          <dd>Rennes, mobile en France</dd>
-        </div>
-        <div>
-          <dt>Formation</dt>
-          <dd>Master MIAGE, Rennes</dd>
-        </div>
-        <div>
-          <dt>Langues</dt>
-          <dd>Français, anglais</dd>
-        </div>
-      </dl>
-
-      <div class="section-head reveal" style="--i: 0">
+      <div class="section-head">
         <span class="num">01</span>
         <h2>Réalisations</h2>
         <span class="count">04</span>
       </div>
 
-      <article class="piece reveal" style="--i: 1">
-        <div class="shot"><span>capture à fournir</span></div>
-        <div class="body">
+      <!-- 1. Paiements : le flux traverse une file, donc rien ne se perd. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une commande passe par l'API, entre dans une file de messages, puis est écrite en base. Le cache répond directement aux lectures."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 225 143 H 290" />
+            <path class="edge-dash draw" d="M 225 58 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">CLIENT</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">API</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">CACHE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="148" text-anchor="middle">FILE</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">BASE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 185 V 143 H 290&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 95 58 H 185 V 143 H 290&quot;)" />
+            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+          </svg>
+          <figcaption><span>Flux d'un paiement</span><span>Kafka, Redis</span></figcaption>
+        </figure>
+
+        <div>
           <span class="kind">En entreprise, Everest Consulting</span>
           <h3>Paiements en ligne d'une plateforme</h3>
           <dl class="story">
             <dt>Le problème</dt>
             <dd>
-              La plateforme devait encaisser des paiements et rester disponible même quand un service tombait, ce qu'une
-              architecture monolithique ne permettait pas.
+              Chaque paiement bloquait la commande jusqu'à la réponse de la banque. Quand un service tombait, les
+              commandes en cours étaient perdues.
             </dd>
             <dt>Ce que j'ai fait</dt>
             <dd>
-              Développé les services de paiement et mis en place une file de messages pour que les traitements longs
-              n'immobilisent plus le reste, avec un cache pour les données les plus demandées.
+              Placé une file de messages entre l'interface et les traitements : la commande est acceptée tout de suite,
+              traitée ensuite, et rien ne disparaît si un service redémarre.
             </dd>
             <dt>Le résultat</dt>
-            <dd class="result">Chiffre à fournir : temps de réponse, volume traité ou disponibilité.</dd>
+            <dd class="result">Chiffre à fournir : temps de réponse, volume, disponibilité.</dd>
           </dl>
-          <p class="stack">Kafka · Redis · MongoDB · Stripe</p>
+          <p class="tools"><span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span></p>
         </div>
       </article>
 
-      <article class="piece reveal" style="--i: 2">
-        <div class="shot"><span>capture à fournir</span></div>
-        <div class="body">
-          <span class="kind">Projet personnel, Android</span>
-          <h3>Navigation hors connexion</h3>
+      <!-- 2. Navigation : le trait mort montre le réseau absent. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="L'écran lit l'application, qui lit sa base locale. La liaison vers le réseau est coupée, et l'application continue de fonctionner."
+          >
+            <path class="edge draw" d="M 100 58 H 160" />
+            <path class="edge-dash edge-dead draw" d="M 240 58 H 310" />
+            <path class="edge draw" d="M 200 76 V 130" />
+
+            <rect class="node-fill" x="20" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="60" y="63" text-anchor="middle">ÉCRAN</text>
+
+            <rect class="node" x="160" y="40" width="80" height="36" />
+            <text class="cap" x="200" y="63" text-anchor="middle">APPLI</text>
+
+            <rect class="node" x="310" y="40" width="90" height="36" />
+            <text class="cap cap-muted" x="355" y="63" text-anchor="middle">RÉSEAU</text>
+            <path class="edge-dead" d="M 325 44 L 385 72 M 325 72 L 385 44" />
+
+            <rect class="node-accent" x="155" y="130" width="90" height="36" />
+            <text class="cap cap-invert" x="200" y="153" text-anchor="middle">LOCAL</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 200 130 V 58 H 100&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 200 130 V 58 H 100&quot;)" />
+          </svg>
+          <figcaption><span>Lecture hors connexion</span><span>Room, Retrofit</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel</span>
+          <h3>Navigation qui survit à la perte de réseau</h3>
           <dl class="story">
             <dt>Le problème</dt>
             <dd>
@@ -756,148 +946,276 @@
             </dd>
             <dt>Ce que j'ai fait</dt>
             <dd>
-              Conçu et développé seul l'application, avec une base locale qui conserve les itinéraires et les points
-              d'intérêt déjà consultés.
+              Inversé la source : l'écran lit toujours la base locale, jamais le réseau directement. Le serveur ne fait
+              que la remplir quand il est joignable.
             </dd>
             <dt>Le résultat</dt>
-            <dd class="result">L'application reste utilisable sans connexion.</dd>
+            <dd class="result">Ce qui a déjà été consulté reste accessible, réseau coupé.</dd>
           </dl>
-          <p class="stack">Kotlin · Jetpack Compose · Room · Retrofit</p>
+          <p class="tools">
+            <span class="key">Room</span><span>Kotlin</span><span>Jetpack Compose</span><span>Retrofit</span>
+          </p>
           <div class="links"><a href="#">Voir le code</a></div>
         </div>
       </article>
 
-      <article class="piece no-shot reveal" style="--i: 3">
-        <div class="body">
-          <span class="kind">Projet personnel, service</span>
-          <h3>Logiciel de gestion hôtelière</h3>
+      <!-- 3. Hôtellerie : la règle refuse, et le refus est le sujet. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une demande de réservation passe le contrôle du jeton, puis la règle de disponibilité qui l'accepte ou la refuse."
+          >
+            <path class="edge draw" d="M 100 100 H 140" />
+            <path class="edge draw" d="M 220 100 H 250" />
+            <path class="edge draw" d="M 330 100 H 355 V 74" />
+            <path class="edge-dash draw" d="M 330 100 H 355 V 126" />
+
+            <rect class="node" x="10" y="82" width="90" height="36" />
+            <text class="cap" x="55" y="105" text-anchor="middle">DEMANDE</text>
+
+            <rect class="node-fill" x="140" y="82" width="80" height="36" />
+            <text class="cap cap-invert" x="180" y="105" text-anchor="middle">JETON</text>
+
+            <rect class="node-accent" x="250" y="82" width="80" height="36" />
+            <text class="cap cap-invert" x="290" y="105" text-anchor="middle">RÈGLE</text>
+
+            <rect class="node" x="330" y="38" width="80" height="36" />
+            <text class="cap" x="370" y="61" text-anchor="middle">ÉCRIT</text>
+
+            <rect class="node" x="330" y="126" width="80" height="36" />
+            <text class="cap cap-muted" x="370" y="149" text-anchor="middle">REFUS</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 100 100 H 140 M 220 100 H 250&quot;)" />
+            <circle
+              class="packet packet-2 packet-slow"
+              r="5"
+              style="offset-path: path(&quot;M 330 100 H 355 V 74&quot;)"
+            />
+          </svg>
+          <figcaption><span>Chemin d'une réservation</span><span>NestJS, JWT</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel</span>
+          <h3>Réservations qui ne se chevauchent jamais</h3>
           <dl class="story">
             <dt>Le problème</dt>
-            <dd>Gérer des réservations suppose d'éviter les doubles réservations et de contrôler qui accède à quoi.</dd>
+            <dd>
+              Deux clients qui réservent la même chambre à la même seconde : sans règle centrale, les deux réservations
+              passent.
+            </dd>
             <dt>Ce que j'ai fait</dt>
             <dd>
-              Construit le service complet : modèle de données des chambres et des clients, règles de réservation,
-              authentification, et une documentation permettant à d'autres de s'y brancher.
+              Placé la règle de disponibilité avant l'écriture, jamais après. Une demande est refusée par le métier, pas
+              rattrapée par un correctif.
             </dd>
             <dt>Le résultat</dt>
-            <dd class="result">Chiffre à fournir : nombre de chambres gérées, ou temps de réservation.</dd>
+            <dd class="result">Chiffre à fournir : chambres gérées, temps de réservation.</dd>
           </dl>
-          <p class="stack">NestJS · Prisma · PostgreSQL · Swagger</p>
+          <p class="tools">
+            <span class="key">NestJS</span><span>Prisma</span><span>PostgreSQL</span><span>Swagger</span>
+          </p>
           <div class="links"><a href="#">Voir le code</a></div>
         </div>
       </article>
 
-      <article class="piece no-shot reveal" style="--i: 4">
-        <div class="body">
+      <!-- 4. Conteneurs : trois environnements identiques, c'est le sujet. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Le code produit une image unique, déployée à l'identique sur les environnements de développement, de test et de production."
+          >
+            <path class="edge draw" d="M 90 100 H 140" />
+            <path class="edge draw" d="M 230 100 H 270" />
+            <path class="edge draw" d="M 270 100 V 46 H 300" />
+            <path class="edge draw" d="M 270 100 H 300" />
+            <path class="edge draw" d="M 270 100 V 154 H 300" />
+
+            <!-- Le point de distribution : sans lui, les trois traits
+                 semblent partir du vide. -->
+            <rect class="node-fill" x="264" y="94" width="12" height="12" />
+
+            <rect class="node" x="10" y="82" width="80" height="36" />
+            <text class="cap" x="50" y="105" text-anchor="middle">CODE</text>
+
+            <rect class="node-accent" x="140" y="82" width="90" height="36" />
+            <text class="cap cap-invert" x="185" y="105" text-anchor="middle">IMAGE</text>
+
+            <rect class="node" x="300" y="28" width="100" height="36" />
+            <text class="cap" x="350" y="51" text-anchor="middle">DÉV</text>
+
+            <rect class="node" x="300" y="82" width="100" height="36" />
+            <text class="cap" x="350" y="105" text-anchor="middle">TEST</text>
+
+            <rect class="node-fill" x="300" y="136" width="100" height="36" />
+            <text class="cap cap-invert" x="350" y="159" text-anchor="middle">PROD</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 230 100 H 270 V 46 H 300&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 230 100 H 300&quot;)" />
+            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 230 100 H 270 V 154 H 300&quot;)" />
+          </svg>
+          <figcaption><span>Une image, trois environnements</span><span>Docker</span></figcaption>
+        </figure>
+
+        <div>
           <span class="kind">En entreprise, CIE DSTD</span>
-          <h3>Modernisation d'une application interne</h3>
+          <h3>La même application partout</h3>
           <dl class="story">
             <dt>Le problème</dt>
             <dd>
-              Une application dont l'installation dépendait de la machine sur laquelle elle tournait, avec les écarts
-              que cela suppose entre les environnements.
+              L'installation dépendait de la machine : ce qui marchait en test échouait en production, pour des raisons
+              que personne ne pouvait reproduire.
             </dd>
             <dt>Ce que j'ai fait</dt>
             <dd>
-              Mis l'application en conteneur pour qu'elle se déploie de la même façon partout, et travaillé sur la
-              structure de sa base de données.
+              Mis l'application en conteneur : une seule image, construite une fois, déployée identique sur les trois
+              environnements.
             </dd>
             <dt>Le résultat</dt>
             <dd class="result">Chiffre à fournir : temps de déploiement avant et après.</dd>
           </dl>
-          <p class="stack">Docker · PostgreSQL · NestJS · Angular</p>
-          <p class="unavailable">Application interne : ni démonstration ni code publics.</p>
+          <p class="tools">
+            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span>
+          </p>
         </div>
       </article>
 
-      <div class="section-head reveal" style="--i: 0">
+      <div class="section-head">
         <span class="num">02</span>
         <h2>Parcours</h2>
       </div>
 
-      <div class="entry reveal" style="--i: 1">
-        <div class="when">2024–2026</div>
-        <div class="what">
-          <strong>À compléter</strong>
-          <p>
-            Deux ans séparent la dernière expérience de l'ancien portfolio d'aujourd'hui. C'est le premier point qu'un
-            recruteur regardera.
-          </p>
+      <div class="rows reveal observe">
+        <div class="row current">
+          <span class="when">09/2024–06/2026</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>À compléter</strong>
+            <p>Employeur et poste à renseigner</p>
+          </div>
+          <div class="used"><span>à renseigner</span></div>
+        </div>
+        <div class="row">
+          <span class="when">11/2023–08/2024</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Everest Consulting</strong>
+            <p>Développeur back-end. Services de paiement et échanges entre services.</p>
+          </div>
+          <div class="used">
+            <span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="when">08/2023–11/2023</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>CIE DSTD</strong>
+            <p>Développeur back-end. Conteneurisation et base relationnelle.</p>
+          </div>
+          <div class="used">
+            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="when">05/2022–11/2022</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Synelia / Smile Group</strong>
+            <p>Développeur front-end. Applications mobiles et web.</p>
+          </div>
+          <div class="used"><span>Flutter</span><span>Angular</span></div>
         </div>
       </div>
 
-      <div class="entry reveal" style="--i: 2">
-        <div class="when">2023–2024</div>
-        <div class="what">
-          <strong>Everest Consulting</strong>
-          <p>Développeur back-end, 9 mois.</p>
-        </div>
-      </div>
-
-      <div class="entry reveal" style="--i: 3">
-        <div class="when">2023</div>
-        <div class="what">
-          <strong>CIE DSTD</strong>
-          <p>Développeur back-end, stage de 4 mois.</p>
-        </div>
-      </div>
-
-      <div class="entry reveal" style="--i: 4">
-        <div class="when">2022</div>
-        <div class="what">
-          <strong>Synelia / Smile Group</strong>
-          <p>Développeur front-end, stage de 7 mois. Flutter et Angular.</p>
-        </div>
-      </div>
-
-      <div class="entry reveal" style="--i: 5">
-        <div class="when">Diplôme</div>
-        <div class="what">
-          <strong>Master MIAGE, Université de Rennes</strong>
-          <p>Informatique et gestion d'entreprise. Année d'obtention à préciser.</p>
-        </div>
-      </div>
-
-      <div class="section-head reveal" style="--i: 0">
+      <div class="section-head">
         <span class="num">03</span>
+        <h2>Formation</h2>
+      </div>
+
+      <div class="rows reveal observe">
+        <div class="row">
+          <span class="when">2024</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Master MIAGE</strong>
+            <p>Université de Rennes. Informatique et gestion d'entreprise.</p>
+          </div>
+          <div class="used"><span>Architecture</span><span>Bases de données</span><span>Gestion de projet</span></div>
+        </div>
+        <div class="row">
+          <span class="when">2025</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Certification à renseigner</strong>
+            <p>Organisme et objet à préciser</p>
+          </div>
+          <div class="used"><span>à renseigner</span></div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="num">04</span>
         <h2>Compétences</h2>
+        <span class="count">27</span>
       </div>
 
-      <div class="stack-grid reveal" style="--i: 1">
-        <div class="cell">
+      <div class="skills reveal observe">
+        <div class="skill">
           <h4>Côté serveur</h4>
-          <p>Traitement des demandes, règles de gestion, sécurité des accès.</p>
-          <ul>
-            <li>Java, TypeScript, Kotlin, Python</li>
-            <li>NestJS, Spring Boot, Express</li>
-          </ul>
+          <div class="used">
+            <span>Java</span><span>TypeScript</span><span>Kotlin</span><span>Python</span><span>NestJS</span
+            ><span>Spring Boot</span><span>Express</span><span>Fastify</span>
+          </div>
         </div>
-        <div class="cell">
+        <div class="skill">
           <h4>Données</h4>
-          <p>Structurer et interroger ce que l'application conserve.</p>
-          <ul>
-            <li>PostgreSQL, MySQL</li>
-            <li>MongoDB, Redis</li>
-          </ul>
+          <div class="used"><span>PostgreSQL</span><span>MySQL</span><span>MongoDB</span><span>Redis</span></div>
         </div>
-        <div class="cell">
-          <h4>Mise en production</h4>
-          <p>Livrer de façon répétable, sans interruption de service.</p>
-          <ul>
-            <li>Docker, Kubernetes</li>
-            <li>GitHub Actions, GitLab CI</li>
-          </ul>
+        <div class="skill">
+          <h4>Échanges</h4>
+          <div class="used">
+            <span>Kafka</span><span>API REST</span><span>Files de messages</span><span>Mise en cache</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Exploitation</h4>
+          <div class="used">
+            <span>Docker</span><span>Kubernetes</span><span>GitHub Actions</span><span>GitLab CI</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Interfaces</h4>
+          <div class="used"><span>Angular</span><span>Svelte</span><span>Next.js</span><span>Flutter</span></div>
+        </div>
+        <div class="skill">
+          <h4>Méthodes</h4>
+          <div class="used">
+            <span>Microservices</span><span>Intégration continue</span><span>Tests automatisés</span>
+          </div>
         </div>
       </div>
 
-      <section class="panel reveal" style="--i: 0">
+      <section class="panel reveal observe">
         <div class="section-head">
-          <span class="num">04</span>
+          <span class="num">05</span>
           <h2>Contact</h2>
         </div>
-        <p class="panel-title">Disponible en CDI</p>
-        <a class="cta" href="mailto:contact@exemple.fr">Écrire un message</a>
-        <div class="secondary">
+        <p class="panel-title">Disponible en CDI ou freelance</p>
+        <dl class="terms">
+          <dt>Contrat</dt>
+          <dd>CDI ou mission freelance</dd>
+          <dt>Lieu</dt>
+          <dd>Rennes, mobile partout en France, ou à distance</dd>
+          <dt>Début</dt>
+          <dd>Immédiat</dd>
+        </dl>
+        <div class="links">
+          <a href="mailto:contact@exemple.fr">Écrire un message</a>
           <a href="#">LinkedIn</a>
           <a href="#">GitHub</a>
           <a href="/cv/donatien-koffi-fr.pdf">CV en PDF</a>
@@ -912,21 +1230,19 @@
 
     <script>
       /*
-       * La révélation au défilement, sans dépendance : la maquette montre
-       * l'intention du mouvement, elle ne préjuge pas de l'outil qui
-       * l'implémentera dans l'application.
+       * Les schémas ne s'animent que lorsqu'ils sont visibles : un point qui
+       * circule dans une page qu'on ne regarde pas consomme de la batterie
+       * pour rien.
        */
       const seen = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
-            entry.target.classList.add("is-in");
-            seen.unobserve(entry.target);
+            entry.target.classList.toggle("is-in", entry.isIntersecting);
           }
         },
-        { rootMargin: "0px 0px -12% 0px" },
+        { rootMargin: "0px 0px -5% 0px" },
       );
-      for (const node of document.querySelectorAll(".reveal")) seen.observe(node);
+      for (const node of document.querySelectorAll(".observe")) seen.observe(node);
     </script>
   </body>
 </html>

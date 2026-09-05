@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quatre carrelages</title>
+    <style>
+      /*
+       * Jetons recopiés depuis src/shared/tokens.css. Les quatre variantes
+       * partagent la MÊME palette : seule la mise en page change, pour que la
+       * comparaison porte sur la structure et non sur la couleur.
+       */
+      :root {
+        --paper: #eeece6;
+        --paper-raised: #f8f7f3;
+        --ink: #121110;
+        --ink-muted: #55524b;
+        --ink-inverse: #f8f7f3;
+        --rule: #c6c2b7;
+        --accent: #b3271a;
+        --accent-strong: #8b1d13;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --space-8: 144px;
+        --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 22px;
+        --text-xl: 32px;
+        --text-2xl: 52px;
+        --text-3xl: 84px;
+        --leading-tight: 0.94;
+        --leading-snug: 1.15;
+        --leading-body: 1.55;
+        --track-tight: -0.03em;
+        --track-wide: 0.08em;
+        --weight-regular: 400;
+        --weight-bold: 700;
+        --radius-1: 0px;
+        --radius-2: 2px;
+        --page-max: 1440px;
+        --bp-md: 768px;
+        --tap-min: 24px;
+        --measure: 64ch;
+        --border-hairline: 1px;
+        --border-heavy: 3px;
+        --motion-fast: 140ms;
+        --motion-base: 320ms;
+        --motion-slow: 620ms;
+        --motion-stagger: 70ms;
+        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --lift: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+      }
+
+      .sheet {
+        max-width: var(--page-max);
+        width: 100%;
+        margin: 0 auto;
+        padding: var(--space-5) var(--space-4) var(--space-7);
+      }
+
+      .board,
+      figure {
+        min-width: 0;
+      }
+
+      .intro {
+        max-width: var(--measure);
+        margin-bottom: var(--space-5);
+      }
+
+      .intro h1 {
+        font-size: clamp(var(--text-xl), 6vw, var(--text-2xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        text-transform: uppercase;
+        margin: 0 0 var(--space-3);
+      }
+
+      .intro p {
+        color: var(--ink-muted);
+        margin: 0;
+      }
+
+      .board {
+        display: grid;
+        gap: var(--space-5);
+      }
+
+      @media (min-width: 768px) {
+        .board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      figure {
+        margin: 0;
+        border: var(--border-heavy) solid var(--ink);
+      }
+
+      figcaption {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
+      figcaption b {
+        color: var(--ink);
+      }
+
+      /*
+       * Sans min-width: 0, un enfant flex refuse de descendre sous la largeur
+       * de son contenu : le texte ne se coupe pas et pousse toute la page.
+       * C'est la cause la plus fréquente d'un débordement horizontal, et la
+       * moins visible puisque rien dans la règle ne parle de largeur.
+       */
+      figcaption > * {
+        min-width: 0;
+        overflow-wrap: break-word;
+      }
+
+      /*
+       * `1fr` vaut `minmax(auto, 1fr)` : la piste refuse de descendre sous la
+       * largeur de son contenu, et une grille déborde alors sans qu'aucune
+       * règle ne mentionne de largeur. `minmax(0, 1fr)` lève ce plancher.
+       */
+      .a-grid div,
+      .c-tiles div,
+      .b-cols div {
+        min-width: 0;
+        overflow-wrap: break-word;
+      }
+
+      .demo {
+        padding: var(--space-3);
+      }
+
+      .who {
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--track-tight);
+        text-transform: uppercase;
+      }
+
+      /* ---- A. Damier : une case pleine sur deux ------------------------ */
+
+      .a-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--border-hairline);
+        background: var(--ink);
+        border: var(--border-hairline) solid var(--ink);
+      }
+
+      .a-grid div {
+        background: var(--paper);
+        padding: var(--space-2);
+        min-height: var(--space-7);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: var(--text-xs);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      .a-grid div:nth-child(3n + 2) {
+        background: var(--accent);
+        color: var(--ink-inverse);
+      }
+
+      .a-grid b {
+        font-family: var(--font-grotesk);
+        font-size: var(--text-lg);
+        letter-spacing: var(--track-tight);
+        text-transform: none;
+      }
+
+      @media (min-width: 768px) {
+        .a-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .a-grid div {
+          padding: var(--space-3);
+          aspect-ratio: 1;
+          min-height: 0;
+        }
+        .b-cols {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0;
+        }
+        .c-tiles {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      /* ---- B. Colonnes de journal, filets verticaux -------------------- */
+
+      .b-cols {
+        display: grid;
+        gap: var(--space-3);
+      }
+
+      .b-cols div {
+        font-size: var(--text-sm);
+      }
+
+      @media (min-width: 768px) {
+        .b-cols div {
+          padding: 0 var(--space-3);
+          border-left: var(--border-hairline) solid var(--rule);
+        }
+      }
+
+      .b-cols div:first-child {
+        border-left: 0;
+        padding-left: 0;
+      }
+
+      .b-cols h4 {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: 0 0 var(--space-2);
+        padding-bottom: var(--space-1);
+        border-bottom: var(--border-heavy) solid var(--ink);
+      }
+
+      .b-cols p {
+        margin: 0 0 var(--space-2);
+        color: var(--ink-muted);
+      }
+
+      /* ---- C. Tuiles de tailles inégales ------------------------------- */
+
+      .c-tiles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-2);
+      }
+
+      .c-tiles div {
+        border: var(--border-hairline) solid var(--ink);
+        padding: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        min-height: var(--space-7);
+      }
+
+      .c-tiles .wide {
+        grid-column: span 2;
+      }
+
+      .c-tiles .tall {
+        grid-row: span 2;
+        background: var(--accent);
+        color: var(--ink-inverse);
+        border-color: var(--accent);
+      }
+
+      .c-tiles b {
+        display: block;
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        text-transform: none;
+        letter-spacing: var(--track-tight);
+        margin-bottom: var(--space-1);
+      }
+
+      /* ---- D. Tableau réglé, lignes et colonnes ------------------------ */
+
+      /* Un tableau ne se plie pas : il défile dans sa propre boîte plutôt
+         que de pousser la page entière. */
+      .scroller {
+        overflow-x: auto;
+      }
+
+      .d-table {
+        width: 100%;
+        min-width: var(--shape-md);
+        border-collapse: collapse;
+        font-size: var(--text-sm);
+      }
+
+      .d-table th {
+        text-align: left;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+        font-weight: var(--weight-regular);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        padding: var(--space-2);
+      }
+
+      .d-table td {
+        border-bottom: var(--border-hairline) solid var(--rule);
+        border-right: var(--border-hairline) solid var(--rule);
+        padding: var(--space-2);
+      }
+
+      .d-table td:last-child {
+        border-right: 0;
+      }
+
+      .d-table tr:hover td {
+        background: var(--accent);
+        color: var(--ink-inverse);
+      }
+
+      .d-table .lead td {
+        font-weight: var(--weight-bold);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sheet">
+      <div class="intro">
+        <h1>Quatre carrelages</h1>
+        <p>
+          Même palette, même typographie, même vermillon. Seule la façon de paver la page change. Désignez la lettre, ou
+          dites ce que vous prenez dans l'une et dans l'autre.
+        </p>
+      </div>
+
+      <div class="board">
+        <figure>
+          <figcaption><b>A. Damier</b><span>cases carrées, une pleine sur trois</span></figcaption>
+          <div class="demo">
+            <div class="a-grid">
+              <div><span>Projet</span><b>Navigation</b></div>
+              <div><span>Poste</span><b>Everest</b></div>
+              <div><span>Outil</span><b>Kafka</b></div>
+              <div><span>Projet</span><b>Hôtellerie</b></div>
+              <div><span>Statut</span><b>CDI</b></div>
+              <div><span>Base</span><b>Rennes</b></div>
+            </div>
+          </div>
+        </figure>
+
+        <figure>
+          <figcaption><b>B. Colonnes de journal</b><span>filets verticaux, lecture en colonnes</span></figcaption>
+          <div class="demo">
+            <div class="b-cols">
+              <div>
+                <h4>01 Projets</h4>
+                <p class="who">Navigation</p>
+                <p>Itinéraires hors connexion.</p>
+                <p class="who">Hôtellerie</p>
+                <p>Réservations et accès.</p>
+              </div>
+              <div>
+                <h4>02 Postes</h4>
+                <p class="who">Everest</p>
+                <p>Paiements, files de messages.</p>
+                <p class="who">CIE DSTD</p>
+                <p>Conteneurisation.</p>
+              </div>
+              <div>
+                <h4>03 Outils</h4>
+                <p>Kafka</p>
+                <p>Redis</p>
+                <p>Docker</p>
+                <p>PostgreSQL</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure>
+          <figcaption><b>C. Tuiles inégales</b><span>modules de tailles variables</span></figcaption>
+          <div class="demo">
+            <div class="c-tiles">
+              <div class="wide"><b>Navigation Android</b>Kotlin, hors connexion</div>
+              <div class="tall"><b>Everest</b>Paiements et files de messages. 2023–2024.</div>
+              <div><b>CDI</b>disponible</div>
+              <div class="wide"><b>Gestion hôtelière</b>NestJS, PostgreSQL</div>
+              <div><b>Rennes</b>mobile</div>
+              <div><b>MIAGE</b>2024</div>
+              <div class="wide"><b>Kubernetes</b>certifié 2025</div>
+            </div>
+          </div>
+        </figure>
+
+        <figure>
+          <figcaption><b>D. Tableau réglé</b><span>lignes et colonnes, survol plein</span></figcaption>
+          <div class="demo">
+            <div class="scroller">
+              <table class="d-table">
+                <thead>
+                  <tr>
+                    <th>Année</th>
+                    <th>Objet</th>
+                    <th>Outils</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="lead">
+                    <td>2023–2024</td>
+                    <td>Everest Consulting</td>
+                    <td>Kafka, Redis</td>
+                  </tr>
+                  <tr>
+                    <td>2023</td>
+                    <td>CIE DSTD</td>
+                    <td>Docker</td>
+                  </tr>
+                  <tr>
+                    <td>Projet</td>
+                    <td>Navigation Android</td>
+                    <td>Kotlin</td>
+                  </tr>
+                  <tr>
+                    <td>Projet</td>
+                    <td>Gestion hôtelière</td>
+                    <td>NestJS</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </body>
+</html>

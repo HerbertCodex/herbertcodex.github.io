@@ -111,3 +111,15 @@ not observe.
 **Now**: `agent_runtime.args` enumerates `--allowedTools`. The list was proven with two
 probes before being written, rather than assumed. `bypassPermissions` would have been
 shorter and would have opened the whole shell to an autonomous agent.
+
+## A gitignore pattern that only held while the directory existed
+
+**Believed**: `pipeline/handoffs/` in `.gitignore` ignores the handoff directory.
+
+**True**: a trailing slash matches directories only. The directory is absent from a
+fresh checkout — precisely because it is ignored — so `git check-ignore -q
+pipeline/handoffs` answered "not ignored" and `apply-profile --check` failed in CI
+while passing locally, where the directory happens to exist.
+
+**Now**: the pattern is `pipeline/handoffs`, without the slash, and the fix was proven
+by replaying the CI condition in a fresh clone rather than reasoned about.

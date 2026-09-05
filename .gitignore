@@ -29,7 +29,11 @@ Thumbs.db
 
 # Pipeline artefacts
 pipeline/pages/
-pipeline/handoffs/
+# Sans barre finale, volontairement. `pipeline/handoffs/` ne matche qu'un
+# repertoire, or ce repertoire est absent d'un checkout neuf puisqu'il est
+# justement ignore. `git check-ignore` repondait alors « non ignore », et
+# `apply-profile --check` echouait en CI en passant en local.
+pipeline/handoffs
 pipeline/runs/
 test-results/
 playwright-report/

@@ -99,6 +99,9 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: node agent-pipeline/scripts/map-coverage.mjs
 
+      - name: content
+        run: pnpm run check:content
+
       - name: core-tests
         run: node --test "agent-pipeline/test/**/*.test.mjs"
 

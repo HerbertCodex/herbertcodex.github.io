@@ -24,7 +24,8 @@
     "audit": "pnpm audit --audit-level high",
     "tracker_sync": "node agent-pipeline/scripts/tracker-sync.mjs",
     "project_map": "pnpm run project-map -- --check",
-    "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs"
+    "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs",
+    "content": "pnpm run check:content"
   },
   "architecture": {
     "id": "feature-modules",
@@ -60,7 +61,7 @@
       "replay": "closure"
     }
   },
-  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit"],
+  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit", "content"],
   "project_map": {
     "out": "docs/project-map.md",
     "roots": ["src"],

@@ -143,3 +143,15 @@ unaddressed heading `## verify-scope <issue> <base>..<sha>`, while the QA prompt
 announces that same output as present in the QA package. Both cannot hold: the heading
 the first prescribes is precisely the one the filter drops. QA reported the gap and
 replayed `verify-scope` by hand. Not fixable here — the core is not to be modified.
+
+## A repeated context heading replaces, it does not append
+
+**Believed**: two `append_context` blocks under the same heading both reach the role.
+
+**True**: `contextsFor` keeps only the last block per heading — "only the last
+instruction is live, the earlier one is history". A correction sent as a second block
+under the same heading silently deleted the two scope decisions the first one carried.
+The record still holds both; only one travels.
+
+**Now**: a correction rewrites the whole block, and what the package actually carries is
+verified before dispatch rather than assumed.

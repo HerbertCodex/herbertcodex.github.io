@@ -594,6 +594,25 @@
       }
 
       /* Celle qui porte la réalisation est pleine dès le départ. */
+      /*
+       * Le marqueur d'emplacement. Il est ecrit pour NE PAS pouvoir passer
+       * pour une competence reelle : hachure, en capitales, et refuse par
+       * `check:content` des qu'il apparait hors de ce dossier de maquettes.
+       * Une valeur plausible ecrite « en attendant » se publie sans que
+       * personne la relise ; un marqueur laid, non.
+       */
+      .used span.todo,
+      .tools span.todo {
+        border-style: dashed;
+        background: transparent;
+        color: var(--accent);
+      }
+
+      .row:hover .used span.todo {
+        background: transparent;
+        color: var(--accent);
+      }
+
       .used span.key,
       .tools span.key {
         background: var(--accent);
@@ -901,7 +920,10 @@
             <dt>Le résultat</dt>
             <dd class="result">Chiffre à fournir : temps de réponse, volume, disponibilité.</dd>
           </dl>
-          <p class="tools"><span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span></p>
+          <p class="tools">
+            <span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span
+            ><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
+          </p>
         </div>
       </article>
 
@@ -1079,7 +1101,8 @@
             <dd class="result">Chiffre à fournir : temps de déploiement avant et après.</dd>
           </dl>
           <p class="tools">
-            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span>
+            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span
+            ><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
           </p>
         </div>
       </article>
@@ -1097,7 +1120,7 @@
             <strong>À compléter</strong>
             <p>Employeur et poste à renseigner</p>
           </div>
-          <div class="used"><span>à renseigner</span></div>
+          <div class="used"><span class="todo">A RENSEIGNER</span></div>
         </div>
         <div class="row">
           <span class="when">11/2023–08/2024</span>
@@ -1128,7 +1151,9 @@
             <strong>Synelia / Smile Group</strong>
             <p>Développeur front-end. Applications mobiles et web.</p>
           </div>
-          <div class="used"><span>Flutter</span><span>Angular</span></div>
+          <div class="used">
+            <span>Flutter</span><span>Angular</span><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
+          </div>
         </div>
       </div>
 

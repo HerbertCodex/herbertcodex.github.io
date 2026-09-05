@@ -29,7 +29,7 @@ jobs:
           node-version: 24
 
       - name: install
-        run: corepack enable && pnpm install --frozen-lockfile
+        run: corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
 
       - name: check
         run: pnpm run check

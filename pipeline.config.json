@@ -198,7 +198,7 @@
   "findings_path": "pipeline/findings.md",
   "ci": {
     "provider": "github",
-    "install": "corepack enable && pnpm install --frozen-lockfile",
+    "install": "corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium",
     "runtime_setup": {
       "uses": "actions/setup-node@v6",
       "with": {

@@ -23,24 +23,41 @@ import { globSync } from "node:fs";
  * de regarder ce qu'elle est censée surveiller.
  */
 const MARKERS = [
-  /A RENSEIGNER/i,
-  /à renseigner/i,
-  /chiffre à fournir/i,
-  /à préciser/i,
-  /à compléter/i,
-  /à venir/i,
-  /LOREM IPSUM/i,
-  /TODO-CONTENU/,
+  /a renseigner/i,
+  /chiffre a fournir/i,
+  /a preciser/i,
+  /a completer/i,
+  /a venir/i,
+  /lorem ipsum/i,
+  /todo-contenu/i,
 ];
-const ROOTS = ["src/**/*.{ts,tsx,css,json,md}", "public/**/*.{html,json,md,txt}"];
+
+/*
+ * Les accents sont retires AVANT comparaison. « Chiffre a fournir » tape sans
+ * accent designait exactement la meme attente et passait la porte : une garde
+ * qu'une touche manquante desarme ne garde rien.
+ */
+const sansAccent = (texte) => texte.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+/*
+ * Tout fichier de `src` et `public`, pas une liste d'extensions. La première
+ * version n'en lisait que six : un fichier de contenu depose en YAML aurait
+ * ete invisible a la porte, qui serait sortie VERTE exactement la ou le
+ * contenu vit. Une garde aveugle a son propre sujet est pire qu'une garde
+ * absente. Les binaires sont ignores parce qu'ils n'ont pas de lignes.
+ */
+const ROOTS = ["src/**/*", "public/**/*"];
+const BINAIRE = /\.(png|jpe?g|gif|webp|avif|svg|ico|pdf|woff2?|ttf|otf|eot|mp4|webm|zip)$/i;
 
 const offenders = [];
 for (const pattern of ROOTS) {
-  for (const file of globSync(pattern, { exclude: (p) => p.includes("node_modules") })) {
-    const text = readFileSync(file, "utf8");
+  for (const file of globSync(pattern, { exclude: (e) => e.name === "node_modules", withFileTypes: true })) {
+    if (!file.isFile()) continue;
+    const path = `${file.parentPath}/${file.name}`;
+    if (BINAIRE.test(path)) continue;
+    const text = readFileSync(path, "utf8");
     text.split("\n").forEach((line, index) => {
-      const hit = MARKERS.find((marker) => marker.test(line));
-      if (hit != null) offenders.push(`${file}:${index + 1}  ${line.trim().slice(0, 80)}`);
+      const hit = MARKERS.find((marker) => marker.test(sansAccent(line)));
+      if (hit != null) offenders.push(`${path}:${index + 1}  ${line.trim().slice(0, 80)}`);
     });
   }
 }

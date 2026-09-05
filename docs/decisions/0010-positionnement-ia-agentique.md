@@ -75,3 +75,19 @@ une information que seul l'opérateur détient.
 La règle du périmètre — toute compétence annoncée est adossée à un projet
 présenté ou à une expérience listée — n'est donc **pas encore satisfaite**, et
 c'est voulu : elle mesure un manque réel au lieu de le masquer.
+
+## Amendement du 2026-09-05 — le titre affiché
+
+Cette décision disait « le portfolio suit le CV », et le CV s'ouvre sur
+« Développeur ». Le titre affiché est pourtant **« Ingénieur logiciel »**,
+choisi par l'opérateur après avoir entendu la réserve.
+
+L'amendement est écrit ici parce que le rôle Produit a signalé deux fois que le
+journal contredisait la maquette. Une décision consignée qui ne dit pas ce que
+le produit fait est pire qu'une décision absente : elle donne l'assurance
+qu'un choix a été pesé, à un endroit qui ne décrit plus rien.
+
+**Ce qui suit le CV** : le positionnement, l'ordre des réalisations, les
+employeurs, les périodes, les compétences. **Ce qui ne le suit pas** : le seul
+titre affiché. La réserve tient — un recruteur qui lit les deux verra l'écart —
+et l'opérateur l'a tranchée en connaissance de cause.

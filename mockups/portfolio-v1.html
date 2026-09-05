@@ -8,13 +8,16 @@
       /*
        * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité.
        *
-       * L'IDÉE DE CETTE PAGE : un ingénieur back-end n'a pas de captures
-       * d'écran parce que ce qu'il construit n'a pas d'écran. Plutôt que de
-       * subir ce manque, la page en fait son sujet : chaque réalisation est
-       * montrée par le SCHÉMA DE CE QU'ELLE FAIT : les services, les files,
-       * les données qui circulent. Le mouvement n'est pas décoratif, il EST
-       * l'information : ce point qui avance, c'est une commande qui traverse
-       * le système.
+       * L'IDÉE DE CETTE PAGE : ce que cette personne construit n'a pas
+       * d'écran. Un agent, une file de messages, une machine d'état ne se
+       * photographient pas. Plutôt que de subir ce manque, la page en fait son
+       * sujet : chaque réalisation est montrée par le SCHÉMA DE CE QU'ELLE
+       * FAIT — les rôles, les portes, les données qui circulent. Le mouvement
+       * n'est pas décoratif, il EST l'information : ce point qui avance, c'est
+       * une demande qui traverse le système.
+       *
+       * Et la page se démontre elle-même : elle est construite par
+       * agent-pipeline, qui est la première réalisation qu'elle présente.
        */
       :root {
         --paper: #eeece6;
@@ -846,14 +849,14 @@
 
       <p class="note">
         Maquette s-0001. Les schémas remplacent les captures d'écran, et c'est le parti pris de cette page. Les
-        résultats chiffrés et la période 2024–2026 restent à renseigner.
+        résultats chiffrés restent à renseigner.
       </p>
 
-      <h1>Ingénieur logiciel</h1>
+      <h1>Agents LLM en production</h1>
       <p class="lede">
-        Ce que je construis n'a pas d'écran. Alors plutôt que de vous montrer des interfaces que je n'ai pas faites,
-        voici ce qui se passe en dessous : les services, les files d'attente, et le chemin que prend une donnée quand
-        tout fonctionne.
+        J'ai passé un an à mettre des assistants et des agents entre les mains d'utilisateurs métier, et à les y
+        maintenir. Ce qui décide de leur adoption ne se voit pas à l'écran : les droits d'accès, le cloisonnement des
+        données, le coût d'une inférence. Alors voici les schémas plutôt que des captures.
       </p>
       <div class="facts">
         <span class="now">CDI ou freelance</span>
@@ -868,13 +871,197 @@
         <span class="count">04</span>
       </div>
 
-      <!-- 1. Paiements : le flux traverse une file, donc rien ne se perd. -->
+      <!-- 1. agent-pipeline : la page est construite par ce qu'elle presente. -->
       <article class="work observe reveal">
         <figure class="diagram">
           <svg
             viewBox="0 0 420 200"
             role="img"
-            aria-label="Une commande passe par l'API, entre dans une file de messages, puis est écrite en base. Le cache répond directement aux lectures."
+            aria-label="Le role Produit definit, le code est ecrit, la revue valide, la cloture enregistre. Les portes de qualite s'interposent et peuvent renvoyer le travail en arriere."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 225 58 H 290" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 330 76 V 125" />
+            <path class="edge-dash draw" d="M 225 143 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">PRODUIT</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">CODE</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">REVUE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="148" text-anchor="middle">PORTES</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">CLÔTURE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+          </svg>
+          <figcaption><span>Un cycle d'issue</span><span>Node.js, MIT</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel, open source</span>
+          <h3>agent-pipeline : orchestration multi-agents</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Un développement assisté par IA produit vite et sans trace. Rien ne dit qui a décidé quoi, ni ce qui a été
+              vérifié avant que le code entre.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Séparé les rôles — Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle
+              les transitions. Une machine d'état borne les mouvements, des portes exécutables refusent, et chaque
+              preuve est attachée à un commit par son empreinte.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">
+              Cette page en est la démonstration : elle est construite par cette pipeline, et chaque décision de sa
+              conception est écrite dans son journal.
+            </dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Node.js</span><span>Machine d'état</span><span>NDJSON</span><span>MCP</span>
+            <span>Portes de qualité</span><span>Traçabilité</span><span>Tests automatisés</span>
+          </p>
+          <div class="links"><a href="https://github.com/HerbertCodex/agent-pipeline">Voir le code</a></div>
+        </div>
+      </article>
+
+      <!-- 2. decodevoyage : livre en pilotant des agents, pas en tapant du code. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une specification alimente des agents de code, qui produisent du code, lequel passe en revue critique avant de repartir vers les agents."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 225 58 H 290" />
+            <path class="edge draw" d="M 330 76 V 143 H 225" />
+            <path class="edge-dash draw" d="M 185 125 V 76" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">SPEC</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">AGENTS</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">CODE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="148" text-anchor="middle">REVUE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 185 125 V 76&quot;)" />
+          </svg>
+          <figcaption><span>Piloter plutôt qu'écrire</span><span>Revue critique</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel</span>
+          <h3>decodevoyage.com, livré en pilotant des agents</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Livrer seul une application publique complète : architecture, modèles de domaine, référencement,
+              conformité.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Écrit les spécifications et l'architecture, puis piloté des agents de code pour la mise en œuvre, avec
+              revue critique de ce qu'ils produisaient plutôt qu'acceptation.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Chiffre à fournir : trafic, performance mesurée, délai de livraison.</dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Spécification</span><span>SEO technique</span><span>RGPD</span><span>Revue de code</span>
+            <span>Documentation technique</span>
+          </p>
+          <div class="links"><a href="https://decodevoyage.com">Voir le site</a></div>
+        </div>
+      </article>
+
+      <!-- 3. Assistants LLM : la demande traverse les droits avant d'atteindre la donnee. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une demande d'un utilisateur metier entre dans l'agent, passe par le controle des droits, atteint les donnees de son entreprise, et la reponse remonte."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 225 143 H 290" />
+            <path class="edge draw" d="M 330 125 V 76" />
+            <path class="edge-dash draw" d="M 225 58 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">MÉTIER</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">AGENT</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">RÉPONSE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="148" text-anchor="middle">DROITS</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">DONNÉES</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 225 143 H 290&quot;)" />
+            <circle class="packet packet-slow" r="5" style="offset-path: path(&quot;M 330 125 V 76&quot;)" />
+          </svg>
+          <figcaption><span>Chemin d'une demande</span><span>OpenAI, Claude</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">En entreprise, Modjo GAIA · OloSuite</span>
+          <h3>Assistants et agents LLM en production</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Un assistant qui lit les données d'une entreprise doit ne lire que celles auxquelles son utilisateur a
+              droit, et ne jamais laisser fuiter celles d'un autre client.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Placé le contrôle des droits sur le chemin de la donnée plutôt qu'à côté : cloisonnement entre clients,
+              contrôle par rôle, traçabilité des sources citées. Puis suivi des usages et du coût d'inférence, et
+              itérations à partir des retours utilisateurs.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Chiffre à fournir : utilisateurs servis, volume de demandes, coût par demande.</dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Anthropic Claude</span><span>OpenAI</span><span>RBAC</span><span>RGPD</span
+            ><span>Next.js</span> <span>Function calling</span><span>React</span><span>TypeScript</span>
+          </p>
+        </div>
+      </article>
+
+      <!-- 4. Paiements : le flux traverse une file, donc rien ne se perd. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une commande passe par l'API, entre dans une file de messages, puis est ecrite en base. Le cache repond directement aux lectures."
           >
             <path class="edge draw" d="M 95 58 H 145" />
             <path class="edge draw" d="M 185 76 V 125" />
@@ -896,16 +1083,17 @@
             <rect class="node" x="290" y="125" width="80" height="36" />
             <text class="cap" x="330" y="148" text-anchor="middle">BASE</text>
 
-            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 185 V 143 H 290&quot;)" />
-            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 95 58 H 185 V 143 H 290&quot;)" />
-            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 225 143 H 290&quot;)" />
+            <circle class="packet packet-slow" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
           </svg>
           <figcaption><span>Flux d'un paiement</span><span>Kafka, Redis</span></figcaption>
         </figure>
 
         <div>
           <span class="kind">En entreprise, Everest Consulting</span>
-          <h3>Paiements en ligne d'une plateforme</h3>
+          <h3>Microservice de paiement</h3>
           <dl class="story">
             <dt>Le problème</dt>
             <dd>
@@ -915,256 +1103,82 @@
             <dt>Ce que j'ai fait</dt>
             <dd>
               Placé une file de messages entre l'interface et les traitements : la commande est acceptée tout de suite,
-              traitée ensuite, et rien ne disparaît si un service redémarre.
+              traitée ensuite, et rien ne disparaît si un service redémarre. Architecture en couches, séparation stricte
+              du domaine et de l'accès aux données.
             </dd>
             <dt>Le résultat</dt>
             <dd class="result">Chiffre à fournir : temps de réponse, volume, disponibilité.</dd>
           </dl>
           <p class="tools">
-            <span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span
-            ><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
-          </p>
-        </div>
-      </article>
-
-      <!-- 2. Navigation : le trait mort montre le réseau absent. -->
-      <article class="work observe reveal">
-        <figure class="diagram">
-          <svg
-            viewBox="0 0 420 200"
-            role="img"
-            aria-label="L'écran lit l'application, qui lit sa base locale. La liaison vers le réseau est coupée, et l'application continue de fonctionner."
-          >
-            <path class="edge draw" d="M 100 58 H 160" />
-            <path class="edge-dash edge-dead draw" d="M 240 58 H 310" />
-            <path class="edge draw" d="M 200 76 V 130" />
-
-            <rect class="node-fill" x="20" y="40" width="80" height="36" />
-            <text class="cap cap-invert" x="60" y="63" text-anchor="middle">ÉCRAN</text>
-
-            <rect class="node" x="160" y="40" width="80" height="36" />
-            <text class="cap" x="200" y="63" text-anchor="middle">APPLI</text>
-
-            <rect class="node" x="310" y="40" width="90" height="36" />
-            <text class="cap cap-muted" x="355" y="63" text-anchor="middle">RÉSEAU</text>
-            <path class="edge-dead" d="M 325 44 L 385 72 M 325 72 L 385 44" />
-
-            <rect class="node-accent" x="155" y="130" width="90" height="36" />
-            <text class="cap cap-invert" x="200" y="153" text-anchor="middle">LOCAL</text>
-
-            <circle class="packet" r="5" style="offset-path: path(&quot;M 200 130 V 58 H 100&quot;)" />
-            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 200 130 V 58 H 100&quot;)" />
-          </svg>
-          <figcaption><span>Lecture hors connexion</span><span>Room, Retrofit</span></figcaption>
-        </figure>
-
-        <div>
-          <span class="kind">Projet personnel</span>
-          <h3>Navigation qui survit à la perte de réseau</h3>
-          <dl class="story">
-            <dt>Le problème</dt>
-            <dd>
-              Une application de navigation devient inutile là où elle sert le plus : en déplacement, sans réseau.
-            </dd>
-            <dt>Ce que j'ai fait</dt>
-            <dd>
-              Inversé la source : l'écran lit toujours la base locale, jamais le réseau directement. Le serveur ne fait
-              que la remplir quand il est joignable.
-            </dd>
-            <dt>Le résultat</dt>
-            <dd class="result">Ce qui a déjà été consulté reste accessible, réseau coupé.</dd>
-          </dl>
-          <p class="tools">
-            <span class="key">Room</span><span>Kotlin</span><span>Jetpack Compose</span><span>Retrofit</span>
-          </p>
-          <div class="links"><a href="#">Voir le code</a></div>
-        </div>
-      </article>
-
-      <!-- 3. Hôtellerie : la règle refuse, et le refus est le sujet. -->
-      <article class="work observe reveal">
-        <figure class="diagram">
-          <svg
-            viewBox="0 0 420 200"
-            role="img"
-            aria-label="Une demande de réservation passe le contrôle du jeton, puis la règle de disponibilité qui l'accepte ou la refuse."
-          >
-            <path class="edge draw" d="M 100 100 H 140" />
-            <path class="edge draw" d="M 220 100 H 250" />
-            <path class="edge draw" d="M 330 100 H 355 V 74" />
-            <path class="edge-dash draw" d="M 330 100 H 355 V 126" />
-
-            <rect class="node" x="10" y="82" width="90" height="36" />
-            <text class="cap" x="55" y="105" text-anchor="middle">DEMANDE</text>
-
-            <rect class="node-fill" x="140" y="82" width="80" height="36" />
-            <text class="cap cap-invert" x="180" y="105" text-anchor="middle">JETON</text>
-
-            <rect class="node-accent" x="250" y="82" width="80" height="36" />
-            <text class="cap cap-invert" x="290" y="105" text-anchor="middle">RÈGLE</text>
-
-            <rect class="node" x="330" y="38" width="80" height="36" />
-            <text class="cap" x="370" y="61" text-anchor="middle">ÉCRIT</text>
-
-            <rect class="node" x="330" y="126" width="80" height="36" />
-            <text class="cap cap-muted" x="370" y="149" text-anchor="middle">REFUS</text>
-
-            <circle class="packet" r="5" style="offset-path: path(&quot;M 100 100 H 140 M 220 100 H 250&quot;)" />
-            <circle
-              class="packet packet-2 packet-slow"
-              r="5"
-              style="offset-path: path(&quot;M 330 100 H 355 V 74&quot;)"
-            />
-          </svg>
-          <figcaption><span>Chemin d'une réservation</span><span>NestJS, JWT</span></figcaption>
-        </figure>
-
-        <div>
-          <span class="kind">Projet personnel</span>
-          <h3>Réservations qui ne se chevauchent jamais</h3>
-          <dl class="story">
-            <dt>Le problème</dt>
-            <dd>
-              Deux clients qui réservent la même chambre à la même seconde : sans règle centrale, les deux réservations
-              passent.
-            </dd>
-            <dt>Ce que j'ai fait</dt>
-            <dd>
-              Placé la règle de disponibilité avant l'écriture, jamais après. Une demande est refusée par le métier, pas
-              rattrapée par un correctif.
-            </dd>
-            <dt>Le résultat</dt>
-            <dd class="result">Chiffre à fournir : chambres gérées, temps de réservation.</dd>
-          </dl>
-          <p class="tools">
-            <span class="key">NestJS</span><span>Prisma</span><span>PostgreSQL</span><span>Swagger</span>
-          </p>
-          <div class="links"><a href="#">Voir le code</a></div>
-        </div>
-      </article>
-
-      <!-- 4. Conteneurs : trois environnements identiques, c'est le sujet. -->
-      <article class="work observe reveal">
-        <figure class="diagram">
-          <svg
-            viewBox="0 0 420 200"
-            role="img"
-            aria-label="Le code produit une image unique, déployée à l'identique sur les environnements de développement, de test et de production."
-          >
-            <path class="edge draw" d="M 90 100 H 140" />
-            <path class="edge draw" d="M 230 100 H 270" />
-            <path class="edge draw" d="M 270 100 V 46 H 300" />
-            <path class="edge draw" d="M 270 100 H 300" />
-            <path class="edge draw" d="M 270 100 V 154 H 300" />
-
-            <!-- Le point de distribution : sans lui, les trois traits
-                 semblent partir du vide. -->
-            <rect class="node-fill" x="264" y="94" width="12" height="12" />
-
-            <rect class="node" x="10" y="82" width="80" height="36" />
-            <text class="cap" x="50" y="105" text-anchor="middle">CODE</text>
-
-            <rect class="node-accent" x="140" y="82" width="90" height="36" />
-            <text class="cap cap-invert" x="185" y="105" text-anchor="middle">IMAGE</text>
-
-            <rect class="node" x="300" y="28" width="100" height="36" />
-            <text class="cap" x="350" y="51" text-anchor="middle">DÉV</text>
-
-            <rect class="node" x="300" y="82" width="100" height="36" />
-            <text class="cap" x="350" y="105" text-anchor="middle">TEST</text>
-
-            <rect class="node-fill" x="300" y="136" width="100" height="36" />
-            <text class="cap cap-invert" x="350" y="159" text-anchor="middle">PROD</text>
-
-            <circle class="packet" r="5" style="offset-path: path(&quot;M 230 100 H 270 V 46 H 300&quot;)" />
-            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 230 100 H 300&quot;)" />
-            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 230 100 H 270 V 154 H 300&quot;)" />
-          </svg>
-          <figcaption><span>Une image, trois environnements</span><span>Docker</span></figcaption>
-        </figure>
-
-        <div>
-          <span class="kind">En entreprise, CIE DSTD</span>
-          <h3>La même application partout</h3>
-          <dl class="story">
-            <dt>Le problème</dt>
-            <dd>
-              L'installation dépendait de la machine : ce qui marchait en test échouait en production, pour des raisons
-              que personne ne pouvait reproduire.
-            </dd>
-            <dt>Ce que j'ai fait</dt>
-            <dd>
-              Mis l'application en conteneur : une seule image, construite une fois, déployée identique sur les trois
-              environnements.
-            </dd>
-            <dt>Le résultat</dt>
-            <dd class="result">Chiffre à fournir : temps de déploiement avant et après.</dd>
-          </dl>
-          <p class="tools">
-            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span
-            ><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
+            <span class="key">Kafka</span><span>Redis</span><span>PostgreSQL</span><span>MongoDB</span
+            ><span>Stripe</span>
           </p>
         </div>
       </article>
 
       <div class="section-head">
         <span class="num">02</span>
-        <h2>Parcours</h2>
+        <h2>Expérience</h2>
+        <span class="count">04</span>
       </div>
 
       <div class="rows reveal observe">
-        <div class="row current">
-          <span class="when">09/2024–06/2026</span>
+        <div class="row">
+          <span class="when">05/2025–08/2026</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
-            <strong>À compléter</strong>
-            <p>Employeur et poste à renseigner</p>
+            <strong>Modjo GAIA · OloSuite</strong>
+            <p>Développeur, agents et assistants LLM en production. Éditeur SaaS.</p>
           </div>
-          <div class="used"><span class="todo">A RENSEIGNER</span></div>
+          <div class="used">
+            <span class="key">Anthropic Claude</span><span>OpenAI</span><span>Next.js</span><span>React</span
+            ><span>TypeScript</span><span>RBAC</span><span>RGPD</span> <span>Prompt engineering</span
+            ><span>Cloisonnement</span><span>Coûts d'inférence</span><span>React</span>
+          </div>
         </div>
         <div class="row">
           <span class="when">11/2023–08/2024</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
             <strong>Everest Consulting</strong>
-            <p>Développeur back-end. Services de paiement et échanges entre services.</p>
+            <p>Développeur back-end. Microservices métier, paiement et échanges entre services.</p>
           </div>
           <div class="used">
-            <span class="key">Kafka</span><span>Redis</span><span>MongoDB</span><span>Stripe</span>
+            <span class="key">Kafka</span><span>Redis</span><span>PostgreSQL</span><span>MongoDB</span
+            ><span>Stripe</span><span>JWT</span> <span>Microservices</span><span>RBAC</span>
           </div>
         </div>
         <div class="row">
-          <span class="when">08/2023–11/2023</span>
+          <span class="when">08/2023–10/2023</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
-            <strong>CIE DSTD</strong>
-            <p>Développeur back-end. Conteneurisation et base relationnelle.</p>
+            <strong>Compagnie Ivoirienne d'Électricité</strong>
+            <p>Développeur fullstack Angular. Applications métier d'un opérateur national d'électricité.</p>
           </div>
           <div class="used">
-            <span class="key">Docker</span><span>PostgreSQL</span><span>NestJS</span><span>Angular</span>
+            <span class="key">Angular</span><span>PostgreSQL</span><span>Docker</span><span>UML</span>
           </div>
         </div>
         <div class="row">
           <span class="when">05/2022–11/2022</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
-            <strong>Synelia / Smile Group</strong>
-            <p>Développeur front-end. Applications mobiles et web.</p>
+            <strong>Synelia Group</strong>
+            <p>Développeur front-end Angular. Interfaces web et contribution à une application mobile.</p>
           </div>
-          <div class="used">
-            <span>Flutter</span><span>Angular</span><span class="todo">A RENSEIGNER : AUTRES TECHNOS</span>
-          </div>
+          <div class="used"><span class="key">Angular</span><span>Flutter</span><span>API REST</span></div>
         </div>
       </div>
 
       <div class="section-head">
         <span class="num">03</span>
         <h2>Formation</h2>
+        <span class="count">03</span>
       </div>
 
       <div class="rows reveal observe">
         <div class="row">
-          <span class="when">2024</span>
+          <span class="when">2026</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
             <strong>Master MIAGE</strong>
@@ -1173,54 +1187,79 @@
           <div class="used"><span>Architecture</span><span>Bases de données</span><span>Gestion de projet</span></div>
         </div>
         <div class="row">
-          <span class="when">2025</span>
+          <span class="when">2021</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
-            <strong>Certification à renseigner</strong>
-            <p>Organisme et objet à préciser</p>
+            <strong>Licence MIAGE</strong>
+            <p>Abidjan.</p>
           </div>
-          <div class="used"><span>à renseigner</span></div>
+          <div class="used"><span>Développement</span><span>Systèmes d'information</span></div>
+        </div>
+        <div class="row">
+          <span class="when">À venir</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Certification</strong>
+            <p>Organisme et objet à préciser.</p>
+          </div>
+          <div class="used"><span class="todo">A RENSEIGNER</span></div>
         </div>
       </div>
 
       <div class="section-head">
         <span class="num">04</span>
         <h2>Compétences</h2>
-        <span class="count">27</span>
+        <span class="count">44</span>
       </div>
 
       <div class="skills reveal observe">
         <div class="skill">
-          <h4>Côté serveur</h4>
+          <h4>Agents & assistants LLM</h4>
           <div class="used">
-            <span>Java</span><span>TypeScript</span><span>Kotlin</span><span>Python</span><span>NestJS</span
-            ><span>Spring Boot</span><span>Express</span><span>Fastify</span>
+            <span>Anthropic Claude</span><span>OpenAI</span><span>Prompt engineering</span><span>Function calling</span
+            ><span>RAG</span><span>Bases vectorielles</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Plateforme agentique</h4>
+          <div class="used">
+            <span>MCP</span><span>LangChain</span><span>LangGraph</span><span>Machine d'état</span
+            ><span>Portes de qualité</span><span>Traçabilité</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Sécurité & gouvernance</h4>
+          <div class="used">
+            <span>RBAC</span><span>Row Level Security</span><span>Cloisonnement</span><span>RGPD</span
+            ><span>Coûts d'inférence</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Développement</h4>
+          <div class="used">
+            <span>Python</span><span>FastAPI</span><span>Flask</span><span>TypeScript</span><span>Node.js</span
+            ><span>NestJS</span><span>Express</span><span>Java</span><span>API REST</span><span>Microservices</span>
           </div>
         </div>
         <div class="skill">
           <h4>Données</h4>
-          <div class="used"><span>PostgreSQL</span><span>MySQL</span><span>MongoDB</span><span>Redis</span></div>
+          <div class="used"><span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>SQL</span></div>
         </div>
         <div class="skill">
-          <h4>Échanges</h4>
+          <h4>DevOps</h4>
           <div class="used">
-            <span>Kafka</span><span>API REST</span><span>Files de messages</span><span>Mise en cache</span>
-          </div>
-        </div>
-        <div class="skill">
-          <h4>Exploitation</h4>
-          <div class="used">
-            <span>Docker</span><span>Kubernetes</span><span>GitHub Actions</span><span>GitLab CI</span>
+            <span>Docker</span><span>Kubernetes</span><span>GitLab CI</span><span>GitHub Actions</span><span>Git</span
+            ><span>Observabilité</span>
           </div>
         </div>
         <div class="skill">
           <h4>Interfaces</h4>
-          <div class="used"><span>Angular</span><span>Svelte</span><span>Next.js</span><span>Flutter</span></div>
+          <div class="used"><span>React</span><span>Next.js</span><span>Angular</span></div>
         </div>
         <div class="skill">
           <h4>Méthodes</h4>
           <div class="used">
-            <span>Microservices</span><span>Intégration continue</span><span>Tests automatisés</span>
+            <span>TDD</span><span>BDD</span><span>Tests automatisés</span><span>Documentation technique</span>
           </div>
         </div>
       </div>
@@ -1240,9 +1279,9 @@
           <dd>Immédiat</dd>
         </dl>
         <div class="links">
-          <a href="mailto:contact@exemple.fr">Écrire un message</a>
-          <a href="#">LinkedIn</a>
-          <a href="#">GitHub</a>
+          <a href="mailto:kraherbertdonatienkoffi@gmail.com">Écrire un message</a>
+          <a href="https://linkedin.com/in/donatien-koffi">LinkedIn</a>
+          <a href="https://github.com/HerbertCodex">GitHub</a>
           <a href="/cv/donatien-koffi-fr.pdf">CV en PDF</a>
         </div>
       </section>

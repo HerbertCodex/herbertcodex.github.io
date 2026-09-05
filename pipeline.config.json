@@ -101,7 +101,16 @@
       ]
     },
     "implementer": {
-      "allow": ["src/**", "tests/**", "public/**", "mockups/**", "docs/**", "package.json", "pnpm-lock.yaml"],
+      "allow": [
+        "src/**",
+        "tests/**",
+        "public/**",
+        "mockups/**",
+        "docs/**",
+        "package.json",
+        "pnpm-lock.yaml",
+        "scripts/routes.mjs"
+      ],
       "deny": [
         "pnpm-workspace.yaml",
         "pipeline.config.json",

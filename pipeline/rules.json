@@ -169,7 +169,8 @@
 				"mockups/**",
 				"docs/**",
 				"package.json",
-				"pnpm-lock.yaml"
+				"pnpm-lock.yaml",
+				"scripts/routes.mjs"
 			],
 			"deny": [
 				"pnpm-workspace.yaml",

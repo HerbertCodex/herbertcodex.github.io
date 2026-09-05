@@ -1,4 +1,4 @@
-# 0006 — L'implémenteur peut écrire le manifeste et le verrou
+# 0006 — L'implémenteur peut écrire le manifeste, le verrou et la liste des routes
 
 - **Date** : 2026-09-05
 - **Statut** : accepté, tranché par l'opérateur
@@ -77,3 +77,52 @@ rebloquer le chantier. Le constat serait alors une mesure, pas une supposition.
   un fichier réellement écrit ne sérialise rien.
 - La décision 0005 n'est pas amendée. Sa règle — installer et importer dans le
   même changement — devient applicable au lieu d'être contredite.
+
+## Amendement du 2026-09-05 — `scripts/routes.mjs`
+
+Le premier dispatch a buté sur le même mur, une issue plus loin. `i-3388`
+change l'ensemble des routes du site, mais `scripts/routes.mjs` n'était dans
+l'`allow` d'aucun rôle.
+
+Ce fichier n'est pas un script parmi d'autres : c'est la **liste unique** que
+lisent le prérendu Nitro (`vite.config.ts`), `check-build.mjs` et `smoke.mjs`.
+Elle a été créée après le piège « `vite build` sort 0 sur une route qu'il n'a
+pas su compiler ». Sans pouvoir l'écrire, l'implémenteur aurait livré `/fr` et
+`/en` gardées par rien : présentes peut-être, vérifiées par aucune des deux
+portes faites précisément pour refuser une route disparue.
+
+**Décision : `scripts/routes.mjs` seul entre dans l'`allow`, pas `scripts/**`.**
+
+La distinction porte tout le raisonnement. `scripts/routes.mjs` est un fichier
+de **données** — la liste de ce que le site publie. Les autres fichiers de
+`scripts/` sont les **portes** : `check-build.mjs`, `smoke.mjs`,
+`check-tokens.mjs`, `scan-secrets.mjs`. Un implémenteur qui pourrait les
+réécrire pourrait rendre verte n'importe quelle porte, ce qui est d'une autre
+nature que d'ajouter une dépendance : il ne s'agirait plus d'une décision non
+discutée, mais d'un juge que le jugé réécrit.
+
+Vérifié après régénération, sur `pipeline/rules.json` et non sur la
+configuration — c'est la leçon du piège 1 de la décision 0007 :
+
+```
+OUVERT  scripts/routes.mjs
+ferme   scripts/check-build.mjs
+ferme   scripts/smoke.mjs
+ferme   scripts/check-tokens.mjs
+ferme   scripts/scan-secrets.mjs
+ferme   vite.config.ts
+```
+
+`vite.config.ts` reste fermé et n'a pas besoin d'être ouvert : il importe
+`PRERENDERED` depuis `scripts/routes.mjs`, donc écrire la liste suffit.
+
+### Ce qui reste ouvert : `i-9dqd`
+
+`i-9dqd` exige de créer `scripts/check-translations.mjs` **et** de déclarer la
+commande dans `pipeline.config.json`, refusé à tous les rôles par conception.
+Aucun rôle ne peut donc la livrer en l'état.
+
+L'opérateur a choisi de trancher au moment où l'issue devient actionnable —
+elle dépend de `i-3388` et `i-8m5b` — plutôt que sur une projection. Le constat
+est persisté sur `i-3388` comme découverte parquée : enregistré, jamais
+planifié, visible dans l'inbox de triage tant qu'il n'est pas traité.

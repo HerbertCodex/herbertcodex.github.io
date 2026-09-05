@@ -29,6 +29,7 @@ Profile: frontend-typescript. When a rule or a prompt names a command by its key
 - tracker_sync : `node agent-pipeline/scripts/tracker-sync.mjs`
 - project_map : `pnpm run project-map -- --check`
 - map_coverage : `node agent-pipeline/scripts/map-coverage.mjs`
+- content : `pnpm run check:content`
 
 ## Source: git-workflow.md
 

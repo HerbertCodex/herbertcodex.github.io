@@ -14,7 +14,7 @@ required of every addition is judged against this document.
 
 ### src/app.tsx
 
-- `App` (default) — function — The application shell: metadata provider, navigation and route outlet.
+- `App` (default) — function — The application shell: metadata provider and route outlet.
 
 ### src/entry-client.tsx
 
@@ -44,15 +44,37 @@ required of every addition is judged against this document.
 
 - `NotFound` (default) — function — The catch-all route, answering 404 for an address that matches nothing.
 
-### src/routes/about.tsx
+### src/routes/[locale].tsx
 
-- `About` (default) — function — The about route.
+- `route` — constant — The route configuration: a segment naming no published language matches nothing, so it reaches the catch-all rather than rendering the default.
+- `LocaleLayout` (default) — function — The layout every localized page sits under.
 
 ### src/routes/index.tsx
 
-- `Home` (default) — function — The home route.
+- `RootRedirect` (default) — function — The root address, which leads to the default language.
+
+## src/routes/[locale]
+
+### src/routes/[locale]/about.tsx
+
+- `About` (default) — function — The about route, in the language its address named.
+
+### src/routes/[locale]/index.tsx
+
+- `Home` (default) — function — The home route, in the language its address named.
 
 ## src/shared
+
+### src/shared/i18n.ts
+
+- `Locale` — type — A language the site publishes, written as it appears in an address.
+- `LOCALES` — constant — The languages the site publishes, in the order the interface offers them.
+- `DEFAULT_LOCALE` — constant — The language an address carrying no prefix leads to.
+- `I18n` — type — The language in force, and the translator bound to it.
+- `I18nContext` — constant — The context carrying the language in force down to every component.
+- `isLocale` — function — Answers whether a segment read from an address names a published language.
+- `createI18n` — function — Binds a translator to a language that may change while the page stays open.
+- `useI18n` — function — Reads the language in force from the nearest provider.
 
 ### src/shared/StarterNote.tsx
 

@@ -14,7 +14,24 @@
 import { readFileSync } from "node:fs";
 import { globSync } from "node:fs";
 
-const MARKERS = [/A RENSEIGNER/i, /à renseigner/i, /LOREM IPSUM/i, /TODO-CONTENU/];
+/*
+ * Toute tournure d'attente s'ajoute ICI, jamais à côté. La première version de
+ * cette liste ne refusait que « à renseigner » : elle laissait passer quatre
+ * des cinq emplacements provisoires de la maquette — « chiffre à fournir »,
+ * « organisme et objet à préciser », « à compléter », « à venir ». Une porte
+ * qui rassure sans protéger est pire qu'une porte absente, parce qu'on cesse
+ * de regarder ce qu'elle est censée surveiller.
+ */
+const MARKERS = [
+  /A RENSEIGNER/i,
+  /à renseigner/i,
+  /chiffre à fournir/i,
+  /à préciser/i,
+  /à compléter/i,
+  /à venir/i,
+  /LOREM IPSUM/i,
+  /TODO-CONTENU/,
+];
 const ROOTS = ["src/**/*.{ts,tsx,css,json,md}", "public/**/*.{html,json,md,txt}"];
 
 const offenders = [];

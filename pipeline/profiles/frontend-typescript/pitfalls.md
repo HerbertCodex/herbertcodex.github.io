@@ -123,3 +123,23 @@ while passing locally, where the directory happens to exist.
 
 **Now**: the pattern is `pipeline/handoffs`, without the slash, and the fix was proven
 by replaying the CI condition in a fresh clone rather than reasoned about.
+
+## A context block only travels when its heading names its addressee
+
+**Believed**: persisting evidence with `append_context` puts it in front of the next
+role.
+
+**True**: `contextsFor` keeps only blocks whose heading matches `## Context for <Role>`.
+A free heading — `CI i-3388`, `verify-scope i-3388 <base>..<sha>` — is archived on the
+record and never travels. That is deliberate: a closure proof is audit material rather
+than an instruction, and unaddressed blocks were half the weight on the heaviest issue
+measured.
+
+**Now**: anything a role must read carries `## Context for <Role>`. Anything meant for
+the audit trail keeps its own heading and stays on the record.
+
+**Still unresolved, and it is in the core**: the orchestrator prompt prescribes the
+unaddressed heading `## verify-scope <issue> <base>..<sha>`, while the QA prompt
+announces that same output as present in the QA package. Both cannot hold: the heading
+the first prescribes is precisely the one the filter drops. QA reported the gap and
+replayed `verify-scope` by hand. Not fixable here — the core is not to be modified.

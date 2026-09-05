@@ -155,3 +155,31 @@ The record still holds both; only one travels.
 
 **Now**: a correction rewrites the whole block, and what the package actually carries is
 verified before dispatch rather than assumed.
+
+## A role forbidden to write the artefact its own contract requires
+
+**Believed**: denying `pipeline/**` to Product keeps it away from the control store.
+
+**True**: it also denied `pipeline/pages/` and `pipeline/handoffs/`, where the Product
+prompt requires it to render a review page and archive its proposal — and where
+`validate-handoff` refuses a proposal that has none. The role had to violate its policy
+to satisfy its contract.
+
+Worse, three earlier rounds wrote the same files without declaring them and passed. The
+round that declared them honestly in `evidence.files` was the one refused. **Honesty was
+punished**, which is the shape of rule that teaches agents to stay quiet.
+
+**Now**: Product's policy opens exactly `pipeline/pages/**` and `pipeline/handoffs/**`
+and denies the control store, the rules, the prompts, the briefs and the profile
+individually rather than by a blanket `pipeline/**`.
+
+## A large handoff arrives as a pointer, not as the document
+
+**Believed**: the `AGENT_HANDOFF` block always carries the whole handoff.
+
+**True**: a 62 KB proposal does not fit. Product wrote the document to its archive and
+returned a short handoff carrying `handoff_file { path }`. Validating the pointer
+reported four missing fields and looked like a defective agent; the document itself
+validated cleanly.
+
+**Now**: a handoff carrying `handoff_file` is validated at that path, not inline.

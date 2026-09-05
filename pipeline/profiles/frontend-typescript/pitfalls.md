@@ -83,3 +83,31 @@ copied between `src/routes/index.tsx` and `src/routes/[...404].tsx`.
 
 **Now**: it is `src/shared/StarterNote.tsx`, and the threshold was not touched. A
 threshold loosened once loosens again.
+
+## A file policy changed in the configuration was not the one being enforced
+
+**Believed**: editing `file_policy` in `pipeline.config.json` changes what a role may
+write.
+
+**True**: `verify-scope.mjs` and `validate-handoff.mjs` read `rules.file_policy` — the
+copy injected into `pipeline/rules.json` — never the configuration. Only `apply-profile`
+rewrites that field. After decision 0006 the two disagreed: the configuration allowed
+`package.json`, the injected rules still denied it. `next-issues` reads the
+configuration, so the issue looked dispatchable while `verify-scope` would have refused
+its diff as out of role.
+
+**Now**: `apply-profile` is run after every `file_policy` change. The only place the
+drift surfaced on its own was `pre-push`, which is after the work.
+
+## An agent that could edit files could not run a single command
+
+**Believed**: `--permission-mode acceptEdits` is enough for a role that writes code.
+
+**True**: it accepts file edits and nothing else. In a non-interactive session `pnpm`,
+`node` and `git` are refused with no way to ask. The first real dispatch produced no
+code at all — correctly, since the implementer refused to declare a red proof it could
+not observe.
+
+**Now**: `agent_runtime.args` enumerates `--allowedTools`. The list was proven with two
+probes before being written, rather than assumed. `bypassPermissions` would have been
+shorter and would have opened the whole shell to an autonomous agent.

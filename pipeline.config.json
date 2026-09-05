@@ -165,6 +165,16 @@
       "-p",
       "--permission-mode",
       "acceptEdits",
+      "--allowedTools",
+      "Bash(pnpm:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "--",
       "Tu es le rôle {role} du pipeline. Lis le task package JSON : {package}. Ses champs `prompt` et `brief` désignent ton prompt de rôle et ton brief compilé : lis-les intégralement et suis-les. Le champ `record` est ton issue. Termine par ton handoff JSON entre AGENT_HANDOFF_START et AGENT_HANDOFF_END, sans aucun texte après la balise de fermeture."
     ]
   },

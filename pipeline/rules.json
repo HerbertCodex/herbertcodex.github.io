@@ -167,11 +167,11 @@
 				"tests/**",
 				"public/**",
 				"mockups/**",
-				"docs/**"
+				"docs/**",
+				"package.json",
+				"pnpm-lock.yaml"
 			],
 			"deny": [
-				"package.json",
-				"pnpm-lock.yaml",
 				"pnpm-workspace.yaml",
 				"pipeline.config.json",
 				"AGENTS.md",

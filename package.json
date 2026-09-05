@@ -27,6 +27,7 @@
     "project-map": "node scripts/project-map.mjs"
   },
   "dependencies": {
+    "@solid-primitives/i18n": "2.2.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.0",

@@ -58,6 +58,31 @@ async function readDown(page: Page, distance: number): Promise<void> {
   await page.evaluate((y) => window.scrollTo(0, y), distance);
 }
 
+type Stop = {
+  readonly name: string;
+  readonly top: number;
+  readonly bar: number;
+};
+
+/*
+ * L'arrêt de tabulation en cours, quand il est situé SOUS la barre. Ce qu'elle
+ * contient est en elle, et le lien d'évitement — le seul lien vers un fragment
+ * de la page — est posé par-dessus elle, puisqu'il mène hors d'elle.
+ */
+async function focusedStop(page: Page): Promise<Stop | null> {
+  return page.evaluate(() => {
+    const active = document.activeElement;
+    const bar = document.querySelector("header");
+    if (bar === null || active === null || active === document.body) return null;
+    if (bar.contains(active) || active.matches('a[href^="#"]')) return null;
+    return {
+      name: `${active.tagName} « ${active.textContent?.trim().slice(0, 24) ?? ""} »`,
+      top: Math.round(active.getBoundingClientRect().top),
+      bar: Math.round(bar.getBoundingClientRect().bottom),
+    };
+  });
+}
+
 test.describe("la barre du site", () => {
   test("reste entièrement visible en haut après un défilement de lecture, sur les huit adresses", async ({ page }) => {
     const faults: string[] = [];
@@ -152,27 +177,19 @@ test.describe("la barre du site", () => {
     const stops = await page.locator("a[href], button, input, select, textarea").count();
 
     /*
-     * Le premier arrêt est le lien d'évitement lui-même. Il est posé
-     * PAR-DESSUS la barre et n'est donc pas un élément situé sous elle ; sa
-     * cible, elle, est mesurée par le test précédent.
+     * Les deux sens de parcours comptent, et le second est celui qui découvre
+     * le défaut : en avant, le navigateur centre l'élément qu'il amène ; en
+     * arrière, il laisse en place celui qu'il croit déjà visible, la barre
+     * fût-elle par-dessus.
      */
-    await page.keyboard.press("Tab");
+    for (const key of ["Tab", "Shift+Tab"]) {
+      for (let step = 0; step < stops; step += 1) {
+        await page.keyboard.press(key);
+        const stop = await focusedStop(page);
 
-    for (let step = 1; step < stops; step += 1) {
-      await page.keyboard.press("Tab");
-      const stop = await page.evaluate(() => {
-        const active = document.activeElement;
-        const bar = document.querySelector("header");
-        if (bar === null || active === null || active === document.body || bar.contains(active)) return null;
-        return {
-          name: `${active.tagName} « ${active.textContent?.trim().slice(0, 24) ?? ""} »`,
-          top: Math.round(active.getBoundingClientRect().top),
-          bar: Math.round(bar.getBoundingClientRect().bottom),
-        };
-      });
-
-      if (stop !== null && stop.top < stop.bar) {
-        covered.push(`${stop.name} reçoit le focus à ${stop.top} px, sous une barre qui descend à ${stop.bar} px`);
+        if (stop !== null && stop.top < stop.bar) {
+          covered.push(`${stop.name} reçoit le focus à ${stop.top} px, sous une barre qui descend à ${stop.bar} px`);
+        }
       }
     }
 

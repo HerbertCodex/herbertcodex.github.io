@@ -69,6 +69,13 @@ required of every addition is judged against this document.
 
 - `ContactPage` (default) — function — The page saying how to get in touch.
 
+### src/shared/content.ts
+
+- `Work` — type — One work, in the language in force.
+- `Content` — type — The editorial content of the site in one language.
+- `missingRequiredFields` — function — The required fields a content document leaves absent, blank or empty.
+- `contentFor` — function — The editorial content of one language.
+
 ### src/shared/HomePage.css
 
 - stylesheet
@@ -92,6 +99,14 @@ required of every addition is judged against this document.
 
 - `JourneyPage` (default) — function — The page presenting experience and training.
 
+### src/shared/LanguageSwitch.css
+
+- stylesheet
+
+### src/shared/LanguageSwitch.tsx
+
+- `LanguageSwitch` (default) — function — The links leading to the page being read, in each published language.
+
 ### src/shared/pages.ts
 
 - `PageKey` — type — A page of the site, named by what it is rather than by where it lives.
@@ -104,6 +119,14 @@ required of every addition is judged against this document.
 - `addressesToPrerender` — function — The addresses a build must produce for a table of pages.
 - `pageForSlug` — function — The page a name designates in one language, for the common route alone.
 
+### src/shared/SiteBar.css
+
+- stylesheet
+
+### src/shared/SiteBar.tsx
+
+- `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, and the languages.
+
 ### src/shared/StarterNote.tsx
 
 - `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.
@@ -115,3 +138,32 @@ required of every addition is judged against this document.
 ### src/shared/WorksPage.tsx
 
 - `WorksPage` (default) — function — The page presenting what has been built.
+
+## src/shared/content
+
+### src/shared/content/en.ts
+
+- `ENGLISH` — constant — Everything the site says in English.
+
+### src/shared/content/facts.ts
+
+- `Provenance` — type — Where a work comes from, which decides the provenance banner it carries.
+- `WorkLink` — type — Something a work can be consulted through, when anything is consultable.
+- `DiagramEmphasis` — type — The weight a box carries in a schema: the subject it is about, or the gate on its path.
+- `DiagramEdge` — type — An arrow of a schema: a flow going forward, or the feedback that returns.
+- `DiagramShape` — type — The shape of a schema, which is the same whatever the language.
+- `DiagramWords` — type — The words one language gives a schema, one per box included.
+- `WorkFacts` — type — What a work is, apart from the words that tell it.
+- `WorkWords` — type — The words one language gives a work.
+- `Period` — type — The months a line of experience spans, its end absent while it lasts.
+- `Certification` — type — A certification, of which the site publishes none until one is obtained.
+- `Words` — type — Everything one language says, and the only thing a translation adds.
+- `TERMS` — constant — The technologies whose name is the same in every language.
+- `WORKS` — constant — The works, in the order they are shown, which is chosen and never computed.
+- `EXPERIENCES` — constant — The lines of professional experience, the most recent first.
+- `EDUCATION` — constant — The diplomas, the most recent first.
+- `SKILL_GROUPS` — constant — The groups the skills are shown in, in the order they are shown.
+
+### src/shared/content/fr.ts
+
+- `FRENCH` — constant — Everything the site says in French.

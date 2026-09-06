@@ -49,7 +49,9 @@ describe("l'adossement des compétences", () => {
     const presented = [...WORKS, ...EXPERIENCES];
 
     expect(unbackedSkills(SKILL_GROUPS, presented)).toEqual([]);
-    expect(unbackedSkills([{ id: "devops", skills: ["kubernetes"] }], presented)).toEqual(["skills.devops[kubernetes]"]);
+    expect(unbackedSkills([{ id: "devops", skills: ["kubernetes"] }], presented)).toEqual([
+      "skills.devops[kubernetes]",
+    ]);
     expect(unbackedSkills([{ id: "devops", skills: ["docker"] }], [])).toEqual(["skills.devops[docker]"]);
   });
 

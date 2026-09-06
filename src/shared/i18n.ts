@@ -16,7 +16,14 @@ export const LOCALES: readonly Locale[] = ["fr", "en"];
  */
 export const DEFAULT_LOCALE: Locale = "fr";
 
-const DICTIONARIES = {
+/**
+ * What the interface says, one tree per published language.
+ *
+ * Exported so that the completeness check can confront the two trees. The
+ * translator only ever holds one of them, so nothing inside this module can
+ * see that a key was added to one language and not to the other.
+ */
+export const DICTIONARIES = {
   fr: {
     bar: { skip: "Aller au contenu", nav: "Navigation principale" },
     nav: { home: "Accueil", works: "Réalisations", journey: "Parcours", contact: "Contact" },

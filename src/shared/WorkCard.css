@@ -1,0 +1,209 @@
+/*
+ * La deuxieme colonne n'apparait que lorsqu'il y a un schema a y mettre.
+ * `:has()` fait porter cette decision par le contenu plutot que par une classe
+ * que le composant devrait penser a poser : une realisation sans schema est
+ * alors une colonne pleine, et non une colonne large a cote d'un vide.
+ */
+.work {
+  display: grid;
+  gap: var(--space-5);
+  border-top: var(--border-hairline) solid var(--rule);
+  padding-top: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .work:has(.diagram) {
+    grid-template-columns: 7fr 5fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+.work > * {
+  min-width: 0;
+}
+
+/*
+ * La micro-etiquette de la carte : provenance, terme du recit, legende du
+ * schema. Elle est ecrite une fois pour les trois parce que c'est un seul
+ * registre typographique ; seule la couleur les separe, et c'est justement ce
+ * qui les distingue — la provenance situe, les deux autres accompagnent.
+ */
+.kind,
+.story dt,
+.diagram figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+}
+
+.kind {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--accent);
+}
+
+.work h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--track-tight);
+  font-weight: var(--weight-bold);
+}
+
+.story {
+  margin: 0;
+}
+
+.story dt {
+  color: var(--ink-muted);
+}
+
+.story dd {
+  margin: var(--space-1) 0 var(--space-3);
+  max-width: var(--measure);
+}
+
+.story .result {
+  color: var(--accent);
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+}
+
+.tools span {
+  border: var(--border-hairline) solid var(--ink);
+  background: var(--paper-raised);
+  color: var(--ink);
+  padding: var(--space-1) var(--space-2);
+  transition: background var(--motion-fast) var(--ease-out-quart);
+}
+
+.work:hover .tools span {
+  background: var(--ink);
+  color: var(--ink-inverse);
+}
+
+.work .links {
+  margin-top: var(--space-4);
+}
+
+/*
+ * Le schema remplace la capture d'ecran. Ce que cette personne construit — un
+ * agent, une file de messages, une machine d'etat — n'a pas d'interface a
+ * photographier ; il a des echanges, et ce sont eux qui sont montres.
+ */
+.diagram {
+  margin: 0;
+  border: var(--border-hairline) solid var(--rule);
+  background: var(--paper-raised);
+  padding: var(--space-3);
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagram figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: space-between;
+  margin-top: var(--space-2);
+  color: var(--ink-muted);
+}
+
+.node {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: var(--flow-stroke);
+}
+
+.node-fill {
+  fill: var(--ink);
+  stroke: var(--ink);
+  stroke-width: var(--flow-stroke);
+}
+
+.node-accent {
+  fill: var(--accent);
+  stroke: var(--accent);
+  stroke-width: var(--flow-stroke);
+}
+
+.edge {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: var(--flow-stroke);
+}
+
+/* Le trait en pointilles : le chemin qu'une donnee peut prendre, pas celui qu'elle prend toujours. */
+.edge-dash {
+  fill: none;
+  stroke: var(--ink-muted);
+  stroke-width: var(--flow-stroke);
+  stroke-dasharray: var(--flow-dash);
+}
+
+.cap {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  fill: var(--ink);
+  text-transform: uppercase;
+}
+
+.cap-invert {
+  fill: var(--ink-inverse);
+}
+
+/*
+ * Le point qui circule EST l'information : c'est une demande qui traverse le
+ * systeme. C'est la seule animation de la page dont l'arret retire quelque
+ * chose, et c'est pourquoi elle s'arrete entierement plutot que de ralentir
+ * lorsque le lecteur demande moins de mouvement.
+ */
+.packet {
+  fill: var(--accent);
+  offset-distance: 0%;
+  animation: travel var(--motion-flow) linear infinite;
+}
+
+.packet-2 {
+  animation-delay: calc(var(--motion-flow) / 3);
+}
+
+.packet-3 {
+  animation-delay: calc(var(--motion-flow) / 3 * 2);
+}
+
+.packet-slow {
+  animation-duration: var(--motion-flow-slow);
+}
+
+@keyframes travel {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .packet {
+    animation: none;
+  }
+
+  .tools span {
+    transition: none;
+  }
+}

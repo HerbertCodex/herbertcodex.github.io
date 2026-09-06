@@ -49,6 +49,20 @@ test.describe("la page des réalisations", () => {
     }
   });
 
+  test("chaque point suit son trajet dès le rendu, sans attendre le script de la page", async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const still = await context.newPage();
+    await still.goto("/fr/realisations");
+
+    const routes = await still
+      .locator("main .packet")
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).offsetPath));
+
+    expect(routes.length).toBeGreaterThan(0);
+    expect(routes.filter((route) => route.startsWith("path("))).toEqual(routes);
+    await context.close();
+  });
+
   test("le mouvement des schémas s'arrête lorsque le lecteur demande moins d'animation", async ({ page }) => {
     await page.goto("/fr/realisations");
     await expect(page.locator("main .packet").first()).toBeAttached();

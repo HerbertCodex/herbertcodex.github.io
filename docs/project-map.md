@@ -159,11 +159,29 @@ required of every addition is judged against this document.
 
 ### src/shared/SiteBar.tsx
 
-- `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, and the languages.
+- `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, the languages and the theme.
 
 ### src/shared/StarterNote.tsx
 
 - `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.
+
+### src/shared/theme.ts
+
+- `Theme` — type — A theme the portfolio can be read in.
+- `THEME_KEY` — constant — The name the reader's choice is kept under, on their own machine.
+- `PRERENDERED_THEME` — constant — The theme a prerendered document is written in, whatever the reader's own.
+- `readChoice` — function — The theme the reader chose, or nothing when they have not chosen.
+- `themeInForce` — function — The theme in force: the reader's choice, or their system while they have not chosen.
+- `chooseTheme` — function — Records the reader's choice and puts it on the document at once.
+- `watchSystemTheme` — function — Follows a change of the system theme while the page stays open.
+
+### src/shared/ThemeToggle.css
+
+- stylesheet
+
+### src/shared/ThemeToggle.tsx
+
+- `ThemeToggle` (default) — function — The button passing the portfolio from dark to light and back.
 
 ### src/shared/tokens.css
 

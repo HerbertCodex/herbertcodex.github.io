@@ -5,9 +5,9 @@ const ADDRESS = "kraherbertdonatienkoffi@gmail.com";
 const ADDRESSES = ["/fr/contact", "/en/contact"];
 
 /*
- * La barre porte sept arrets — l'evitement, quatre pages, deux langues — avant
- * que le contenu commence. Seize fait donc un tour large de la page de contact
- * sans dependre du nombre exact de moyens affiches.
+ * La barre porte huit arrets — l'evitement, quatre pages, deux langues, le
+ * theme — avant que le contenu commence. Seize fait donc un tour large de la
+ * page de contact sans dependre du nombre exact de moyens affiches.
  */
 const TAB_BUDGET = 16;
 
@@ -26,7 +26,15 @@ for (const address of ADDRESSES) {
   test(`${address} ne porte aucun formulaire et n'envoie rien`, async ({ page }) => {
     await page.goto(address);
 
-    expect(await page.locator("form, input, textarea, select, button").count()).toBe(0);
+    /*
+     * Le formulaire est refuse sur toute la page ; les autres controles ne le
+     * sont que dans le contenu. La barre porte desormais le bouton de theme
+     * sur les huit adresses, et compter les boutons du document entier
+     * refusait cette commande d'interface au titre d'un envoi qu'elle ne fait
+     * pas. Ce qui est en jeu ici est que la page n'envoie rien, pas qu'elle
+     * n'ait aucun bouton.
+     */
+    expect(await page.locator("form, main input, main textarea, main select, main button").count()).toBe(0);
     const targets = await page
       .locator("main a[href]")
       .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href") ?? ""));

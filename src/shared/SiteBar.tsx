@@ -1,6 +1,7 @@
 import { useParams } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import LanguageSwitch from "~/shared/LanguageSwitch";
+import ThemeToggle from "~/shared/ThemeToggle";
 import { useI18n, type Locale } from "~/shared/i18n";
 import { PAGES, addressOf, type Page } from "~/shared/pages";
 import "./SiteBar.css";
@@ -16,12 +17,13 @@ type SiteBarProps = {
 };
 
 /**
- * The bar every page carries: the way out, the four pages, and the languages.
+ * The bar every page carries: the way out, the four pages, the languages and the theme.
  *
  * On an address designating no page, the language switch is absent rather
  * than pointing home: leading home is precisely the defect this issue
  * exists to prevent, and an address that names nothing has no counterpart
- * to lead to.
+ * to lead to. The theme button sits outside that condition: it depends on
+ * no page, so it is offered wherever the bar is.
  *
  * @param props - the identifier of the element the skip link leads to
  * @returns the skip link and the header bar, in the language in force
@@ -41,6 +43,7 @@ export default function SiteBar(props: SiteBarProps) {
           <For each={PAGES}>{(page) => <a href={addressOf(page, locale())}>{t(`nav.${page.key}`)}</a>}</For>
         </nav>
         <Show when={current()}>{(page) => <LanguageSwitch page={page()} />}</Show>
+        <ThemeToggle />
       </header>
     </>
   );

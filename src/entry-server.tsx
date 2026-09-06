@@ -27,6 +27,14 @@ export default createHandler(() => (
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
+          {/*
+           * Bloquant, et avant les feuilles de style : le fil de rendu
+           * s'arrete ici, pose l'attribut, et la page n'est jamais peinte
+           * dans un theme que le lecteur n'a pas demande. Un module differe
+           * s'executerait apres la premiere peinture, donc apres le
+           * clignotement.
+           */}
+          <script src="/theme.js" />
           {assets}
         </head>
         <body>

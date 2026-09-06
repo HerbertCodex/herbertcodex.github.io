@@ -183,7 +183,8 @@
 
       .bar a,
       .langs a,
-      .links a {
+      .links a,
+      .theme {
         display: inline-flex;
         align-items: center;
         min-height: var(--tap-min);
@@ -193,6 +194,34 @@
         color: var(--ink-inverse);
         background: var(--ink);
         padding: 0 var(--space-2);
+      }
+
+      /*
+       * Le bouton de thème est une ACTION, pas une destination : il porte un
+       * filet, là où la langue en cours porte l'aplat inversé qui marque une
+       * page en cours. Deux marques identiques pour deux sens différents se
+       * lisent comme un même état, et la barre en porterait deux.
+       *
+       * Cette maquette ne montre que le thème clair. Le thème sombre existe
+       * dans les jetons, jamais ici : `mockup-check` ne retient que la
+       * dernière déclaration de chaque nom, donc un second jeu de valeurs
+       * effacerait le premier de ce qu'il considère comme déclaré.
+       */
+      .theme {
+        padding: 0 var(--space-2);
+        border: var(--border-hairline) solid var(--rule);
+        background: none;
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .theme[aria-pressed="true"] {
+        border-color: var(--ink);
+        font-weight: var(--weight-bold);
       }
 
       /* ---- Ouverture --------------------------------------------------- */
@@ -851,6 +880,7 @@
           <a href="/fr/realisations" aria-current="true">FR</a>
           <a href="/en/work" hreflang="en">EN</a>
         </div>
+        <button class="theme" type="button" aria-pressed="false">Sombre</button>
       </header>
 
       <p class="note">

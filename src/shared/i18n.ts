@@ -27,6 +27,7 @@ export const DICTIONARIES = {
   fr: {
     bar: { skip: "Aller au contenu", nav: "Navigation principale", theme: "Sombre" },
     nav: { home: "Accueil", works: "Réalisations", journey: "Parcours", contact: "Contact" },
+    footer: { label: "Pied de page", place: "Rennes, France" },
     home: {
       title: "Accueil",
       heading: "Ingénieur logiciel",
@@ -88,6 +89,7 @@ export const DICTIONARIES = {
   en: {
     bar: { skip: "Skip to content", nav: "Main navigation", theme: "Dark" },
     nav: { home: "Home", works: "Work", journey: "About", contact: "Contact" },
+    footer: { label: "Site footer", place: "Rennes, France" },
     home: {
       title: "Home",
       heading: "Software engineer",

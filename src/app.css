@@ -59,6 +59,22 @@ a:hover {
 }
 
 /*
+ * Le petit texte mono en capitales grises. La rangee de faits de l'accueil et
+ * le pied de page sont le meme objet typographique dans la maquette, et
+ * `duplication` a refuse la deuxieme copie des cinq memes declarations. Il est
+ * declare ICI pour la raison que `.links` juste au-dessus donne deja : une
+ * primitive recopiee par composant est une primitive qui divergera.
+ */
+.facts,
+.foot {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+  color: var(--ink-muted);
+}
+
+/*
  * Le bandeau de section, declare ici pour la meme raison que `.links` juste
  * au-dessus : la page des realisations et la page du parcours l'ont ecrit
  * chacune de son cote a partir de la meme maquette, et `duplication` l'a

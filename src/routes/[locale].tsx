@@ -1,6 +1,7 @@
 import { type RouteSectionProps } from "@solidjs/router";
 import { createI18n, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
 import SiteBar from "~/shared/SiteBar";
+import SiteFooter from "~/shared/SiteFooter";
 
 /**
  * The route configuration: a segment naming no published language matches
@@ -29,6 +30,7 @@ export default function LocaleLayout(props: RouteSectionProps) {
       <div id={CONTENT_ID} tabindex="-1">
         {props.children}
       </div>
+      <SiteFooter />
     </I18nContext.Provider>
   );
 }

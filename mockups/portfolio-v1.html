@@ -28,6 +28,8 @@
         --rule: #c6c2b7;
         --accent: #b3271a;
         --accent-strong: #8b1d13;
+        --accent-plate: #b3271a;
+        --on-accent: #f8f7f3;
         --focus: #1e40af;
         --space-1: 4px;
         --space-2: 8px;
@@ -106,8 +108,8 @@
       }
 
       ::selection {
-        background: var(--accent);
-        color: var(--ink-inverse);
+        background: var(--accent-plate);
+        color: var(--on-accent);
       }
 
       :focus-visible {
@@ -231,9 +233,9 @@
       }
 
       .facts .now {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: var(--ink-inverse);
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
       }
 
       /* ---- Section ----------------------------------------------------- */
@@ -618,9 +620,9 @@
 
       .used span.key,
       .tools span.key {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: var(--ink-inverse);
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
       }
 
       .row:hover .used span.key,
@@ -699,8 +701,8 @@
       /* ---- Contact ----------------------------------------------------- */
 
       .panel {
-        background: var(--accent);
-        color: var(--ink-inverse);
+        background: var(--accent-plate);
+        color: var(--on-accent);
         padding: var(--space-5);
         margin-top: var(--space-6);
       }
@@ -714,11 +716,11 @@
        */
       .panel .section-head {
         margin-top: 0;
-        border-top-color: var(--ink-inverse);
+        border-top-color: var(--on-accent);
       }
 
       .panel .num {
-        color: var(--ink-inverse);
+        color: var(--on-accent);
       }
 
       /*
@@ -768,11 +770,11 @@
       }
 
       .panel a {
-        color: var(--ink-inverse);
+        color: var(--on-accent);
       }
 
       .panel .links a {
-        border-bottom-color: var(--ink-inverse);
+        border-bottom-color: var(--on-accent);
       }
 
       .reveal {

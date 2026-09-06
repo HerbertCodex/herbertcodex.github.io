@@ -1,16 +1,16 @@
 .panel {
-  background: var(--accent);
-  color: var(--ink-inverse);
+  background: var(--accent-plate);
+  color: var(--on-accent);
   padding: var(--space-5);
   margin-top: var(--space-6);
 }
 
 .panel a {
-  color: var(--ink-inverse);
+  color: var(--on-accent);
 }
 
 .panel .links a {
-  border-bottom-color: var(--ink-inverse);
+  border-bottom-color: var(--on-accent);
 }
 
 .panel-title {
@@ -66,8 +66,8 @@
   margin: 0 0 var(--space-4);
   padding: var(--space-3) 0;
   min-height: var(--tap-min);
-  border-top: var(--border-heavy) solid var(--ink-inverse);
-  border-bottom: var(--border-heavy) solid var(--ink-inverse);
+  border-top: var(--border-heavy) solid var(--on-accent);
+  border-bottom: var(--border-heavy) solid var(--on-accent);
   text-decoration: none;
 }
 

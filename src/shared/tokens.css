@@ -33,8 +33,31 @@
     --rule: #35332e;
     --accent: #e04a33;
     --accent-strong: #f47257;
+    --accent-plate: #c93a24;
+    --on-accent: #f8f7f3;
     --focus: #7fa8ff;
   }
+}
+
+/*
+ * Le choix explicite. Le bloc ci-dessus suit le systeme ; celui-ci l'emporte
+ * quand le lecteur a tranche, et il est place AVANT les valeurs claires pour
+ * la meme raison que lui : le parseur de `mockup-check.mjs` ne retient que la
+ * DERNIERE declaration de chaque nom, et un bloc sombre place en dernier
+ * ferait disparaitre les valeurs claires de ce qu'il considere comme declare.
+ */
+:root[data-theme="dark"] {
+  --paper: #100f0e;
+  --paper-raised: #1a1917;
+  --ink: #edeae1;
+  --ink-muted: #a29d92;
+  --ink-inverse: #100f0e;
+  --rule: #35332e;
+  --accent: #e04a33;
+  --accent-strong: #f47257;
+  --accent-plate: #c93a24;
+  --on-accent: #f8f7f3;
+  --focus: #7fa8ff;
 }
 
 :root {
@@ -47,8 +70,21 @@
   --ink-inverse: #f8f7f3;
   --rule: #c6c2b7;
   /* Vermillon : l'aplat autour duquel la grille est construite. Jamais un dégradé. */
+  /*
+   * L'aplat et le texte qu'il porte sont des jetons DISTINCTS de l'accent.
+   * Un seul jeton ne peut pas faire les deux metiers : en theme sombre,
+   * l'accent doit etre assez clair pour se lire comme TEXTE sur la page noire
+   * (#e04a33 y vaut 4,74) et devient alors trop clair pour porter du texte
+   * clair en APLAT (3,77, refuse). Le panneau de contact virait donc au noir
+   * sur orange, ce qui inverse le rapport tenu en theme clair et se lit comme
+   * une bande d'alerte au lieu d'une affiche.
+   *
+   * La regle vaut dans les deux themes : du texte clair sur un aplat sature.
+   */
   --accent: #b3271a;
   --accent-strong: #8b1d13;
+  --accent-plate: #b3271a;
+  --on-accent: #f8f7f3;
   --focus: #1e40af;
 
   /* Base de 4px, volontairement grossière : une grille suisse a peu de pas et s'y tient. */

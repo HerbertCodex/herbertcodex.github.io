@@ -1,13 +1,19 @@
 import { test, expect } from "@playwright/test";
 
-const PAGES = ["", "/about"];
+const PAGES = [
+  { fr: "/fr", en: "/en" },
+  { fr: "/fr/realisations", en: "/en/work" },
+  { fr: "/fr/parcours", en: "/en/about" },
+  { fr: "/fr/contact", en: "/en/contact" },
+];
 
 test.describe("every page is addressed by its language", () => {
-  for (const page_path of PAGES) {
-    for (const locale of ["fr", "en"]) {
-      test(`/${locale}${page_path} answers with its own page`, async ({ page }) => {
-        const response = await page.goto(`/${locale}${page_path}`);
+  for (const page_addresses of PAGES) {
+    for (const [locale, address] of Object.entries(page_addresses)) {
+      test(`${address} answers with its own page`, async ({ page }) => {
+        const response = await page.goto(address);
         expect(response?.status()).toBe(200);
+        expect(await page.locator("html").getAttribute("lang")).toBe(locale);
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       });
     }
@@ -29,7 +35,7 @@ test.describe("a shared link opens in the language it names", () => {
     expect(await served.text()).toContain('lang="en"');
 
     await page.goto("/en/about");
-    await expect(page.getByRole("link", { name: "About" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "About" })).toBeVisible();
     expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
   });
 });

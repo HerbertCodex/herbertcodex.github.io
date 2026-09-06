@@ -68,6 +68,34 @@ test.describe("sans choix enregistré, le thème est celui du système", () => {
   });
 });
 
+/*
+ * Le chargement sous un système sombre est un chemin distinct de la bascule
+ * page ouverte : le HTML prérendu est écrit sans connaître le lecteur, donc
+ * l'annonce du bouton n'est juste qu'une fois l'hydratation passée dessus.
+ * La bascule, elle, part d'une page déjà hydratée et ne prouve pas ce chemin.
+ */
+test.describe("sans choix enregistré, le bouton annonce le système dès le chargement", () => {
+  for (const address of ["/fr", "/en"]) {
+    test(`${address} : l'annonce est juste au chargement, et une activation la retourne`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: "dark" });
+      await page.goto(address);
+
+      const toggle = page.locator(TOGGLE);
+      await expect(toggle, "la page est sombre et le bouton annonce l'inverse").toHaveAttribute("aria-pressed", "true");
+      const dark = await background(page);
+
+      await toggle.click();
+      const chosen = await background(page);
+
+      expect(lightness(chosen)).toBeGreaterThan(lightness(dark));
+      await expect(toggle, "l'annonce n'a pas changé alors que le thème a changé").toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    });
+  }
+});
+
 test.describe("le choix du lecteur", () => {
   test("l'emporte sur le système, survit à la navigation et au rechargement", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "light" });

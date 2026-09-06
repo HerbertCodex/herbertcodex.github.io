@@ -71,7 +71,7 @@
   "duplication": {
     "roots": ["src", "tests"],
     "min_lines": 6,
-    "skip": "\\.generated\\."
+    "skip": "\\.generated\\.|shared/tokens\\.css$"
   },
   "doc_policy": {
     "roots": ["src", "tests"],

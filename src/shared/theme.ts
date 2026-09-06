@@ -18,6 +18,18 @@ const THEME_ATTRIBUTE = "data-theme";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 /**
+ * The theme a prerendered document is written in, whatever the reader's own.
+ *
+ * The build has neither `matchMedia` nor storage, so `themeInForce` can only
+ * answer `light` there, and every served page carries that answer. A
+ * component hydrating from that HTML must start here rather than from what
+ * it can already read on the machine: starting from the truth would make the
+ * first value equal to the last, and an attribute the server wrote wrong
+ * would never be corrected.
+ */
+export const PRERENDERED_THEME: Theme = "light";
+
+/**
  * The theme the reader chose, or nothing when they have not chosen.
  *
  * Anything the product did not write is read as an absence of choice rather

@@ -211,3 +211,35 @@ the browser suite.
 **Now**: the exclusion follows the screens (`src/shared/*Page.tsx`) and the threshold is
 untouched. Verified that the gate still bites: an uncovered function planted in
 `src/shared/pages.ts` drops it to 87.09% and it refuses.
+
+## Two issues in parallel on one branch leave broken commits between them
+
+**Believed**: reservations that do not intersect make two issues independent.
+
+**True**: they make their *files* independent, not their *history*. `i-841g` and `i-8m5b`
+interleaved as test, test, feat, feat on one branch. At `i-841g`'s own commit, the other
+issue's test file was already there and its module was not: `pnpm run check` exited 2 with
+nine tsc errors, so that SHA could never have a green run. QA refused to close on it and
+was right.
+
+`verify-scope` fails the same way: a diff from a shared base carries both issues, so each
+reports the other's files as undeclared. Measured per issue against its own commits, both
+were clean — nothing undeclared, nothing declared-but-untouched.
+
+**Now**: a parallel wave validates at the branch head, where the work is coherent, and
+`verify-scope` is replayed per issue against its own commits rather than a shared base.
+
+## A coverage exemption by filename is a rule about names, not about proof
+
+**Believed**: excluding `src/shared/*Page.tsx` keeps browser-proven screens out of the
+unit threshold.
+
+**True**: QA named the flaw as it was persisted, and it bit one issue later. `SiteBar.tsx`
+is a screen the browser suite proves exactly as much, does not end in `Page.tsx`, and
+counted as 0% — coverage fell to 85.59%. The pattern would also have exempted any future
+file that merely ended in `Page.tsx` without being proven anywhere.
+
+**Now**: screens are listed one by one. Each line is a claim someone had to write that the
+browser suite renders that file. Proven both ways: an uncovered function planted in
+`src/shared/content.ts` is refused, and a `FauxPage.tsx` that nothing proves is refused
+too — where the pattern would have exempted it.

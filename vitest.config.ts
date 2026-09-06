@@ -26,18 +26,28 @@ export default defineConfig({
       // declared test_suite replayed at closure. Counting them as uncovered here
       // would report a file that is proven, only elsewhere — and a threshold set
       // to absorb that noise stops refusing anything real.
-      // `src/shared/*Page.tsx` joins that list for the same reason, not a new one:
-      // decision 0009 replaced one route file per page with a single dynamic route,
-      // which moved the screens out of `src/routes/` without moving them out of the
-      // browser suite that proves them. The exclusion follows the screens; the
-      // threshold is untouched, and every other file of `src/shared` is still counted.
+      // Screens are listed ONE BY ONE, never by a name pattern. A first attempt
+      // excluded `src/shared/*Page.tsx`, and QA named the flaw before it bit: that
+      // is a rule about NAMES, not about PROOF. It let `SiteBar.tsx` — a screen the
+      // browser suite proves just as much — count as 0% one issue later, and it
+      // would silently exempt any future file that happened to end in `Page.tsx`
+      // without being proven anywhere.
+      //
+      // Each line below is a claim that the browser suite renders that file against
+      // the built site. Adding one is a decision someone had to write, which is the
+      // point: an exemption nobody had to justify is an exemption always taken.
       exclude: [
         "src/entry-client.tsx",
         "src/entry-server.tsx",
         "src/global.d.ts",
         "src/app.tsx",
         "src/routes/**",
-        "src/shared/*Page.tsx",
+        "src/shared/HomePage.tsx",
+        "src/shared/WorksPage.tsx",
+        "src/shared/JourneyPage.tsx",
+        "src/shared/ContactPage.tsx",
+        "src/shared/SiteBar.tsx",
+        "src/shared/LanguageSwitch.tsx",
       ],
       reporter: ["text", "lcov"],
       // Measured on this repository rather than chosen in advance. Lines,

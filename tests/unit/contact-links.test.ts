@@ -1,38 +1,37 @@
-import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CONTACT_EMAIL, contactMeans, malformedContactLinks, type ContactMeans } from "~/shared/ContactLinks";
 import { LOCALES } from "~/shared/i18n";
+import { resumeOf, type Resume } from "~/shared/resume";
 
-const RESUME = (locale: string): string => `public/cv/donatien-koffi-${locale}.pdf`;
+const PUBLISHED: Resume = { href: "/cv/donatien-koffi-fr.pdf", file: "public/cv/donatien-koffi-fr.pdf" };
 
 describe("les moyens de contact du second rang", () => {
   it("range le CV derrière LinkedIn et GitHub, et seulement pour une langue qui en publie un", () => {
-    expect(contactMeans("fr", []).map((mean) => mean.key)).toEqual(["linkedin", "github"]);
-    expect(contactMeans("fr", ["fr"]).map((mean) => mean.key)).toEqual(["linkedin", "github", "cv"]);
-    expect(contactMeans("en", ["fr"]).map((mean) => mean.key)).toEqual(["linkedin", "github"]);
-    expect(contactMeans("fr", ["fr"])[2].href).toBe("/cv/donatien-koffi-fr.pdf");
+    expect(contactMeans("fr", undefined).map((mean) => mean.key)).toEqual(["linkedin", "github"]);
+    expect(contactMeans("fr", PUBLISHED).map((mean) => mean.key)).toEqual(["linkedin", "github", "cv"]);
+    expect(contactMeans("fr", PUBLISHED)[2].href).toBe(PUBLISHED.href);
   });
 
   /*
-   * Le CV est versionne par une autre issue, dans un dossier qu'elle reserve.
-   * Sans ce test, une declaration qui ne suit pas le depot passe en silence
-   * dans les deux sens : un CV depose et jamais annonce reste invisible pour
-   * toujours, un CV annonce et jamais depose publie un lien qui ne mene nulle
-   * part. Aucune des deux fautes n'est mal formee, donc la garde de forme ne
-   * les voit pas.
+   * Le CV est porte par `resume.ts`, qui le publie aussi pour la page du
+   * parcours. Ce test tient le cablage, pas le contenu du dossier : sans lui,
+   * une seconde declaration pourrait s'installer ici et rappeler le CV au
+   * contact alors que le parcours ne le propose plus. La confrontation de la
+   * declaration au depot appartient a `tests/unit/cv.test.ts`, qui la tient
+   * deja dans les deux sens.
    */
-  it("n'annonce un CV que pour une langue dont le fichier est versionné dans le dépôt", () => {
+  it("lit le CV publié par le module qui le porte, sans seconde déclaration", () => {
     for (const locale of LOCALES) {
-      const announced = contactMeans(locale).some((mean) => mean.key === "cv");
-      expect(announced, RESUME(locale)).toBe(existsSync(RESUME(locale)));
+      const announced = contactMeans(locale).find((mean) => mean.key === "cv");
+      expect(announced?.href, locale).toBe(resumeOf(locale)?.href);
     }
   });
 });
 
 describe("la garde des liens de contact", () => {
   it("accepte les cibles réellement renseignées du dépôt", () => {
-    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("fr", ["fr"]))).toEqual([]);
-    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("en", []))).toEqual([]);
+    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("fr", PUBLISHED))).toEqual([]);
+    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("en", undefined))).toEqual([]);
   });
 
   it("nomme une adresse vide ou mal formée plutôt que de la publier", () => {

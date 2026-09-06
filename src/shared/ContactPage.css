@@ -1,0 +1,88 @@
+.panel {
+  background: var(--accent);
+  color: var(--ink-inverse);
+  padding: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.panel a {
+  color: var(--ink-inverse);
+}
+
+.panel .links a {
+  border-bottom-color: var(--ink-inverse);
+}
+
+.panel-title {
+  font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--track-tight);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  overflow-wrap: break-word;
+  margin: 0 0 var(--space-4);
+}
+
+.terms {
+  display: grid;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-5);
+  max-width: var(--measure);
+}
+
+@media (min-width: 768px) {
+  .terms {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.terms dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+  align-self: baseline;
+}
+
+/*
+ * Les valeurs restent en graisse normale, comme dans la maquette : le contrat
+ * est deja annonce en grand juste au-dessus, et repeter du gras sur trois
+ * lignes ferait de la mobilite une revendication alors que c'est une precision.
+ */
+.terms dd {
+  margin: 0;
+}
+
+/*
+ * La maquette dessine les quatre liens sur une seule rangee, parce que le
+ * contact y est la cinquieme section d'une page unique. Sur une page qui ne
+ * porte que lui, cette rangee ne dit plus lequel est l'appel principal. La
+ * messagerie prend donc l'echelle et les deux filets, et les moyens
+ * secondaires gardent la rangee. Aucune valeur nouvelle : ce sont les jetons
+ * que la maquette emploie deja pour separer un titre d'une liste.
+ */
+.call {
+  display: block;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) 0;
+  min-height: var(--tap-min);
+  border-top: var(--border-heavy) solid var(--ink-inverse);
+  border-bottom: var(--border-heavy) solid var(--ink-inverse);
+  text-decoration: none;
+}
+
+.call-action {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+}
+
+.call-address {
+  display: block;
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--track-tight);
+  overflow-wrap: break-word;
+}

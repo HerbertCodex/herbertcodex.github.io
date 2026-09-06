@@ -119,6 +119,10 @@ required of every addition is judged against this document.
 - `createI18n` — function — Binds a translator to a language that may change while the page stays open.
 - `useI18n` — function — Reads the language in force from the nearest provider.
 
+### src/shared/identity.ts
+
+- `PERSON` — constant — The person this site is, written once for every place that shows it.
+
 ### src/shared/JourneyPage.css
 
 - stylesheet

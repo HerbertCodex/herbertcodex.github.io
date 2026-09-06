@@ -15,6 +15,14 @@ const WORKS = 4;
  */
 const DESCRIPTION = 40;
 
+/*
+ * Les largeurs auxquelles la page est mesuree. 320 px est la largeur normative
+ * du critere WCAG 2.1 AA 1.4.10 : c'est ce dont dispose un contenu concu pour
+ * 1280 px agrandi a 400 %. 768 est la bascule de la grille du schema, ou la
+ * colonne de texte est la plus etroite qu'une deuxieme colonne la laisse.
+ */
+const REFLOW = [320, 768];
+
 const animatedCount = (nodes: (SVGElement | HTMLElement)[]) =>
   nodes.filter((node) => getComputedStyle(node).animationName !== "none").length;
 
@@ -28,6 +36,25 @@ test.describe("la page des réalisations", () => {
 
       const audit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
       expect(audit.violations.map((violation) => `${path} ${violation.id}: ${violation.help}`)).toEqual([]);
+    });
+  }
+
+  for (const { path } of ADDRESSES) {
+    test(`${path} se lit sans défilement horizontal jusqu'à 320 px @a11y`, async ({ page }) => {
+      const overflowing: string[] = [];
+
+      for (const width of REFLOW) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
+
+        const overflow = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+
+        if (overflow > 0) overflowing.push(`${path} à ${width} px déborde de ${overflow} px`);
+      }
+
+      expect(overflowing).toEqual([]);
     });
   }
 

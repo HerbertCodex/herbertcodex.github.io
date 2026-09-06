@@ -183,3 +183,31 @@ reported four missing fields and looked like a defective agent; the document its
 validated cleanly.
 
 **Now**: a handoff carrying `handoff_file` is validated at that path, not inline.
+
+## A module read by the build config must not reach a component, even lazily
+
+**Believed**: a dynamic `import()` inside an arrow that is never called costs nothing at
+build time.
+
+**True**: `vite.config.ts` imports `scripts/routes.mjs` to read the prerender list, and
+Vite's config loader **bundles** that file and follows its relative imports — the lazy
+ones included. A page table carrying `load: () => import("./WorksPage")` failed
+`pnpm run build` on `[UNRESOLVED_IMPORT]`, measured during the `i-1ee9` spike.
+
+**Now**: the table carries names only; the name-to-component map lives in the route file
+and is typed, so a page added without a component does not compile. See the amendment to
+decision 0009.
+
+## A coverage exclusion names a directory the screens have left
+
+**Believed**: excluding `src/routes/**` from coverage keeps browser-proven screens out of
+the unit threshold.
+
+**True**: decision 0009 replaced one route file per page with a single dynamic route and
+moved the screens to `src/shared/`, where the exclusion no longer applied. Coverage fell
+to 36.84% against a threshold of 90 — four page components at 0%, each of them proven by
+the browser suite.
+
+**Now**: the exclusion follows the screens (`src/shared/*Page.tsx`) and the threshold is
+untouched. Verified that the gate still bites: an uncovered function planted in
+`src/shared/pages.ts` drops it to 87.09% and it refuses.

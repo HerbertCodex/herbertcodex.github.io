@@ -90,3 +90,27 @@ coûterait le travail entier.
 - `src/routes/[locale]/about.tsx`, livrée par `i-3388`, disparaît au profit de
   la route dynamique. Ce n'est pas une régression de `i-3388` : ses quatre
   critères restent satisfaits, seule la forme de l'adressage change.
+
+## Amendement du 2026-09-06 — la table ne porte pas le composant
+
+Cette décision écrivait : « La table associe une identité de page à son slug
+dans chaque langue **et au composant qui l'affiche**. » Le code ne le fait pas,
+et il ne le peut pas.
+
+**La mesure qui l'a établie**, faite pendant l'implémentation de `i-1ee9` :
+`vite.config.ts` importe `scripts/routes.mjs` pour lire la liste de prérendu.
+Le chargeur de configuration de Vite **empaquette** ce fichier et suit ses
+imports relatifs — y compris un import dynamique écrit dans une flèche qui
+n'est jamais appelée. Une table portant `load: () => import("./WorksPage")`
+fait échouer `pnpm run build` sur `[UNRESOLVED_IMPORT]`.
+
+**Ce que le code fait à la place** : la table porte les noms seuls, et le lien
+nom vers composant vit dans `src/routes/[locale]/[slug].tsx`, typé
+`Record<NamedPageKey, Component>`. Une page ajoutée à la table sans composant
+ne compile pas.
+
+L'invariant qui comptait est donc préservé — un seul endroit décide, et un
+oubli est refusé à la construction — par un autre moyen que celui prévu. La
+décision est amendée plutôt que réécrite, pour que la contrainte qui l'a forcée
+reste lisible : un module lu par la configuration de build n'appartient pas au
+même monde que le code applicatif.

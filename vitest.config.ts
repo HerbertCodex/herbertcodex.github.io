@@ -26,7 +26,19 @@ export default defineConfig({
       // declared test_suite replayed at closure. Counting them as uncovered here
       // would report a file that is proven, only elsewhere — and a threshold set
       // to absorb that noise stops refusing anything real.
-      exclude: ["src/entry-client.tsx", "src/entry-server.tsx", "src/global.d.ts", "src/app.tsx", "src/routes/**"],
+      // `src/shared/*Page.tsx` joins that list for the same reason, not a new one:
+      // decision 0009 replaced one route file per page with a single dynamic route,
+      // which moved the screens out of `src/routes/` without moving them out of the
+      // browser suite that proves them. The exclusion follows the screens; the
+      // threshold is untouched, and every other file of `src/shared` is still counted.
+      exclude: [
+        "src/entry-client.tsx",
+        "src/entry-server.tsx",
+        "src/global.d.ts",
+        "src/app.tsx",
+        "src/routes/**",
+        "src/shared/*Page.tsx",
+      ],
       reporter: ["text", "lcov"],
       // Measured on this repository rather than chosen in advance. Lines,
       // functions and statements sit at 100% on the covered scope, so 90 leaves

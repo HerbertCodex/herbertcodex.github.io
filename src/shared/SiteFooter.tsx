@@ -1,7 +1,6 @@
 import { useI18n } from "~/shared/i18n";
+import { PERSON } from "~/shared/identity";
 import "./SiteFooter.css";
-
-const NAME = "Donatien Koffi";
 
 /**
  * The signature the foot of the page carries.
@@ -14,7 +13,7 @@ const NAME = "Donatien Koffi";
  * @returns the person, then the year that moment falls in
  */
 export function signatureAt(now: Date): string {
-  return `${NAME}, ${now.getFullYear()}`;
+  return `${PERSON}, ${now.getFullYear()}`;
 }
 
 /**

@@ -3,10 +3,9 @@ import { For, Show } from "solid-js";
 import LanguageSwitch from "~/shared/LanguageSwitch";
 import ThemeToggle from "~/shared/ThemeToggle";
 import { useI18n, type Locale } from "~/shared/i18n";
+import { PERSON } from "~/shared/identity";
 import { PAGES, addressOf, type Page } from "~/shared/pages";
 import "./SiteBar.css";
-
-const MARK = "Donatien Koffi";
 
 function pageAt(locale: Locale, slug: string): Page | undefined {
   return PAGES.find((page) => page.slugs[locale] === slug);
@@ -38,7 +37,7 @@ export default function SiteBar(props: SiteBarProps) {
         {t("bar.skip")}
       </a>
       <header class="bar">
-        <span class="mark">{MARK}</span>
+        <span class="mark">{PERSON}</span>
         <nav aria-label={t("bar.nav")}>
           <For each={PAGES}>{(page) => <a href={addressOf(page, locale())}>{t(`nav.${page.key}`)}</a>}</For>
         </nav>

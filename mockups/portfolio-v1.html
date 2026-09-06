@@ -147,15 +147,67 @@
 
       /* ---- Barre ------------------------------------------------------- */
 
+      /*
+       * La barre reste en haut pendant qu'on lit. Elle porte donc un fond
+       * OPAQUE : le texte passe dessous, et sans aplat il se lirait à travers
+       * elle. Le papier de la page, pas un blanc de plus.
+       */
       .bar {
         display: flex;
         flex-wrap: wrap;
         gap: var(--space-3) var(--space-4);
         justify-content: space-between;
         align-items: baseline;
+        padding-top: var(--space-3);
         padding-bottom: var(--space-3);
+        background: var(--paper);
         border-bottom: var(--border-heavy) solid var(--ink);
         margin-bottom: var(--space-5);
+      }
+
+      /*
+       * Une barre qui reste prend sa hauteur au texte, et elle ne la prend
+       * que si la fenêtre a de quoi la donner. Deux cas la rendent légitime :
+       * une fenêtre d'au moins 768 px de haut, où même la barre repliée sur
+       * trois lignes tient dans le quart de l'écran ; ou, dès 768 px de
+       * large, où elle tient sur une seule ligne, une fenêtre de 420 px.
+       * Un téléphone tenu en paysage ne remplit ni l'un ni l'autre et
+       * récupère toute sa hauteur.
+       *
+       * Une requête de média ne peut pas lire var() : les deux valeurs sont
+       * écrites en clair, mais ce sont les jetons --bp-md et --shape-lg.
+       */
+      @media (min-height: 768px), (min-width: 768px) and (min-height: 420px) {
+        .bar {
+          position: sticky;
+          top: 0;
+          z-index: 2;
+        }
+      }
+
+      /*
+       * Ce que le navigateur garde libre au-dessus de ce vers quoi il
+       * conduit : la cible du lien d'évitement, et tout élément qui reçoit le
+       * focus au clavier. Sans cette réserve, la barre restée en haut les
+       * recouvre, et le lecteur qu'on vient d'y mener ne voit rien.
+       *
+       * Aucune propriété CSS ne mesure la barre : la réserve est écrite comme
+       * une somme de pas de l'échelle, au-dessus de la plus haute barre
+       * observée (186 px, repliée sur trois lignes à 320 px de large). Elle
+       * redescend d'un cran dès que la barre tient sur une ligne. Les deux
+       * requêtes reprennent exactement les conditions ci-dessus : la réserve
+       * n'a de sens que là où la barre reste.
+       */
+      @media (min-height: 768px) {
+        html {
+          scroll-padding-top: calc(var(--space-8) + var(--space-6));
+        }
+      }
+
+      @media (min-width: 768px) and (min-height: 420px) {
+        html {
+          scroll-padding-top: var(--space-8);
+        }
       }
 
       .bar > *,

@@ -18,6 +18,7 @@ export const DEFAULT_LOCALE: Locale = "fr";
 
 const DICTIONARIES = {
   fr: {
+    bar: { skip: "Aller au contenu", nav: "Navigation principale" },
     nav: { home: "Accueil", works: "Réalisations", journey: "Parcours", contact: "Contact" },
     home: {
       title: "Accueil",
@@ -43,6 +44,7 @@ const DICTIONARIES = {
     contact: { title: "Contact", heading: "Contact" },
   },
   en: {
+    bar: { skip: "Skip to content", nav: "Main navigation" },
     nav: { home: "Home", works: "Work", journey: "About", contact: "Contact" },
     home: {
       title: "Home",

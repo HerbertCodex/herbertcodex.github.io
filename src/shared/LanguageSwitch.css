@@ -1,0 +1,43 @@
+.langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.lang {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/*
+ * La langue en cours porte la graisse en plus de l'aplat inversé. L'aplat
+ * seul reste de la couleur, et une couleur seule ne dit rien à qui ne la
+ * distingue pas : c'est le critère, pas une préférence de mise en forme.
+ */
+.lang[aria-current="true"] {
+  background: var(--ink);
+  color: var(--ink-inverse);
+  font-weight: var(--weight-bold);
+  padding: 0 var(--space-2);
+}
+
+/*
+ * Le nom de la langue reste dans le document pour être annoncé, et hors de
+ * l'écran pour ne pas doubler le code à deux lettres. `display: none` le
+ * retirerait aussi de ce qu'un lecteur d'écran lit, ce qui est l'inverse du
+ * but.
+ */
+.lang-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

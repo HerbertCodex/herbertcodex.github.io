@@ -1,0 +1,68 @@
+/*
+ * Le lien d'évitement est hors de l'écran tant qu'il n'a pas le focus, et
+ * jamais retiré du flux : `display: none` le sortirait aussi de l'ordre de
+ * tabulation, donc du seul usage qu'il ait.
+ */
+.skip {
+  position: absolute;
+  left: var(--space-3);
+  top: calc(var(--space-8) * -1);
+  z-index: 3;
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: var(--border-heavy) solid var(--accent);
+  transition: top var(--motion-base) var(--ease-out-expo);
+}
+
+.skip:focus {
+  top: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip {
+    transition-duration: var(--motion-fast);
+  }
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: var(--page-max);
+  margin: 0 auto var(--space-5);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-bottom: var(--border-heavy) solid var(--ink);
+}
+
+/*
+ * `src/app.css` habille tout `nav` d'un filet et d'une gouttière, ce qui
+ * datait de la navigation posée à nu dans la mise en page. Dans la barre, ce
+ * filet en double un autre à trois pixels de lui.
+ */
+.bar nav {
+  flex-wrap: wrap;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.mark,
+.bar nav a {
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+.mark {
+  font-weight: var(--weight-bold);
+}
+
+.bar nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--ink);
+  text-decoration: none;
+}

@@ -1,17 +1,11 @@
-import { Title } from "@solidjs/meta";
-import { useI18n } from "~/shared/i18n";
+import HomePage from "~/shared/HomePage";
 
 /**
- * The home route, in the language its address named.
+ * The home route, which the common route never serves: the language prefix
+ * alone carries no page name for it to match.
  *
- * @returns the landing page of the portfolio
+ * @returns the opening of the portfolio, in the language its address named
  */
 export default function Home() {
-  const { t } = useI18n();
-  return (
-    <main>
-      <Title>{t("home.title")}</Title>
-      <h1>{t("home.heading")}</h1>
-    </main>
-  );
+  return <HomePage />;
 }

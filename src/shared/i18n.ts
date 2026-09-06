@@ -18,14 +18,54 @@ export const DEFAULT_LOCALE: Locale = "fr";
 
 const DICTIONARIES = {
   fr: {
-    nav: { home: "Accueil", about: "À propos" },
-    home: { title: "Accueil", heading: "Ingénieur logiciel" },
-    about: { title: "À propos", heading: "À propos" },
+    nav: { home: "Accueil", works: "Réalisations", journey: "Parcours", contact: "Contact" },
+    home: {
+      title: "Accueil",
+      heading: "Ingénieur logiciel",
+      lede:
+        "Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail " +
+        "vérifiable : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, " +
+        "puisqu'elle est construite par lui.",
+      facts: {
+        contract: "CDI ou freelance",
+        place: "Rennes, mobile en France",
+        education: "Master MIAGE",
+        languages: "FR · EN",
+      },
+      entries: {
+        works: "Ce que j'ai construit, ce que ça fait, et comment.",
+        journey: "Où j'ai travaillé, ce que j'ai étudié, ce que je sais faire.",
+        contact: "Ce que je cherche, et par où me joindre.",
+      },
+    },
+    works: { title: "Réalisations", heading: "Réalisations" },
+    journey: { title: "Parcours", heading: "Parcours" },
+    contact: { title: "Contact", heading: "Contact" },
   },
   en: {
-    nav: { home: "Home", about: "About" },
-    home: { title: "Home", heading: "Software engineer" },
-    about: { title: "About", heading: "About" },
+    nav: { home: "Home", works: "Work", journey: "About", contact: "Contact" },
+    home: {
+      title: "Home",
+      heading: "Software engineer",
+      lede:
+        "I put assistants in the hands of business users, and I write the framework that makes that work " +
+        "verifiable: separated roles, executable gates, traceability. This page is that demonstration, " +
+        "since it is built by it.",
+      facts: {
+        contract: "Permanent or freelance",
+        place: "Rennes, mobile across France",
+        education: "MIAGE master's degree",
+        languages: "FR · EN",
+      },
+      entries: {
+        works: "What I have built, what it does, and how.",
+        journey: "Where I have worked, what I studied, what I can do.",
+        contact: "What I am looking for, and how to reach me.",
+      },
+    },
+    works: { title: "Work", heading: "Work" },
+    journey: { title: "About", heading: "About" },
+    contact: { title: "Contact", heading: "Contact" },
   },
 } as const;
 

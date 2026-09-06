@@ -5,7 +5,7 @@ import { createI18n, I18nContext, isLocale, useI18n, type Locale } from "~/share
 
 function Consumer() {
   const { t } = useI18n();
-  return <p>{t("nav.about")}</p>;
+  return <p>{t("nav.journey")}</p>;
 }
 
 describe("the language in force", () => {
@@ -17,7 +17,7 @@ describe("the language in force", () => {
       </I18nContext.Provider>
     ));
 
-    expect(getByText("À propos")).toBeTruthy();
+    expect(getByText("Parcours")).toBeTruthy();
     setLocale("en");
     expect(getByText("About")).toBeTruthy();
     cleanup();
@@ -37,7 +37,7 @@ describe("the language in force", () => {
 
 describe("the internationalisation library", () => {
   it("is the one resolving a nested key, which the dictionaries never do themselves", () => {
-    expect(createI18n(() => "en").t("nav.about")).toBe("About");
-    expect(createI18n(() => "fr").t("nav.about")).toBe("À propos");
+    expect(createI18n(() => "en").t("nav.journey")).toBe("About");
+    expect(createI18n(() => "fr").t("nav.journey")).toBe("Parcours");
   });
 });

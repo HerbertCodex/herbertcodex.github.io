@@ -1,5 +1,7 @@
 import { type RouteSectionProps } from "@solidjs/router";
+import { For } from "solid-js";
 import { createI18n, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
+import { PAGES, addressOf } from "~/shared/pages";
 
 /**
  * The route configuration: a segment naming no published language matches
@@ -18,8 +20,7 @@ export default function LocaleLayout(props: RouteSectionProps) {
   return (
     <I18nContext.Provider value={i18n}>
       <nav>
-        <a href={`/${i18n.locale()}`}>{i18n.t("nav.home")}</a>
-        <a href={`/${i18n.locale()}/about`}>{i18n.t("nav.about")}</a>
+        <For each={PAGES}>{(page) => <a href={addressOf(page, i18n.locale())}>{i18n.t(`nav.${page.key}`)}</a>}</For>
       </nav>
       {props.children}
     </I18nContext.Provider>

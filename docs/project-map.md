@@ -161,6 +161,15 @@ required of every addition is judged against this document.
 
 - `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, the languages and the theme.
 
+### src/shared/SiteFooter.css
+
+- stylesheet
+
+### src/shared/SiteFooter.tsx
+
+- `signatureAt` — function — The signature the foot of the page carries.
+- `SiteFooter` (default) — function — The foot every page carries: who the site is, since when, and from where.
+
 ### src/shared/StarterNote.tsx
 
 - `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.

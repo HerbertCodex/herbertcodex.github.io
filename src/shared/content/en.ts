@@ -103,6 +103,7 @@ export const ENGLISH: Words = {
   },
   education: {
     "master-miage": { degree: "MIAGE master's degree", institution: "University of Rennes" },
+    "licence-miage": { degree: "MIAGE bachelor's degree", institution: "Félix Houphouët-Boigny University, Abidjan" },
   },
   certifications: [],
   skills: {

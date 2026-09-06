@@ -13,6 +13,58 @@
   border-bottom-color: var(--on-accent);
 }
 
+/*
+ * Le titre et les conditions se partagent la plaque sur ecran large. Avant, ils
+ * s'empilaient dans une colonne etroite et la moitie droite de l'aplat restait
+ * vide, ce qui allongeait le bloc sans rien y mettre. En dessous du point de
+ * rupture ils reprennent une seule colonne : deux colonnes de 320 px n'en
+ * seraient plus.
+ */
+.offer {
+  display: grid;
+  /*
+   * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
+   * pas sous la largeur de son contenu, et le bloc debordait de 36 px a 320.
+   * C'est le piege deja paye dans ce depot, retombe ici parce qu'une nouvelle
+   * grille a ete ecrite sans lui.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .offer {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  /*
+   * Le titre descend d'un cran des qu'il partage la plaque. A 52 px,
+   * « immediatement » mesure plus que la colonne et se coupait au milieu du
+   * mot — « AVAILABL / E IMMEDIA / TELY ». Une coupure intra-mot n'est pas une
+   * mise en page serree, c'est un mot qu'on ne lit plus.
+   */
+  .offer .panel-title {
+    font-size: clamp(var(--text-lg), 4vw, var(--text-xl));
+  }
+
+  /*
+   * Dans la colonne de droite, le libelle passe AU-DESSUS de sa valeur. Cote a
+   * cote il ne restait que la moitie d'une demi-plaque au texte, et
+   * « Permanent role or freelance engagement » s'y etalait sur quatre lignes.
+   */
+  .offer .terms {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .offer .terms dt {
+    margin-bottom: var(--space-1);
+  }
+}
+
 .panel-title {
   font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
   line-height: var(--leading-tight);
@@ -20,13 +72,13 @@
   text-transform: uppercase;
   font-weight: var(--weight-bold);
   overflow-wrap: break-word;
-  margin: 0 0 var(--space-4);
+  margin: 0;
 }
 
 .terms {
   display: grid;
   gap: var(--space-2) var(--space-4);
-  margin: 0 0 var(--space-5);
+  margin: 0;
   max-width: var(--measure);
 }
 

@@ -145,9 +145,15 @@
   stroke-width: var(--flow-stroke);
 }
 
+/*
+ * Une boite d'accent est un APLAT qui porte un libelle, pas une marque : elle
+ * prend donc les jetons de plaque, comme le panneau de contact. Le point qui
+ * circule et la pastille du poste en cours gardent --accent, eux ne portent
+ * aucun texte et doivent rester vifs sur la page sombre. Voir decision 0012.
+ */
 .node-accent {
-  fill: var(--accent);
-  stroke: var(--accent);
+  fill: var(--accent-plate);
+  stroke: var(--accent-plate);
   stroke-width: var(--flow-stroke);
 }
 
@@ -174,6 +180,10 @@
 
 .cap-invert {
   fill: var(--ink-inverse);
+}
+
+.cap-on-accent {
+  fill: var(--on-accent);
 }
 
 /*

@@ -17,7 +17,7 @@ type WorkId = "agent-pipeline" | "decodevoyage" | "assistants-llm" | "paiement";
 
 type ExperienceId = "modjo" | "everest" | "cie" | "synelia";
 
-type DiplomaId = "master-miage";
+type DiplomaId = "master-miage" | "licence-miage";
 
 type SkillGroupId = "llm" | "platform" | "security" | "development" | "data" | "devops" | "interfaces" | "methods";
 
@@ -328,7 +328,10 @@ export const EXPERIENCES: readonly ExperienceFacts[] = [
 /**
  * The diplomas, the most recent first.
  */
-export const EDUCATION: readonly DiplomaFacts[] = [{ id: "master-miage", year: "2026", ongoing: false }];
+export const EDUCATION: readonly DiplomaFacts[] = [
+  { id: "master-miage", year: "2026", ongoing: false },
+  { id: "licence-miage", year: "2021", ongoing: false },
+];
 
 /*
  * Chaque competence citee ici est portee par une realisation presentee ou par

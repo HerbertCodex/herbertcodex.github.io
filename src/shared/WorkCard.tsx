@@ -27,6 +27,9 @@ const VIEW_BOX = "0 0 420 200";
 
 const FILL: Readonly<Record<string, string>> = { subject: "node-fill", gate: "node-accent" };
 
+/* Le libelle suit l aplat qui le porte : encre inverse sur l encre, texte de plaque sur la plaque. */
+const CAP: Readonly<Record<string, string>> = { subject: "cap cap-invert", gate: "cap cap-on-accent" };
+
 /*
  * Le decalage de depart de chaque point qui circule. Lances ensemble, ils
  * forment une pulsation ; decales, ils se lisent comme un trafic.
@@ -84,7 +87,7 @@ function Schema(props: { readonly diagram: Diagram }) {
                 height={BOX_H}
               />
               <text
-                class={box.emphasis === undefined ? "cap" : "cap cap-invert"}
+                class={CAP[box.emphasis ?? ""] ?? "cap"}
                 x={placeOf(box).cx}
                 y={placeOf(box).y + CAP_Y}
                 text-anchor="middle"

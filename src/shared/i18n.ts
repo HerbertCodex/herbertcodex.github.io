@@ -75,7 +75,7 @@ export const DICTIONARIES = {
     contact: {
       title: "Contact",
       heading: "Contact",
-      lede: "Disponible en CDI ou freelance",
+      lede: "Disponible immédiatement",
       write: "Écrire un message",
       terms: {
         contract: { label: "Contrat", value: "CDI ou mission freelance" },
@@ -136,7 +136,7 @@ export const DICTIONARIES = {
     contact: {
       title: "Contact",
       heading: "Contact",
-      lede: "Available for a permanent role or freelance work",
+      lede: "Available immediately",
       write: "Write a message",
       terms: {
         contract: { label: "Contract", value: "Permanent role or freelance engagement" },

@@ -257,3 +257,18 @@ run that failed on six 404s because another agent's `build` had just run
 
 **Now**: at most two issues in parallel, none of which builds; otherwise serial. See
 decision 0011. The real answer is one worktree per agent, which lives in the core.
+
+## An agent asked to stamp a time, with no way to read the clock, invents one
+
+**Believed**: a handoff's `produced_at` is a trivial field an agent fills correctly.
+
+**True**: `agent_runtime.args` listed `pnpm`, `node`, `git` and `gh run`, and nothing else.
+`date` was not among them, so the agent could not read the clock and guessed. Three
+handoffs in a row were refused for a `produced_at` in the future — first by two hours,
+then by one, then by twenty minutes. The agent was not careless; it was blind, and a
+field it must fill with no way to measure is a field it will invent.
+
+**Now**: `Bash(date:*)` is allowed, and it was proven before being written — the agent
+returned a stamp two seconds from the real clock. The general lesson is wider than the
+clock: any field a role must state, it must be able to measure, or the requirement
+manufactures the fabrication it means to prevent.

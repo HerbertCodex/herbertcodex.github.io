@@ -45,12 +45,20 @@
   color: var(--accent);
 }
 
+/*
+ * Le titre porte un jeton insecable — un nom de domaine — qui reclamait a lui
+ * seul 342 px de largeur minimale, dans une colonne de 272. `anywhere` la
+ * ramene a 32 px la ou `break-word` la laisse a 342 : les deux effacent le
+ * debordement mesure, mais seul le premier cesse de dependre du `min-width: 0`
+ * pose plus haut pour que la colonne accepte de retrecir.
+ */
 .work h2 {
   margin: 0 0 var(--space-3);
   font-size: var(--text-xl);
   line-height: var(--leading-snug);
   letter-spacing: var(--track-tight);
   font-weight: var(--weight-bold);
+  overflow-wrap: anywhere;
 }
 
 .story {

@@ -55,15 +55,27 @@ required of every addition is judged against this document.
 
 ## src/routes/[locale]
 
-### src/routes/[locale]/about.tsx
+### src/routes/[locale]/[slug].tsx
 
-- `About` (default) — function — The about route, in the language its address named.
+- `NamedPageRoute` (default) — function — The route serving every page the table names, home excepted.
 
 ### src/routes/[locale]/index.tsx
 
-- `Home` (default) — function — The home route, in the language its address named.
+- `Home` (default) — function — The home route, which the common route never serves: the language prefix alone carries no page name for it to match.
 
 ## src/shared
+
+### src/shared/ContactPage.tsx
+
+- `ContactPage` (default) — function — The page saying how to get in touch.
+
+### src/shared/HomePage.css
+
+- stylesheet
+
+### src/shared/HomePage.tsx
+
+- `HomePage` (default) — function — The opening of the portfolio, and the way into each of the other pages.
 
 ### src/shared/i18n.ts
 
@@ -76,6 +88,22 @@ required of every addition is judged against this document.
 - `createI18n` — function — Binds a translator to a language that may change while the page stays open.
 - `useI18n` — function — Reads the language in force from the nearest provider.
 
+### src/shared/JourneyPage.tsx
+
+- `JourneyPage` (default) — function — The page presenting experience and training.
+
+### src/shared/pages.ts
+
+- `PageKey` — type — A page of the site, named by what it is rather than by where it lives.
+- `NamedPageKey` — type — A page the common route serves, which home is never one of.
+- `Page` — type — One page, and the name it carries in each published language.
+- `NamedPage` — type — A page whose name is written in every language, therefore addressable.
+- `PAGES` — constant — The pages the site publishes, and the only place their names are written.
+- `NAMED_PAGES` — constant — The pages the common route serves, in the order the table declares them.
+- `addressOf` — function — The address of a page in one language.
+- `addressesToPrerender` — function — The addresses a build must produce for a table of pages.
+- `pageForSlug` — function — The page a name designates in one language, for the common route alone.
+
 ### src/shared/StarterNote.tsx
 
 - `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.
@@ -83,3 +111,7 @@ required of every addition is judged against this document.
 ### src/shared/tokens.css
 
 - stylesheet
+
+### src/shared/WorksPage.tsx
+
+- `WorksPage` (default) — function — The page presenting what has been built.

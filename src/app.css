@@ -31,6 +31,70 @@ a:hover {
   color: var(--accent-strong);
 }
 
+/*
+ * La rangee de liens soulignes est declaree ICI parce que la maquette la
+ * declare ainsi : hors de toute section, au meme titre que `a` ou `nav`. Deux
+ * ecrans l'ont reecrite chacun de son cote a partir de la meme maquette, et la
+ * porte `duplication` l'a refuse. Une primitive recopiee par composant est une
+ * primitive qui divergera, et la divergence ne se voit que sur une capture.
+ */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  border-bottom: var(--border-heavy) solid var(--accent);
+  text-decoration: none;
+}
+
+/*
+ * Le bandeau de section, declare ici pour la meme raison que `.links` juste
+ * au-dessus : la page des realisations et la page du parcours l'ont ecrit
+ * chacune de son cote a partir de la meme maquette, et `duplication` l'a
+ * refuse. Seule la marge reste a l'ecran, parce qu'un bandeau qui ouvre une
+ * page et un bandeau qui separe deux blocs ne respirent pas pareil.
+ */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+  border-top: var(--border-heavy) solid var(--ink);
+  padding-top: var(--space-2);
+}
+
+.section-head > * {
+  min-width: 0;
+}
+
+.num,
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.num {
+  color: var(--accent);
+  font-weight: var(--weight-bold);
+}
+
+.count {
+  margin-left: auto;
+  flex: none;
+  color: var(--ink-muted);
+}
+
 :focus-visible {
   outline: var(--space-1) solid var(--focus);
   outline-offset: var(--space-1);

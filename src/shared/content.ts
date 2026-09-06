@@ -92,7 +92,7 @@ type SkillGroup = {
 /**
  * What the journey page tells: experience, education, certifications, skills.
  */
-type Journey = {
+export type Journey = {
   readonly experiences: readonly Experience[];
   readonly education: readonly Diploma[];
   readonly certifications: readonly Certification[];

@@ -1,5 +1,5 @@
 import { createContext, useContext, type Accessor } from "solid-js";
-import { flatten, translator, type Translator } from "@solid-primitives/i18n";
+import { flatten, resolveTemplate, translator, type Translator } from "@solid-primitives/i18n";
 
 /**
  * A language the site publishes, written as it appears in an address.
@@ -46,9 +46,44 @@ export const DICTIONARIES = {
         contact: "Ce que je cherche, et par où me joindre.",
       },
     },
-    works: { title: "Réalisations", heading: "Réalisations" },
-    journey: { title: "Parcours", heading: "Parcours" },
-    contact: { title: "Contact", heading: "Contact" },
+    works: {
+      title: "Réalisations",
+      heading: "Réalisations",
+      personal: "Projet personnel",
+      openSource: "Projet personnel, open source",
+      inHouse: "En entreprise, {{ employer }}",
+      problem: "Le problème",
+      did: "Ce que j'ai fait",
+      result: "Le résultat",
+      code: "Voir le code",
+      demo: "Voir le site",
+    },
+    journey: {
+      title: "Parcours",
+      heading: "Parcours",
+      sections: {
+        experience: "Expérience",
+        education: "Formation",
+        certifications: "Certifications",
+        skills: "Compétences",
+      },
+      present: "aujourd'hui",
+      current: "En poste",
+      ongoing: "En cours d'obtention",
+      resume: "CV en PDF",
+    },
+    contact: {
+      title: "Contact",
+      heading: "Contact",
+      lede: "Disponible en CDI ou freelance",
+      write: "Écrire un message",
+      terms: {
+        contract: { label: "Contrat", value: "CDI ou mission freelance" },
+        place: { label: "Lieu", value: "Rennes, mobile partout en France, ou à distance" },
+        start: { label: "Début", value: "Immédiat" },
+      },
+      links: { linkedin: "LinkedIn", github: "GitHub", cv: "CV en PDF" },
+    },
   },
   en: {
     bar: { skip: "Skip to content", nav: "Main navigation" },
@@ -72,9 +107,44 @@ export const DICTIONARIES = {
         contact: "What I am looking for, and how to reach me.",
       },
     },
-    works: { title: "Work", heading: "Work" },
-    journey: { title: "About", heading: "About" },
-    contact: { title: "Contact", heading: "Contact" },
+    works: {
+      title: "Work",
+      heading: "Work",
+      personal: "Personal project",
+      openSource: "Personal project, open source",
+      inHouse: "In-house, {{ employer }}",
+      problem: "The problem",
+      did: "What I did",
+      result: "The result",
+      code: "View the code",
+      demo: "View the site",
+    },
+    journey: {
+      title: "About",
+      heading: "About",
+      sections: {
+        experience: "Experience",
+        education: "Education",
+        certifications: "Certifications",
+        skills: "Skills",
+      },
+      present: "present",
+      current: "Current role",
+      ongoing: "In progress",
+      resume: "Résumé (PDF)",
+    },
+    contact: {
+      title: "Contact",
+      heading: "Contact",
+      lede: "Available for a permanent role or freelance work",
+      write: "Write a message",
+      terms: {
+        contract: { label: "Contract", value: "Permanent role or freelance engagement" },
+        place: { label: "Location", value: "Rennes, mobile across France, or remote" },
+        start: { label: "Availability", value: "Immediate" },
+      },
+      links: { linkedin: "LinkedIn", github: "GitHub", cv: "Résumé (PDF)" },
+    },
   },
 } as const;
 
@@ -111,7 +181,7 @@ export function isLocale(value: string): value is Locale {
  */
 export function createI18n(locale: Accessor<Locale>): I18n {
   const dictionary = () => flatten(DICTIONARIES[locale()]) as Dictionary;
-  return { locale, t: translator(dictionary) };
+  return { locale, t: translator(dictionary, resolveTemplate) };
 }
 
 /**

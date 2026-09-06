@@ -243,3 +243,17 @@ file that merely ended in `Page.tsx` without being proven anywhere.
 browser suite renders that file. Proven both ways: an uncovered function planted in
 `src/shared/content.ts` is refused, and a `FauxPage.tsx` that nothing proves is refused
 too — where the pattern would have exempted it.
+
+## Agents whose files are disjoint still share one git index
+
+**Believed**: `next-issues` declaring four issues parallel means they can run together.
+
+**True**: it computes the intersection of reserved paths and knows nothing about the
+shared index, the shared branch head or the shared `.output`. Four agents committing
+concurrently produced one commit carrying two issues' files, a test rewritten between its
+own red and green, an issue writing five files outside its reservations, and a `smoke`
+run that failed on six 404s because another agent's `build` had just run
+`clean-output.mjs` under it.
+
+**Now**: at most two issues in parallel, none of which builds; otherwise serial. See
+decision 0011. The real answer is one worktree per agent, which lives in the core.

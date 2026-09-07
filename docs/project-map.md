@@ -28,15 +28,71 @@ required of every addition is judged against this document.
 
 - no public export
 
-## src/components
+## src/features/contact
 
-### src/components/Counter.css
+### src/features/contact/ContactLinks.tsx
+
+- `CONTACT_EMAIL` — constant — The address the site publishes, which is the one the résumé carries.
+- `ContactMeans` — type — A way of reaching the person other than the message itself, and its target.
+- `contactMeans` — function — The means of contact at the second rank, in the order the design fixes.
+- `malformedContactLinks` — function — The contact targets stated empty or malformed, which are never published.
+- `ContactLinks` (default) — function — The second rank of the contact block: the profiles, then the résumé.
+
+### src/features/contact/ContactPage.css
 
 - stylesheet
 
-### src/components/Counter.tsx
+### src/features/contact/ContactPage.tsx
 
-- `Counter` (default) — function — A counter button demonstrating local signal state.
+- `ContactPage` (default) — function — The page saying how to get in touch, and under which conditions.
+
+## src/features/home
+
+### src/features/home/HomePage.css
+
+- stylesheet
+
+### src/features/home/HomePage.tsx
+
+- `HomePage` (default) — function — The opening of the portfolio, and the way into each of the other pages.
+
+## src/features/journey
+
+### src/features/journey/JourneyPage.css
+
+- stylesheet
+
+### src/features/journey/JourneyPage.tsx
+
+- `JourneyPage` (default) — function — The page presenting experience, education, certifications and skills.
+
+## src/features/not-found
+
+### src/features/not-found/NotFoundPage.css
+
+- stylesheet
+
+### src/features/not-found/NotFoundPage.tsx
+
+- `NotFoundPage` (default) — function — The screen an address the site does not publish leads to.
+
+## src/features/works
+
+### src/features/works/WorkCard.css
+
+- stylesheet
+
+### src/features/works/WorkCard.tsx
+
+- `WorkCard` (default) — function — One work: the schema of what it does, then what it was and what came of it.
+
+### src/features/works/WorksPage.css
+
+- stylesheet
+
+### src/features/works/WorksPage.tsx
+
+- `WorksPage` (default) — function — The page presenting what has been built, in the order the content declares.
 
 ## src/routes
 
@@ -75,22 +131,6 @@ required of every addition is judged against this document.
 - `miscountedSections` — function — The sections whose announced count is not the count of what they show.
 - `completenessFaults` — function — Everything the published site leaves incomplete, on the state of the repository.
 
-### src/shared/ContactLinks.tsx
-
-- `CONTACT_EMAIL` — constant — The address the site publishes, which is the one the résumé carries.
-- `ContactMeans` — type — A way of reaching the person other than the message itself, and its target.
-- `contactMeans` — function — The means of contact at the second rank, in the order the design fixes.
-- `malformedContactLinks` — function — The contact targets stated empty or malformed, which are never published.
-- `ContactLinks` (default) — function — The second rank of the contact block: the profiles, then the résumé.
-
-### src/shared/ContactPage.css
-
-- stylesheet
-
-### src/shared/ContactPage.tsx
-
-- `ContactPage` (default) — function — The page saying how to get in touch, and under which conditions.
-
 ### src/shared/content.ts
 
 - `Work` — type — One work, in the language in force.
@@ -98,14 +138,6 @@ required of every addition is judged against this document.
 - `Content` — type — The editorial content of the site in one language.
 - `missingRequiredFields` — function — The required fields a content document leaves absent, blank or empty.
 - `contentFor` — function — The editorial content of one language.
-
-### src/shared/HomePage.css
-
-- stylesheet
-
-### src/shared/HomePage.tsx
-
-- `HomePage` (default) — function — The opening of the portfolio, and the way into each of the other pages.
 
 ### src/shared/i18n.ts
 
@@ -122,14 +154,6 @@ required of every addition is judged against this document.
 ### src/shared/identity.ts
 
 - `PERSON` — constant — The person this site is, written once for every place that shows it.
-
-### src/shared/JourneyPage.css
-
-- stylesheet
-
-### src/shared/JourneyPage.tsx
-
-- `JourneyPage` (default) — function — The page presenting experience, education, certifications and skills.
 
 ### src/shared/LanguageSwitch.css
 
@@ -174,10 +198,6 @@ required of every addition is judged against this document.
 - `signatureAt` — function — The signature the foot of the page carries.
 - `SiteFooter` (default) — function — The foot every page carries: who the site is, since when, and from where.
 
-### src/shared/StarterNote.tsx
-
-- `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.
-
 ### src/shared/theme.ts
 
 - `Theme` — type — A theme the portfolio can be read in.
@@ -199,22 +219,6 @@ required of every addition is judged against this document.
 ### src/shared/tokens.css
 
 - stylesheet
-
-### src/shared/WorkCard.css
-
-- stylesheet
-
-### src/shared/WorkCard.tsx
-
-- `WorkCard` (default) — function — One work: the schema of what it does, then what it was and what came of it.
-
-### src/shared/WorksPage.css
-
-- stylesheet
-
-### src/shared/WorksPage.tsx
-
-- `WorksPage` (default) — function — The page presenting what has been built, in the order the content declares.
 
 ## src/shared/content
 

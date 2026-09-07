@@ -272,3 +272,26 @@ field it must fill with no way to measure is a field it will invent.
 returned a stamp two seconds from the real clock. The general lesson is wider than the
 clock: any field a role must state, it must be able to measure, or the requirement
 manufactures the fabrication it means to prevent.
+
+## A tracker sync that never converges, because its confirmation crashes
+
+**Believed**: a `tracker-sync --apply` that leaves the store and the tracker disagreeing
+is a transient glitch, and running it again fixes it.
+
+**True**: `sudocode export` aborts roughly two runs in three with a native assertion —
+`node::RemoveEnvironmentCleanupHook — Assertion failed: (env) != nullptr`, from
+`better-sqlite3` under Node 24. `tracker-sync` writes the status correctly, then confirms
+it by exporting, and the confirmation is what dies. It reports "not confirmed in the
+exported snapshot" and refuses to dispatch on an unconfirmed state, which is right.
+
+The status update itself succeeds. Only the read-back is flaky, which is why some passes
+appeared to converge: those were the runs where the export happened not to crash.
+
+**Cost of not diagnosing it**: the bare `[node]` stack was seen three times and worked
+around by retrying. A flaky failure that a retry hides is more dangerous than a hard one,
+because it teaches people to stop reading it. It only got diagnosed when it started
+failing every time.
+
+**Now**: a bare `[node]` trace out of `tracker-sync` means the export aborted, not that
+the write failed. Check `.sudocode/issues.jsonl` for the desired status before assuming
+anything. The fix belongs to Sudocode, not to this repository.

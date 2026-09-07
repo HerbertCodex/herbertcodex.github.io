@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette accueil et contact</title>
+    <style>
+      /*
+ * L'ACCUEIL ET LE CONTACT, dans la direction retenue par l'operateur sur une
+ * planche de quatre. La lecon de la decision 0004 : une direction se departage
+ * sur une planche, pas en serie. L'accueil prend la grille, le contact prend
+ * la fiche ; le sommaire et le bandeau plein sont ecartes et archives dans
+ * mockups/exploration/.
+ *
+ * Trois corrections sont deja appliquees partout, parce qu'elles ne se
+ * departagent pas, elles se constatent :
+ *  - la page prend --page-max au lieu de --measure, seuls les blocs de texte
+ *    long gardent leurs 64 caracteres. Aujourd'hui le site vit dans 740 px,
+ *    avec 590 px de vide de chaque cote sur un ecran de 1920 ;
+ *  - le filet haut de la PREMIERE section disparait : il separait d'une
+ *    section precedente qui n'existe pas, et depuis que la barre est fixe il
+ *    doublait le sien ;
+ *  - les blancs verticaux sont resserres.
+ */
+
+      /*
+       * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité.
+       *
+       * L'IDÉE DE CETTE PAGE : ce que cette personne construit n'a pas
+       * d'écran. Un agent, une file de messages, une machine d'état ne se
+       * photographient pas. Plutôt que de subir ce manque, la page en fait son
+       * sujet : chaque réalisation est montrée par le SCHÉMA DE CE QU'ELLE
+       * FAIT — les rôles, les portes, les données qui circulent. Le mouvement
+       * n'est pas décoratif, il EST l'information : ce point qui avance, c'est
+       * une demande qui traverse le système.
+       *
+       * Et la page se démontre elle-même : elle est construite par
+       * agent-pipeline, qui est la première réalisation qu'elle présente.
+       */
+      :root {
+        --paper: #eeece6;
+        --paper-raised: #f8f7f3;
+        --ink: #121110;
+        --ink-muted: #55524b;
+        --ink-inverse: #f8f7f3;
+        --rule: #c6c2b7;
+        --accent: #b3271a;
+        --accent-strong: #8b1d13;
+        --accent-plate: #b3271a;
+        --on-accent: #f8f7f3;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --space-8: 144px;
+        --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 22px;
+        --text-xl: 32px;
+        --text-2xl: 52px;
+        --text-3xl: 84px;
+        --leading-tight: 0.94;
+        --leading-snug: 1.15;
+        --leading-body: 1.55;
+        --track-tight: -0.03em;
+        --track-wide: 0.08em;
+        --weight-regular: 400;
+        --weight-bold: 700;
+        --radius-1: 0px;
+        --radius-2: 2px;
+        --page-max: 1440px;
+        --bp-md: 768px;
+        --bp-lg: 1024px;
+        --tap-min: 24px;
+        --measure: 64ch;
+        --border-hairline: 1px;
+        --border-heavy: 3px;
+        --motion-fast: 140ms;
+        --motion-base: 320ms;
+        --motion-slow: 620ms;
+        --motion-stagger: 70ms;
+        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --flow-stroke: 2px;
+        --flow-node: 3px;
+        --flow-dash: 6;
+        --motion-flow: 3200ms;
+        --motion-flow-slow: 5200ms;
+        --lift: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .planche {
+        max-width: var(--page-max);
+        margin: 0 auto;
+        padding: var(--space-5) var(--space-4) var(--space-7);
+      }
+      .etiquette {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: var(--space-7) 0 var(--space-2);
+      }
+      .etiquette:first-of-type {
+        margin-top: 0;
+      }
+      .cadre {
+        border: var(--border-hairline) solid var(--rule);
+        background: var(--paper);
+        padding: var(--space-5) var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      /* La barre, identique partout : c'est l'acquis, pas le sujet de la planche. */
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-4);
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        margin-bottom: var(--space-5);
+      }
+      .mark {
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        font-weight: var(--weight-bold);
+      }
+      .bar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+      }
+      /*
+       * min-height sur chaque cible : WCAG 2.5.8 demande 24 px, et un lien qui
+       * ne fait que la hauteur de son texte se rate au doigt. La regle existe
+       * dans le site depuis i-841g ; elle avait ete perdue en simplifiant la
+       * feuille de cette planche, et une maquette de reference ne doit pas
+       * transmettre un defaut qu'un implementeur recopierait.
+       */
+      .bar nav a,
+      .outils a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+      .outils {
+        display: flex;
+        gap: var(--space-3);
+        align-items: center;
+      }
+      .outils a {
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+      }
+      .outils [aria-current="true"] {
+        background: var(--ink);
+        color: var(--ink-inverse);
+        padding: 0 var(--space-2);
+      }
+      .icone {
+        width: var(--tap-min);
+        height: var(--tap-min);
+        border: var(--border-hairline) solid var(--rule);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icone svg {
+        width: var(--space-3);
+        height: var(--space-3);
+        stroke: var(--ink);
+        fill: none;
+        stroke-width: var(--flow-stroke);
+      }
+
+      h1 {
+        font-size: clamp(var(--text-2xl), 8vw, var(--text-3xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        overflow-wrap: break-word;
+        margin: 0 0 var(--space-3);
+      }
+      .lede {
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+        color: var(--ink-muted);
+        max-width: var(--measure);
+        margin: 0 0 var(--space-4);
+      }
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        list-style: none;
+        padding: 0;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        margin: 0 0 var(--space-5);
+      }
+      .facts li {
+        border: var(--border-hairline) solid var(--rule);
+        padding: var(--space-1) var(--space-2);
+        color: var(--ink-muted);
+      }
+      .facts .now {
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
+      }
+
+      /* ---- A. L'accueil en grille : les trois entrees occupent la largeur ---- */
+      .grille {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--border-hairline);
+        background: var(--rule);
+        border: var(--border-hairline) solid var(--rule);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      @media (min-width: 768px) {
+        .grille {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      .grille li {
+        background: var(--paper);
+      }
+      /*
+       * Aucune hauteur imposee : une cellule qui reserve 260 px pour trois
+       * lignes de texte fabrique exactement le vide que cette planche corrige.
+       */
+      .grille a {
+        display: block;
+        padding: var(--space-4);
+      }
+      .grille .n {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--accent);
+        font-weight: var(--weight-bold);
+        display: block;
+        margin-bottom: var(--space-3);
+      }
+      .grille .nom {
+        display: block;
+        font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+        overflow-wrap: break-word;
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--track-tight);
+        line-height: var(--leading-tight);
+        margin-bottom: var(--space-2);
+      }
+      .grille .ligne {
+        display: block;
+        color: var(--ink-muted);
+        font-size: var(--text-sm);
+        max-width: var(--measure);
+      }
+
+      /* ---- D. Le contact en fiche : l'adresse d'abord, sobre ---- */
+      .fiche {
+        display: grid;
+        /*
+         * minmax(0, 1fr) et non le defaut. Troisieme fois que ce piege revient
+         * dans ce depot : une piste de grille en `auto` ne descend pas sous la
+         * largeur de son contenu, et le bloc debordait de 122 px a 375.
+         */
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-5);
+      }
+      @media (min-width: 768px) {
+        .fiche {
+          grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        }
+      }
+      .fiche .appel {
+        border-top: var(--border-heavy) solid var(--ink);
+        padding-top: var(--space-3);
+      }
+      .fiche .quoi {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+        display: block;
+        margin-bottom: var(--space-2);
+      }
+      .fiche .adresse {
+        font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
+        font-weight: var(--weight-bold);
+        overflow-wrap: break-word;
+        display: block;
+        margin-bottom: var(--space-4);
+      }
+      .fiche .liens {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+      }
+      .fiche .liens a {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        border: var(--border-hairline) solid var(--ink);
+        padding: var(--space-1) var(--space-2);
+      }
+      .fiche .conditions {
+        border-top: var(--border-hairline) solid var(--rule);
+        padding-top: var(--space-3);
+      }
+      .fiche .conditions dl {
+        display: grid;
+        gap: var(--space-3);
+        margin: 0;
+      }
+      .fiche .conditions dt {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+      .fiche .conditions dd {
+        margin: var(--space-1) 0 0;
+      }
+      .fiche .dispo {
+        display: inline-block;
+        background: var(--accent-plate);
+        color: var(--on-accent);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        padding: var(--space-1) var(--space-2);
+        margin-bottom: var(--space-3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="planche">
+      <p class="etiquette">Accueil</p>
+      <div class="cadre">
+        <header class="bar">
+          <span class="mark">Donatien Koffi</span>
+          <nav><a href="#">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a><a href="#">Contact</a></nav>
+          <div class="outils">
+            <a href="#" aria-current="true">FR</a><a href="#">EN</a>
+            <span class="icone" title="Passer en sombre"
+              ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
+            ></span>
+          </div>
+        </header>
+        <h1>Ingénieur logiciel</h1>
+        <p class="lede">
+          Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail
+          vérifiable : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, puisqu'elle
+          est construite par lui.
+        </p>
+        <ul class="facts">
+          <li class="now">CDI ou freelance</li>
+          <li>Rennes, mobile en France</li>
+          <li>Master MIAGE</li>
+          <li>FR · EN</li>
+        </ul>
+        <ul class="grille">
+          <li>
+            <a href="#"
+              ><span class="n">01</span><span class="nom">Réalisations</span
+              ><span class="ligne">Ce que j'ai construit, ce que ça fait, et comment.</span></a
+            >
+          </li>
+          <li>
+            <a href="#"
+              ><span class="n">02</span><span class="nom">Parcours</span
+              ><span class="ligne">Où j'ai travaillé, ce que j'ai étudié, ce que je sais faire.</span></a
+            >
+          </li>
+          <li>
+            <a href="#"
+              ><span class="n">03</span><span class="nom">Contact</span
+              ><span class="ligne">Ce que je cherche, et par où me joindre.</span></a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <p class="etiquette">Contact</p>
+      <div class="cadre">
+        <header class="bar">
+          <span class="mark">Donatien Koffi</span>
+          <nav><a href="#">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a><a href="#">Contact</a></nav>
+          <div class="outils">
+            <a href="#" aria-current="true">FR</a><a href="#">EN</a>
+            <span class="icone" title="Passer en sombre"
+              ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
+            ></span>
+          </div>
+        </header>
+        <section class="fiche">
+          <div class="appel">
+            <span class="dispo">Disponible immédiatement</span>
+            <span class="quoi">Écrire un message</span>
+            <a class="adresse" href="#">kraherbertdonatienkoffi@gmail.com</a>
+            <div class="liens"><a href="#">LinkedIn</a><a href="#">GitHub</a></div>
+          </div>
+          <div class="conditions">
+            <dl>
+              <dt>Contrat</dt>
+              <dd>CDI ou mission freelance</dd>
+              <dt>Lieu</dt>
+              <dd>Rennes, mobile partout en France, ou à distance</dd>
+              <dt>Début</dt>
+              <dd>Immédiat</dd>
+            </dl>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

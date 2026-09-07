@@ -1,0 +1,16 @@
+/*
+ * Le bandeau, sa regle et le compte sont la primitive de `src/app.css`. La
+ * page ne fixe que ce qui lui appartient : la respiration sous le bandeau, et
+ * l'echelle d'un titre de page, qui n'est pas celle d'un titre de section.
+ */
+.works .section-head {
+  margin: 0 0 var(--space-5);
+}
+
+.works .section-head h1 {
+  margin: 0;
+  font-size: clamp(var(--text-xl), 8vw, var(--text-2xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--track-tight);
+  text-transform: uppercase;
+}

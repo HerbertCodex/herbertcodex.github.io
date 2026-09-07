@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "document": "perimetre_approuve",
+  "spec_id": "s-5bjp",
+  "round": 8,
+  "title": "Le cadre de la page : une barre qui reste, et le pied de page que la maquette portait deja",
+  "approved_at": "2026-09-06T19:12:20Z",
+  "approved_by": "operator",
+  "archived_at": "2026-09-06T19:20:24Z",
+  "proposal_round_waived": {
+    "waived": true,
+    "by": "operator",
+    "instruction_verbatim": "Produis un spec_plan avec un scope_change, sans round de proposition : la demande est claire. Ecris directement les criteres verifiables, les reservations et les dependances. Une ou deux issues, a ton jugement.",
+    "consequence": "Aucune page de revue n a ete rendue pour ce perimetre, et aucun decisions_for_operator ne lui a ete soumis. Ce fichier n est donc pas un round de proposition lu puis approuve : c est l archive de la demande de l operateur, ecrite mot pour mot, plus la lecture produit que le plan en tire. Il existe pour que le plan derive d un perimetre nomme et relisible sur un depot frais, et non d une intention. La confrontation habituelle — l operateur a-t-il vu ce qu il approuve — n a pas eu lieu ici, et c est la deuxieme fois de suite sur cette spec, apres le round 7. La difference avec le round 7 est nommee plus bas : cette demande-ci contient une VRAIE question ouverte, la hauteur que la barre confisque sur un petit ecran, et le plan y repond par un critere plutot que par un round.",
+    "what_was_not_asked": [
+      "Le mot « fixe ». L operateur a ecrit « menu fixe » ; le plan retient une barre qui reste visible au defilement, ce qui est le sens courant de la demande. Il n a PAS ete demande de choisir entre position: sticky et position: fixed, ni de trancher l apparence de la barre une fois collee. Le plan recommande sticky et laisse la forme au dessin de la maquette, qui revient a l operateur.",
+      "Ce que la barre doit devenir sur un ecran court. Mesure faite pour ce plan : a 320 px de large la barre fait 186 px de haut, soit 46 % d une fenetre de 400 px. Une barre fixee telle quelle y confisquerait pres de la moitie de l ecran. L operateur n a pas ete interroge la-dessus ; le plan tranche par un critere — sur un telephone en paysage la barre cesse de rester — et le declare ici pour que ce ne soit pas une decision silencieuse.",
+      "Le contenu du pied de page au-dela de ce que la maquette validee montre deja : la mention de la personne et de l annee, et le lieu. Aucun lien, aucune mention legale, aucun plan du site n a ete demande, et le plan n en ajoute pas.",
+      "Le comportement de l annee affichee sur un site prerendu qui traverse un 1er janvier sans etre reconstruit. Le plan le traite par la resilience et le declare en surface non testee, plutot que d en faire une question."
+    ]
+  },
+  "operator_request": {
+    "verbatim": "je veux un menu fixe, (le header) et je veux un footer",
+    "read_from": "pipeline/handoffs/i-841g-product-package.json, contexte « ## Context for Product (SPEC UNCLEAR) », depose le 2026-09-06T19:12:20.867Z",
+    "requirements_stated_by_the_operator": [
+      "La barre du site reste accessible pendant qu on lit : c est le sens de « menu fixe ».",
+      "Le site porte un pied de page.",
+      "Le lien d evitement conduit a une ancre, et une barre fixee ne doit pas passer par-dessus la cible de cette ancre.",
+      "La barre ne doit pas confisquer la hauteur d un telephone en paysage, ou l ecran fait moins de 400 px de haut.",
+      "Le pied de page existe dans les deux langues.",
+      "L annee du pied de page ne doit pas etre ecrite a la main, sans quoi elle vieillira seule.",
+      "Les huit pages restent a zero debordement horizontal aux largeurs 320, 360, 375, 480, 768, 900, 1100 et 1440."
+    ]
+  },
+  "facts_measured_before_writing_this_scope": [
+    {
+      "fact": "Le pied de page existe dans la maquette validee et n a jamais ete implemente.",
+      "how": "mockups/portfolio-v1.html porte <footer> aux lignes 1325 a 1328 — « Donatien Koffi, 2026 » et « Rennes, France » — et son style aux lignes 852 a 866 : flex, justify-content space-between, filet superieur en --border-heavy, --font-mono, --text-xs, --track-wide, --ink-muted. Aucun fichier de src/ ne contient le mot footer. Ce n est donc pas une fonction nouvelle mais un ECART entre le site et sa maquette de reference, que neuf issues closes n avaient pas releve.",
+      "consequence": "L issue du pied de page ne modifie PAS la maquette. Elle rattrape le site sur un dessin deja approuve, et c est la seule des deux issues dont la forme n a pas a etre decidee."
+    },
+    {
+      "fact": "La barre n est pas fixe, et la maquette ne la montre pas fixe non plus.",
+      "how": "src/shared/SiteBar.css ne declare aucune position en dehors du lien d evitement. Le .bar de la maquette, lignes 150 a 160, ne declare pas davantage de position.",
+      "consequence": "Rendre la barre fixe est une VRAIE nouveaute visuelle. Le plan ne prend PAS mockup.not_applicable : l issue de la barre reserve la maquette et le dessin y est fait AVANT l ecran, comme la page du design system le prescrit. Nomme franchement : le validateur aurait accepte l exemption ici, parce que le diff de cette issue ne portera que du .css et un .spec.ts, et que screensAmong ne reconnait comme ecran que .tsx, .jsx, .vue et .svelte. L exemption etait donc disponible, et elle est refusee par choix."
+    },
+    {
+      "fact": "Les huit adresses sont a zero debordement horizontal aux huit largeurs demandees, aujourd hui.",
+      "how": "Mesure contre l artefact construit sur f9303b2, 64 combinaisons (8 adresses x 8 largeurs), document.documentElement.scrollWidth - clientWidth : liste vide. L affirmation de l operateur est confirmee plutot que reprise.",
+      "consequence": "La decouverte parquee de i-841g — /fr/realisations debordant de +62 px a 320 et +22 px a 360 — est PERIMEE : c28e1ff l a corrigee par overflow-wrap: anywhere sur le titre des realisations. Le zero mesure aujourd hui est ce que le plan exige de preserver, et il devient un critere plutot qu une esperance."
+    },
+    {
+      "fact": "La barre fait 186 px de haut a 320 px de large.",
+      "how": "Mesure sur l artefact construit, /fr/realisations, getBoundingClientRect().height de header.bar : 186 px a 320, 360 et 375 de large ; 146 a 480 ; 108 a 768 ; 68 a partir de 900. Sur une fenetre de 740 x 360 — un telephone tenu en paysage — la barre fait 108 px, soit 30 % de la hauteur. Sur 320 x 400, 186 px sur 400, soit 46 %.",
+      "consequence": "C est le fait qui commande tout le perimetre de la barre. Une barre fixee sans condition confisquerait pres de la moitie d un petit ecran, et la hauteur varie d un facteur 2,7 selon la largeur — ce qui interdit une compensation d ancre ecrite comme une seule valeur."
+    },
+    {
+      "fact": "La cible du lien d evitement est a 226 px du haut du document a 375 px de large.",
+      "how": "getBoundingClientRect().top de #contenu sur /fr/realisations, fenetre 375 x 700, page non defilee.",
+      "consequence": "Une barre collee de 186 px recouvrirait la cible sur presque toute sa hauteur apres un saut d ancre. C est le defaut que le critere 3 de l issue de la barre existe pour empecher."
+    }
+  ],
+  "functional_scope": {
+    "features": [
+      {
+        "name": "Une barre qui reste pendant qu on lit",
+        "user_value": "Un lecteur arrive au bas de la page du parcours et veut passer au contact : il n a pas a remonter toute la page pour retrouver la navigation, ni a chercher ou est passe le selecteur de langue.",
+        "rules": [
+          "La barre reste visible en haut de la fenetre pendant le defilement, sur les quatre pages et dans les deux langues.",
+          "La barre fixee est opaque : le texte qui passe dessous ne se lit pas au travers.",
+          "La barre ne recouvre jamais ce vers quoi le lecteur vient d etre conduit : ni la cible du lien d evitement, ni l element qui vient de recevoir le focus au clavier.",
+          "Sur un ecran court — un telephone tenu en paysage —, la barre cesse de rester : elle rend sa hauteur au contenu plutot que d en confisquer un tiers.",
+          "Rien de ce que la barre contient ne change : les quatre pages, les deux langues et le bouton de theme restent ce qu ils sont."
+        ]
+      },
+      {
+        "name": "Le pied de page",
+        "user_value": "Le lecteur qui arrive au bas d une page sait qui a ecrit ce site et d ou, et la page se termine au lieu de s arreter.",
+        "rules": [
+          "Chacune des quatre pages, dans les deux langues, porte le pied de page.",
+          "Le pied de page dit la personne, l annee et le lieu, exactement ce que la maquette validee montre.",
+          "L annee vient d une horloge, jamais d une valeur ecrite dans le code.",
+          "Le repere de pied de page est nomme dans la langue de la page, pour qu un lecteur d ecran l annonce dans cette langue."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Tout contenu de pied de page que la maquette ne montre pas : aucun lien, aucun profil, aucune mention legale, aucun plan du site, aucun bouton de retour en haut. La maquette porte deux mentions et le plan en livre deux.",
+      "Toute modification de ce que la barre CONTIENT. Les quatre entrees, le selecteur de langue et le bouton de theme sont livres et clos par i-841g et i-7eph ; cette demande ne porte que la maniere dont la barre se tient dans la fenetre.",
+      "Un menu deroulant, un burger, une barre qui se retracte au defilement vers le bas et reapparait au defilement vers le haut. L operateur a demande une barre qui reste, pas une barre qui reagit.",
+      "Toute modification de src/shared/tokens.css. Consequence assumee : la compensation d ancre s ecrit avec les jetons d espacement existants, ou par palier de largeur, et non par un jeton de hauteur de barre cree pour l occasion. Si l implementeur juge qu un jeton est indispensable, c est une remontee a l operateur, pas un elargissement.",
+      "Le pied de page sur la page 404, qui vit hors de la mise en page localisee et ne porte pas davantage la barre. La coherence des deux y est preservee : elle n en porte aucune des deux.",
+      "L annee juste sur un site prerendu qui traverse un 1er janvier sans etre reconstruit ET lu sans JavaScript. Le site est un artefact statique : l annee est calculee au prerendu et corrigee a l hydratation. Sans JavaScript et sans reconstruction, l annee affichee est celle de la construction. Limite nommee plutot que masquee.",
+      "Toute reponse a la question « que devient la barre entre 400 et 700 px de hauteur ». Le critere ne porte que sur 360 px de haut, la hauteur d un telephone courant en paysage ; l implementeur choisit le seuil et le declare."
+    ]
+  },
+  "decisions_for_operator": [],
+  "scope_final": true,
+  "notes": [
+    "Deux issues plutot qu une, et la raison n est PAS le parallelisme. La decision 0011 borne le parallelisme a deux issues dont aucune ne construit ; les deux issues de ce plan ont des criteres [e2e], donc elles construisent, donc elles se dispatchent en serie de toute facon. Ce que la coupe achete est l isolement du risque : le pied de page est un ecart contre un dessin approuve, il n a aucune question ouverte ; la barre en a une vraie, les 186 px a 320. Les fondre ferait dependre la chose reglee de la chose qui peut revenir en blocked_product.",
+    "L ordre est le pied de page d abord, la barre ensuite, et il est declare par une dependance plutot que laisse au hasard. check-reservations ne calcule qu un recouvrement de chemins ; les reservations des deux issues sont disjointes, donc il les laisserait partir ensemble, ce que la decision 0011 interdit. La dependance est le seul moyen dont dispose un plan pour dire une contrainte que l outil ne sait pas voir.",
+    "La barre passe en second aussi pour une raison de mesure : son critere de debordement porte sur les huit pages, et il vaut mieux qu il soit mesure sur un site qui porte deja son pied de page que sur un site qui ne le porte pas encore."
+  ]
+}

@@ -83,3 +83,215 @@ copied between `src/routes/index.tsx` and `src/routes/[...404].tsx`.
 
 **Now**: it is `src/shared/StarterNote.tsx`, and the threshold was not touched. A
 threshold loosened once loosens again.
+
+## A file policy changed in the configuration was not the one being enforced
+
+**Believed**: editing `file_policy` in `pipeline.config.json` changes what a role may
+write.
+
+**True**: `verify-scope.mjs` and `validate-handoff.mjs` read `rules.file_policy` — the
+copy injected into `pipeline/rules.json` — never the configuration. Only `apply-profile`
+rewrites that field. After decision 0006 the two disagreed: the configuration allowed
+`package.json`, the injected rules still denied it. `next-issues` reads the
+configuration, so the issue looked dispatchable while `verify-scope` would have refused
+its diff as out of role.
+
+**Now**: `apply-profile` is run after every `file_policy` change. The only place the
+drift surfaced on its own was `pre-push`, which is after the work.
+
+## An agent that could edit files could not run a single command
+
+**Believed**: `--permission-mode acceptEdits` is enough for a role that writes code.
+
+**True**: it accepts file edits and nothing else. In a non-interactive session `pnpm`,
+`node` and `git` are refused with no way to ask. The first real dispatch produced no
+code at all — correctly, since the implementer refused to declare a red proof it could
+not observe.
+
+**Now**: `agent_runtime.args` enumerates `--allowedTools`. The list was proven with two
+probes before being written, rather than assumed. `bypassPermissions` would have been
+shorter and would have opened the whole shell to an autonomous agent.
+
+## A gitignore pattern that only held while the directory existed
+
+**Believed**: `pipeline/handoffs/` in `.gitignore` ignores the handoff directory.
+
+**True**: a trailing slash matches directories only. The directory is absent from a
+fresh checkout — precisely because it is ignored — so `git check-ignore -q
+pipeline/handoffs` answered "not ignored" and `apply-profile --check` failed in CI
+while passing locally, where the directory happens to exist.
+
+**Now**: the pattern is `pipeline/handoffs`, without the slash, and the fix was proven
+by replaying the CI condition in a fresh clone rather than reasoned about.
+
+## A context block only travels when its heading names its addressee
+
+**Believed**: persisting evidence with `append_context` puts it in front of the next
+role.
+
+**True**: `contextsFor` keeps only blocks whose heading matches `## Context for <Role>`.
+A free heading — `CI i-3388`, `verify-scope i-3388 <base>..<sha>` — is archived on the
+record and never travels. That is deliberate: a closure proof is audit material rather
+than an instruction, and unaddressed blocks were half the weight on the heaviest issue
+measured.
+
+**Now**: anything a role must read carries `## Context for <Role>`. Anything meant for
+the audit trail keeps its own heading and stays on the record.
+
+**Still unresolved, and it is in the core**: the orchestrator prompt prescribes the
+unaddressed heading `## verify-scope <issue> <base>..<sha>`, while the QA prompt
+announces that same output as present in the QA package. Both cannot hold: the heading
+the first prescribes is precisely the one the filter drops. QA reported the gap and
+replayed `verify-scope` by hand. Not fixable here — the core is not to be modified.
+
+## A repeated context heading replaces, it does not append
+
+**Believed**: two `append_context` blocks under the same heading both reach the role.
+
+**True**: `contextsFor` keeps only the last block per heading — "only the last
+instruction is live, the earlier one is history". A correction sent as a second block
+under the same heading silently deleted the two scope decisions the first one carried.
+The record still holds both; only one travels.
+
+**Now**: a correction rewrites the whole block, and what the package actually carries is
+verified before dispatch rather than assumed.
+
+## A role forbidden to write the artefact its own contract requires
+
+**Believed**: denying `pipeline/**` to Product keeps it away from the control store.
+
+**True**: it also denied `pipeline/pages/` and `pipeline/handoffs/`, where the Product
+prompt requires it to render a review page and archive its proposal — and where
+`validate-handoff` refuses a proposal that has none. The role had to violate its policy
+to satisfy its contract.
+
+Worse, three earlier rounds wrote the same files without declaring them and passed. The
+round that declared them honestly in `evidence.files` was the one refused. **Honesty was
+punished**, which is the shape of rule that teaches agents to stay quiet.
+
+**Now**: Product's policy opens exactly `pipeline/pages/**` and `pipeline/handoffs/**`
+and denies the control store, the rules, the prompts, the briefs and the profile
+individually rather than by a blanket `pipeline/**`.
+
+## A large handoff arrives as a pointer, not as the document
+
+**Believed**: the `AGENT_HANDOFF` block always carries the whole handoff.
+
+**True**: a 62 KB proposal does not fit. Product wrote the document to its archive and
+returned a short handoff carrying `handoff_file { path }`. Validating the pointer
+reported four missing fields and looked like a defective agent; the document itself
+validated cleanly.
+
+**Now**: a handoff carrying `handoff_file` is validated at that path, not inline.
+
+## A module read by the build config must not reach a component, even lazily
+
+**Believed**: a dynamic `import()` inside an arrow that is never called costs nothing at
+build time.
+
+**True**: `vite.config.ts` imports `scripts/routes.mjs` to read the prerender list, and
+Vite's config loader **bundles** that file and follows its relative imports — the lazy
+ones included. A page table carrying `load: () => import("./WorksPage")` failed
+`pnpm run build` on `[UNRESOLVED_IMPORT]`, measured during the `i-1ee9` spike.
+
+**Now**: the table carries names only; the name-to-component map lives in the route file
+and is typed, so a page added without a component does not compile. See the amendment to
+decision 0009.
+
+## A coverage exclusion names a directory the screens have left
+
+**Believed**: excluding `src/routes/**` from coverage keeps browser-proven screens out of
+the unit threshold.
+
+**True**: decision 0009 replaced one route file per page with a single dynamic route and
+moved the screens to `src/shared/`, where the exclusion no longer applied. Coverage fell
+to 36.84% against a threshold of 90 — four page components at 0%, each of them proven by
+the browser suite.
+
+**Now**: the exclusion follows the screens (`src/shared/*Page.tsx`) and the threshold is
+untouched. Verified that the gate still bites: an uncovered function planted in
+`src/shared/pages.ts` drops it to 87.09% and it refuses.
+
+## Two issues in parallel on one branch leave broken commits between them
+
+**Believed**: reservations that do not intersect make two issues independent.
+
+**True**: they make their *files* independent, not their *history*. `i-841g` and `i-8m5b`
+interleaved as test, test, feat, feat on one branch. At `i-841g`'s own commit, the other
+issue's test file was already there and its module was not: `pnpm run check` exited 2 with
+nine tsc errors, so that SHA could never have a green run. QA refused to close on it and
+was right.
+
+`verify-scope` fails the same way: a diff from a shared base carries both issues, so each
+reports the other's files as undeclared. Measured per issue against its own commits, both
+were clean — nothing undeclared, nothing declared-but-untouched.
+
+**Now**: a parallel wave validates at the branch head, where the work is coherent, and
+`verify-scope` is replayed per issue against its own commits rather than a shared base.
+
+## A coverage exemption by filename is a rule about names, not about proof
+
+**Believed**: excluding `src/shared/*Page.tsx` keeps browser-proven screens out of the
+unit threshold.
+
+**True**: QA named the flaw as it was persisted, and it bit one issue later. `SiteBar.tsx`
+is a screen the browser suite proves exactly as much, does not end in `Page.tsx`, and
+counted as 0% — coverage fell to 85.59%. The pattern would also have exempted any future
+file that merely ended in `Page.tsx` without being proven anywhere.
+
+**Now**: screens are listed one by one. Each line is a claim someone had to write that the
+browser suite renders that file. Proven both ways: an uncovered function planted in
+`src/shared/content.ts` is refused, and a `FauxPage.tsx` that nothing proves is refused
+too — where the pattern would have exempted it.
+
+## Agents whose files are disjoint still share one git index
+
+**Believed**: `next-issues` declaring four issues parallel means they can run together.
+
+**True**: it computes the intersection of reserved paths and knows nothing about the
+shared index, the shared branch head or the shared `.output`. Four agents committing
+concurrently produced one commit carrying two issues' files, a test rewritten between its
+own red and green, an issue writing five files outside its reservations, and a `smoke`
+run that failed on six 404s because another agent's `build` had just run
+`clean-output.mjs` under it.
+
+**Now**: at most two issues in parallel, none of which builds; otherwise serial. See
+decision 0011. The real answer is one worktree per agent, which lives in the core.
+
+## An agent asked to stamp a time, with no way to read the clock, invents one
+
+**Believed**: a handoff's `produced_at` is a trivial field an agent fills correctly.
+
+**True**: `agent_runtime.args` listed `pnpm`, `node`, `git` and `gh run`, and nothing else.
+`date` was not among them, so the agent could not read the clock and guessed. Three
+handoffs in a row were refused for a `produced_at` in the future — first by two hours,
+then by one, then by twenty minutes. The agent was not careless; it was blind, and a
+field it must fill with no way to measure is a field it will invent.
+
+**Now**: `Bash(date:*)` is allowed, and it was proven before being written — the agent
+returned a stamp two seconds from the real clock. The general lesson is wider than the
+clock: any field a role must state, it must be able to measure, or the requirement
+manufactures the fabrication it means to prevent.
+
+## A tracker sync that never converges, because its confirmation crashes
+
+**Believed**: a `tracker-sync --apply` that leaves the store and the tracker disagreeing
+is a transient glitch, and running it again fixes it.
+
+**True**: `sudocode export` aborts roughly two runs in three with a native assertion —
+`node::RemoveEnvironmentCleanupHook — Assertion failed: (env) != nullptr`, from
+`better-sqlite3` under Node 24. `tracker-sync` writes the status correctly, then confirms
+it by exporting, and the confirmation is what dies. It reports "not confirmed in the
+exported snapshot" and refuses to dispatch on an unconfirmed state, which is right.
+
+The status update itself succeeds. Only the read-back is flaky, which is why some passes
+appeared to converge: those were the runs where the export happened not to crash.
+
+**Cost of not diagnosing it**: the bare `[node]` stack was seen three times and worked
+around by retrying. A flaky failure that a retry hides is more dangerous than a hard one,
+because it teaches people to stop reading it. It only got diagnosed when it started
+failing every time.
+
+**Now**: a bare `[node]` trace out of `tracker-sync` means the export aborted, not that
+the write failed. Check `.sudocode/issues.jsonl` for the desired status before assuming
+anything. The fix belongs to Sudocode, not to this repository.

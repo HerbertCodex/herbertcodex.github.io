@@ -1,0 +1,16 @@
+/*
+ * La maquette porte la largeur et la gouttière sur la feuille qui contient
+ * tout ; l'application n'a pas cette feuille, et c'est la barre qui les a
+ * reprises à son compte. Le pied les reprend à l'identique, sans quoi son
+ * filet et celui de la barre ne finiraient pas au même endroit.
+ */
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+  max-width: var(--page-max);
+  margin: var(--space-5) auto 0;
+  padding: var(--space-3) var(--space-4) var(--space-6);
+  border-top: var(--border-heavy) solid var(--ink);
+}

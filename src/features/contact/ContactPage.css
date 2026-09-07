@@ -1,0 +1,78 @@
+/*
+ * Le contact est une FICHE posee sur le papier : l'appel d'un cote, les
+ * conditions de l'autre. L'aplat vermillon plein qui portait toute la page a
+ * disparu — un aplat qui couvre les deux tiers d'un ecran n'est plus un
+ * signal, c'est un fond, et il repoussait les conditions hors de la premiere
+ * lecture.
+ */
+.card {
+  display: grid;
+  /*
+   * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
+   * pas sous la largeur de son contenu, et l'adresse de messagerie, qui ne se
+   * coupe qu'aux mots, faisait deborder le bloc de 122 px a 375. Piege deja
+   * paye trois fois dans ce depot.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+/* Une requete de media ne peut pas lire var() : 768 px est le jeton --bp-md. */
+@media (min-width: 768px) {
+  .card {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+
+/*
+ * L'appel porte le filet lourd et les conditions le filet fin : la hierarchie
+ * de la fiche tient au trait, donc elle tient aussi sans la couleur.
+ */
+.reach {
+  border-top: var(--border-heavy) solid var(--ink);
+  padding-top: var(--space-3);
+}
+
+.terms {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  border-top: var(--border-hairline) solid var(--rule);
+  padding-top: var(--space-3);
+}
+
+.terms dd {
+  margin: var(--space-1) 0 0;
+}
+
+/*
+ * La disponibilite est un SIGNAL, pas un fond : elle tient dans une pastille
+ * au bas de l'echelle typographique, dont `src/app.css` porte deja le corps,
+ * la casse et l'interlettrage. Ne reste ici que l'aplat et le texte clair
+ * qu'il exige — la decision 0012 tient les deux jetons distincts de l'accent
+ * pour que le rapport clair-sur-sature vaille dans les deux themes.
+ */
+.card .status {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  background: var(--accent-plate);
+  color: var(--on-accent);
+}
+
+.reach-what {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.reach-address {
+  display: block;
+  margin-bottom: var(--space-4);
+  min-height: var(--tap-min);
+  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-bold);
+  overflow-wrap: break-word;
+  text-decoration: none;
+}

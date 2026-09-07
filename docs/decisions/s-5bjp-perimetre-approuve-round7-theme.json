@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "document": "perimetre_approuve",
+  "spec_id": "s-5bjp",
+  "round": 7,
+  "title": "Un bouton de theme, et la memoire du choix",
+  "approved_at": "2026-09-06T12:26:04Z",
+  "approved_by": "operator",
+  "archived_at": "2026-09-06T12:30:26Z",
+  "proposal_round_waived": {
+    "waived": true,
+    "by": "operator",
+    "instruction_verbatim": "Pas de round de proposition : la demande est claire et l operateur veut avancer. Ecris directement les criteres d acceptation verifiables, les reservations et les dependances.",
+    "consequence": "Aucune page de revue n a ete rendue pour ce perimetre, et aucun decisions_for_operator ne lui a ete soumis. Ce fichier n est donc pas un round de proposition lu puis approuve : c est l archive de la demande de l operateur, ecrite mot pour mot, plus la lecture produit que le plan en tire. Il existe pour que le plan derive d un perimetre nomme et relisible sur un depot frais, et non d une intention. La confrontation habituelle — l operateur a-t-il vu ce qu il approuve — n a pas eu lieu ici : elle a ete remplacee par une demande explicite d avancer.",
+    "what_was_not_asked": [
+      "La place du bouton dans la barre et sa forme dessinee : la maquette ne le porte pas encore, et le plan exige qu elle soit mise a jour avant l ecran plutot que de trancher a la place de l operateur.",
+      "Le libelle exact du bouton dans les deux langues.",
+      "Le comportement d un lecteur qui refuse le stockage local, laisse a la resilience plutot qu au produit."
+    ]
+  },
+  "operator_request": {
+    "verbatim": "je veux un bouton pour passer de dark a light, par defaut on prend le theme par defaut du systeme",
+    "read_from": "pipeline/handoffs/i-841g-product-package.json, contexte « ## Context for Product (SPEC UNCLEAR) », depose le 2026-09-06T12:26:04.584Z",
+    "requirements_stated_by_the_operator": [
+      "Le defaut sans choix enregistre suit le systeme, et suit un CHANGEMENT du systeme tant que le lecteur n a pas tranche.",
+      "Le choix est memorise et survit a la navigation et au rechargement.",
+      "Aucun clignotement au chargement : la page ne doit pas s afficher en clair puis basculer en sombre, ce qui impose de poser data-theme AVANT la peinture et non dans un effet.",
+      "Le bouton est utilisable au clavier seul et son etat est annonce aux technologies d assistance.",
+      "Il existe dans les deux langues.",
+      "Le site est prerendu statiquement : le HTML servi ne connait pas le lecteur, donc rien ne peut etre decide au serveur."
+    ]
+  },
+  "functional_scope": {
+    "features": [
+      {
+        "name": "Le choix du theme",
+        "user_value": "Un lecteur qui prefere lire en sombre, ou en clair contre l avis de sa machine, obtient le portfolio dans le theme qu il veut, en une action, depuis n importe quelle page.",
+        "rules": [
+          "Tant que le lecteur n a rien choisi, le site rend le theme de son systeme.",
+          "Tant que le lecteur n a rien choisi, un changement du theme du systeme est suivi immediatement, sans rechargement.",
+          "Des que le lecteur a choisi, son choix l emporte sur le systeme, jusqu a ce qu il en change.",
+          "Le bouton est present sur les quatre pages, dans les deux langues, et son libelle est ecrit dans la langue de la page."
+        ]
+      },
+      {
+        "name": "La memoire du choix",
+        "user_value": "Le lecteur choisit une fois. Il ne rechoisit pas a chaque page, ni au retour sur le site le lendemain.",
+        "rules": [
+          "Le choix survit a la navigation d une page a l autre et au rechargement complet.",
+          "Le choix est garde sur le poste du lecteur : le site est un artefact statique, aucun serveur ne connait le lecteur et aucun compte n existe.",
+          "Une valeur enregistree que le produit n a pas ecrite est traitee comme une absence de choix, jamais comme une erreur affichee au lecteur."
+        ]
+      },
+      {
+        "name": "Un chargement sans clignotement",
+        "user_value": "Le lecteur qui a choisi le sombre ne recoit jamais une page blanche en pleine figure avant qu elle ne bascule.",
+        "rules": [
+          "Le theme est pose sur le document avant la premiere peinture, et non apres l hydratation.",
+          "La regle vaut sur les huit adresses, puisque chacune est un document prerendu independant."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Un troisieme etat « automatique » offert explicitement dans l interface. Le defaut EST le systeme tant que rien n est choisi ; l operateur a demande un bouton pour passer de sombre a clair, pas un selecteur a trois positions. Consequence assumee et nommee : une fois qu il a choisi, le lecteur ne dispose d aucun moyen dans l interface de revenir a « suivre le systeme » — il ne peut que reposer manuellement le theme qui correspond au sien.",
+      "Toute modification des valeurs de couleur. Le socle est livre par la decision 0012 et src/shared/tokens.css est un chemin en revue humaine : cette demande ne porte que l interface et la memoire.",
+      "Le theme sombre dans la maquette. La decision 0012 l a deja tente et mockup-check l a refuse : son parseur ne retient que la derniere declaration de chaque nom, donc un second theme effacerait le premier. La maquette montrera le BOUTON, en theme clair, et rien de plus.",
+      "Une preference par langue ou par page. Un seul choix vaut pour tout le site.",
+      "Le respect de prefers-reduced-motion sur la transition du basculement, qui n est pas demande et qu aucun mouvement nouveau ne rend necessaire : le basculement est instantane.",
+      "Toute synchronisation entre deux onglets ouverts sur le site."
+    ]
+  },
+  "decisions_for_operator": [],
+  "scope_final": true,
+  "notes": [
+    "Verifie plutot que suppose avant d ecrire ce perimetre : src/shared/tokens.css porte bien les deux chemins. Le bloc @media (prefers-color-scheme: dark) sous :root:not([data-theme=\"light\"]) donne le systeme, le bloc :root[data-theme=\"dark\"] donne le choix explicite, et les valeurs claires sont sur :root nu. Il n existe pas de bloc :root[data-theme=\"light\"], et il n en faut pas : sous un systeme sombre, data-theme=\"light\" desactive le bloc media par son :not et laisse les valeurs claires de :root nu s appliquer. Les deux choix explicites fonctionnent donc sans toucher au fichier.",
+    "Consequence directe de la premiere regle, et c est elle qui commande la forme de la solution : quand le lecteur n a rien choisi, le document ne doit porter AUCUN attribut data-theme. Poser data-theme=\"light\" par defaut casserait le suivi d un changement du systeme, qui est une exigence de l operateur."
+  ]
+}

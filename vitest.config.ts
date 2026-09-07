@@ -26,7 +26,35 @@ export default defineConfig({
       // declared test_suite replayed at closure. Counting them as uncovered here
       // would report a file that is proven, only elsewhere — and a threshold set
       // to absorb that noise stops refusing anything real.
-      exclude: ["src/entry-client.tsx", "src/entry-server.tsx", "src/global.d.ts", "src/app.tsx", "src/routes/**"],
+      // Les chemins suivent les ecrans : l'issue i-2q07 les deplace de
+      // `src/shared` vers `src/features/<page>`, et une liste qui ne suit pas
+      // laisse un ecran compter a 0 %. Mesure par Produit avant le travail :
+      // sans ce deplacement, coverage sort a 89,96 % pour un seuil de 90, la
+      // cause etant HomePage.tsx seul.
+      //
+      // Screens are listed ONE BY ONE, never by a name pattern. A first attempt
+      // excluded `src/shared/*Page.tsx`, and QA named the flaw before it bit: that
+      // is a rule about NAMES, not about PROOF. It let `SiteBar.tsx` — a screen the
+      // browser suite proves just as much — count as 0% one issue later, and it
+      // would silently exempt any future file that happened to end in `Page.tsx`
+      // without being proven anywhere.
+      //
+      // Each line below is a claim that the browser suite renders that file against
+      // the built site. Adding one is a decision someone had to write, which is the
+      // point: an exemption nobody had to justify is an exemption always taken.
+      exclude: [
+        "src/entry-client.tsx",
+        "src/entry-server.tsx",
+        "src/global.d.ts",
+        "src/app.tsx",
+        "src/routes/**",
+        "src/features/home/HomePage.tsx",
+        "src/features/works/WorksPage.tsx",
+        "src/features/journey/JourneyPage.tsx",
+        "src/features/contact/ContactPage.tsx",
+        "src/shared/SiteBar.tsx",
+        "src/shared/LanguageSwitch.tsx",
+      ],
       reporter: ["text", "lcov"],
       // Measured on this repository rather than chosen in advance. Lines,
       // functions and statements sit at 100% on the covered scope, so 90 leaves

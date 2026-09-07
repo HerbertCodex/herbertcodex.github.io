@@ -1,0 +1,219 @@
+/*
+ * Le bandeau, le numero et le compte sont la primitive de `src/app.css` ; la
+ * page ne fixe que ce qui lui appartient : la respiration entre deux blocs, et
+ * l'echelle d'un titre de section, qui n'est pas celle d'un titre de page.
+ */
+.journey .section-head {
+  margin: var(--space-6) 0 var(--space-4);
+}
+
+.journey .section-head h2 {
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  margin: 0;
+}
+
+.rows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-hairline) solid var(--rule);
+}
+
+/*
+ * Quatre colonnes plutot que deux : la date, le rail, le poste, et ce qui y a
+ * ete employe. A deux colonnes, les deux tiers droits de la page restaient
+ * vides, ce qui se lit comme un contenu absent plutot que comme une
+ * respiration.
+ */
+@media (min-width: 768px) {
+  .row {
+    grid-template-columns: var(--space-8) var(--space-4) 1fr minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.row > * {
+  min-width: 0;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row strong {
+  display: block;
+  letter-spacing: var(--track-tight);
+}
+
+.row p {
+  margin: var(--space-1) 0 0;
+  color: var(--ink-muted);
+  max-width: var(--measure);
+}
+
+.when {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+
+/*
+ * Le poste en cours et le diplome en cours d obtention sont ECRITS, pas
+ * seulement colores. La maquette ne les distinguait que par un noeud plein sur
+ * le rail : une difference de couleur qu aucun lecteur daltonien ni aucun
+ * lecteur d ecran ne recoit. Le noeud plein reste, en second.
+ */
+.mark {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding: 0 var(--space-2);
+  background: var(--accent-plate);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+}
+
+/*
+ * Le rail reprend le trait des schemas : un noeud sur une ligne. Le parcours
+ * devient lui aussi un flux, et la page garde un seul vocabulaire graphique.
+ */
+.rail {
+  display: none;
+  position: relative;
+  align-self: stretch;
+}
+
+@media (min-width: 768px) {
+  .rail {
+    display: block;
+  }
+}
+
+.rail::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: calc(var(--space-4) * -1);
+  width: var(--flow-stroke);
+  background: var(--rule);
+  transform: translateX(calc(var(--flow-stroke) / -2));
+}
+
+.row:last-child .rail::before {
+  bottom: 50%;
+}
+
+.rail::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: var(--space-2);
+  width: var(--space-2);
+  height: var(--space-2);
+  background: var(--paper);
+  border: var(--flow-stroke) solid var(--ink);
+  transform: translateX(-50%);
+  transition: background var(--motion-base) var(--ease-out-quart);
+}
+
+.row.current .rail::after {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.used {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+}
+
+/*
+ * Les technologies sortent du gris. C est la premiere chose qu un lecteur
+ * technique cherche, et un filtre automatique de recrutement les lit aussi :
+ * en gris clair elles etaient moins visibles que la ponctuation autour.
+ */
+.used span {
+  border: var(--border-hairline) solid var(--ink);
+  background: var(--paper-raised);
+  color: var(--ink);
+  padding: var(--space-1) var(--space-2);
+  transition:
+    background var(--motion-fast) var(--ease-out-quart),
+    color var(--motion-fast) var(--ease-out-quart);
+}
+
+.row:hover .used span {
+  background: var(--ink);
+  color: var(--ink-inverse);
+}
+
+.skills {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--border-hairline);
+  background: var(--rule);
+  border: var(--border-hairline) solid var(--rule);
+}
+
+@media (min-width: 768px) {
+  .skills {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.skill {
+  background: var(--paper);
+  padding: var(--space-3);
+  min-width: 0;
+}
+
+.skill h3 {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--track-wide);
+  color: var(--accent);
+  margin: 0 0 var(--space-2);
+}
+
+/*
+ * Les competences etaient ecrites en phrases : « Kafka, API REST, files de
+ * messages ». Un recruteur qui cherche une technologie precise doit alors LIRE
+ * au lieu de BALAYER. Le meme vocabulaire d etiquettes que dans les
+ * realisations rend chaque nom reperable d un coup d oeil.
+ */
+.skill .used {
+  gap: var(--space-1);
+}
+
+/*
+ * La rangee de liens est la primitive `.links` de `src/app.css`, pas une
+ * copie : seule sa place dans la page appartient a cet ecran.
+ */
+.journey .links {
+  margin-top: var(--space-5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail::after,
+  .used span {
+    transition-duration: var(--motion-fast);
+  }
+}

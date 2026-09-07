@@ -1,0 +1,125 @@
+/*
+ * Le lien d'évitement est hors de l'écran tant qu'il n'a pas le focus, et
+ * jamais retiré du flux : `display: none` le sortirait aussi de l'ordre de
+ * tabulation, donc du seul usage qu'il ait.
+ */
+.skip {
+  position: absolute;
+  left: var(--space-3);
+  top: calc(var(--space-8) * -1);
+  z-index: 3;
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: var(--border-heavy) solid var(--accent);
+  transition: top var(--motion-base) var(--ease-out-expo);
+}
+
+.skip:focus {
+  top: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip {
+    transition-duration: var(--motion-fast);
+  }
+}
+
+/*
+ * La barre reste en haut pendant qu'on lit, elle porte donc un fond OPAQUE :
+ * le texte passe dessous, et sans aplat il se lirait à travers elle. C'est le
+ * papier de la page, pas un blanc de plus.
+ */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: var(--page-max);
+  margin: 0 auto var(--space-5);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  background: var(--paper);
+  border-bottom: var(--border-heavy) solid var(--ink);
+}
+
+/*
+ * Une barre qui reste prend sa hauteur au texte, et elle ne la prend que si
+ * la fenêtre a de quoi la donner. Deux cas la rendent légitime : une fenêtre
+ * d'au moins 768 px de haut, où même la barre repliée sur trois lignes tient
+ * dans le quart de l'écran ; ou, dès 768 px de large, où elle tient sur une
+ * seule ligne, une fenêtre de 420 px. Un téléphone tenu en paysage ne remplit
+ * ni l'un ni l'autre : mesurée à 186 px de haut, elle y confisquerait la
+ * moitié de l'écran, et elle la rend.
+ *
+ * Une requête de média ne peut pas lire var() : les deux valeurs sont écrites
+ * en clair, mais ce sont les jetons --bp-md et --shape-lg.
+ *
+ * Le lien d'évitement garde son z-index au-dessus : la seule chose qui ait le
+ * droit de couvrir la barre est ce qui mène hors d'elle.
+ */
+@media (min-height: 768px), (min-width: 768px) and (min-height: 420px) {
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+/*
+ * Ce que le navigateur garde libre au-dessus de ce vers quoi il conduit : la
+ * cible du lien d'évitement, et tout élément qui reçoit le focus au clavier.
+ * Sans cette réserve, la barre restée en haut les recouvre, et le lecteur
+ * qu'on vient d'y mener ne voit rien.
+ *
+ * Elle est déclarée ici, avec la barre qui la rend nécessaire, plutôt que
+ * dans la feuille de mise en page : séparées, la réserve et la condition qui
+ * fait rester la barre dériveraient l'une de l'autre sans que rien ne le
+ * dise. Les deux requêtes reprennent exactement les conditions ci-dessus.
+ *
+ * Aucune propriété CSS ne mesure la barre : la réserve est écrite comme une
+ * somme de pas de l'échelle, au-dessus de la plus haute barre observée —
+ * 186 px, repliée sur trois lignes à 320 px de large. Elle redescend d'un
+ * cran dès que la barre tient sur une ligne.
+ */
+@media (min-height: 768px) {
+  html {
+    scroll-padding-top: calc(var(--space-8) + var(--space-6));
+  }
+}
+
+@media (min-width: 768px) and (min-height: 420px) {
+  html {
+    scroll-padding-top: var(--space-8);
+  }
+}
+
+/*
+ * `src/app.css` habille tout `nav` d'un filet et d'une gouttière, ce qui
+ * datait de la navigation posée à nu dans la mise en page. Dans la barre, ce
+ * filet en double un autre à trois pixels de lui.
+ */
+.bar nav {
+  flex-wrap: wrap;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.mark,
+.bar nav a {
+  font-size: var(--text-sm);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+}
+
+.mark {
+  font-weight: var(--weight-bold);
+}
+
+.bar nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--ink);
+  text-decoration: none;
+}

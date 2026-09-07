@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "mode": "spec_proposal",
+  "agent": "product",
+  "produced_at": "2026-09-04T18:19:36Z",
+  "round": 2,
+  "scope": {
+    "spec_id": "s-0001"
+  },
+  "basis": {
+    "record_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "note": "sha256 de pipeline/store/specs.jsonl, lu vide : la spec n'existe pas encore dans le store."
+  },
+  "outcome": "awaiting_operator",
+  "review_page": {
+    "path": "pipeline/pages/proposal-portfolio-v1.html"
+  },
+  "scope_final": true,
+  "operator_feedback": {
+    "verbatim": "1: Une bibliothèque d'internationalisation : justifiée le jour où le contenu explose ou si une troisième langue arrive. C'est une installation de dépendance, donc votre décision seule. 2: je suis ta recommandation avec la priorité sur la recherche d'emploi. 3: je ne comprends pas ça. 4: suis la recommandation. Puis, après reformulation : fichiers de contenu séparés ; une adresse par langue ; France d'abord.",
+    "decided": [
+      "d1-bilinguisme : une bibliothèque d'internationalisation, contre la recommandation Product.",
+      "d1b-adressage : une adresse par langue, /fr/... et /en/...",
+      "d2-publics : hiérarchiser, avec la recherche d'emploi salarié en priorité.",
+      "d3-contenu : des fichiers de contenu séparés, versionnés.",
+      "d4-cv : un CV PDF versionné dans les deux langues.",
+      "d5-marche : la France d'abord, donc le français comme langue par défaut."
+    ],
+    "changed": [
+      "La règle « pas de page à moitié traduite » devient vérifiable par une commande plutôt que par relecture : c'est la conséquence directe d'avoir séparé les libellés d'interface (dictionnaires) du contenu long (fichiers par langue).",
+      "La fonctionnalité bilingue précise désormais que la racine du site redirige vers le français, conséquence de d1b combiné à d5.",
+      "La fonctionnalité « Parcours » porte le CV téléchargeable dans les deux langues, avec le CV français mis en avant (d4 + d5).",
+      "La fonctionnalité « Prise de contact » porte un appel à l'action principal unique orienté recrutement, les autres moyens restant accessibles mais secondaires (d2).",
+      "Une exclusion a été ajoutée : le contenu long ne passe pas par les dictionnaires de la bibliothèque. Sans cette phrase, la coexistence des deux mécanismes de traduction serait tranchée au hasard par le premier agent qui écrit une page.",
+      "Product maintient, pour mémoire et sans y revenir, que la surface mesurée — 30 à 50 clés d'interface — ne justifiait pas une dépendance. La décision de l'opérateur est suivie, et l'évaluation de dépendance qui l'accompagne retient le candidat le moins coûteux à quitter."
+    ]
+  },
+  "answers_composition_check": {
+    "pairs_checked": [
+      {
+        "pair": [
+          "d1-bilinguisme : une bibliothèque",
+          "d3-contenu : des fichiers de contenu séparés"
+        ],
+        "composes": true,
+        "note": "Elles composent, mais seulement une fois la frontière écrite noir sur blanc, et c'est la confrontation la plus utile de ce round. Une bibliothèque d'internationalisation traduit des libellés courts référencés par une clé ; elle n'est pas faite pour porter la description d'un projet ou un parcours. Sans règle explicite, un agent mettrait le texte long dans les dictionnaires — parce que c'est là que vit « la traduction » — et le contenu deviendrait illisible en même temps que les fichiers de contenu perdraient leur raison d'être. La proposition tranche donc : dictionnaires pour l'interface, fichiers par langue pour le contenu, et rien ne traverse cette frontière."
+      },
+      {
+        "pair": [
+          "d1b-adressage : une adresse par langue",
+          "d5-marche : le français par défaut"
+        ],
+        "composes": true,
+        "note": "Elles composent à condition de répondre à une question qu'aucune des deux ne pose seule : que se passe-t-il à la racine du site ? Avec des adresses préfixées, « / » n'appartient à aucune langue. La proposition la fait rediriger vers la version française, ce qui est la traduction directe de « la France d'abord » et évite une page fantôme que personne n'aurait spécifiée."
+      },
+      {
+        "pair": [
+          "d2-publics : priorité à la recherche d'emploi",
+          "d5-marche : la France d'abord"
+        ],
+        "composes": true,
+        "note": "Cohérentes et se renforçant : un recruteur français lit une page française et attend un CV français. C'est ce qui justifie de mettre le CV français en avant plutôt que de présenter les deux à égalité."
+      },
+      {
+        "pair": [
+          "d2-publics : priorité à la recherche d'emploi",
+          "bilinguisme FR/EN retenu au round 1"
+        ],
+        "composes": false,
+        "note": "Il y a une tension réelle, et la taire serait la laisser se régler toute seule au pire moment. Si la cible est le marché français, la version anglaise sert peu, et une version peu servie est une version qu'on laisse vieillir — jusqu'au jour où elle est à moitié traduite, ce que la règle interdit. La proposition ne résout pas la tension en abandonnant l'anglais, puisque vous l'avez demandé : elle la rend visible en faisant de la complétude des traductions un gate, de sorte qu'une version anglaise négligée bloque la publication au lieu de se dégrader en silence. C'est le coût assumé du bilinguisme sur un site dont le public prioritaire est francophone."
+      },
+      {
+        "pair": [
+          "d4-cv : CV dans les deux langues",
+          "d3-contenu : des fichiers de contenu séparés"
+        ],
+        "composes": true,
+        "note": "Le CV est un fichier binaire versionné, pas du contenu structuré : il suit la même règle d'organisation par langue, sans passer par le mécanisme de traduction. Rien à arbitrer, mais la symétrie évite qu'on invente un troisième emplacement."
+      }
+    ],
+    "conflicts_found": []
+  },
+  "functional_scope": {
+    "summary": "Un portfolio personnel qui présente un développeur, son travail et un moyen de le joindre, en français d'abord et en anglais. Il s'adresse en priorité à un recruteur du marché français. Il ne possède aucune donnée : il ne stocke rien, ne demande aucun compte et n'enregistre aucun message.",
+    "features": [
+      {
+        "name": "Présentation des projets réalisés",
+        "user_value": "Un recruteur comprend en quelques secondes ce que cette personne sait construire, sans lire de code ni aller chercher ailleurs.",
+        "rules": [
+          "Chaque projet dit ce qu'il fait, pour qui, et ce que la personne y a fait précisément — pas seulement la liste des technologies employées.",
+          "Un projet dont ni la démonstration ni le code ne sont consultables l'annonce, plutôt que d'exposer un lien qui ne mène nulle part.",
+          "L'ordre des projets est choisi par la personne : le plus représentatif d'abord, jamais un tri automatique par date.",
+          "Un projet peut être présenté sans image : l'absence de visuel ne doit pas casser la mise en page.",
+          "Le texte d'un projet vit dans un fichier de contenu versionné, une version par langue ; ajouter un projet n'est pas une modification de composant."
+        ]
+      },
+      {
+        "name": "Parcours, compétences et CV",
+        "user_value": "Un recruteur sait à qui il parle, juge la pertinence du profil en moins d'une minute, et repart avec un document qu'il peut transmettre en interne.",
+        "rules": [
+          "Le parcours dit ce que la personne a fait et sait faire, pas seulement où elle est passée et pendant combien de temps.",
+          "Les compétences annoncées sont adossées à au moins un projet présenté, ou ne sont pas annoncées.",
+          "Un CV téléchargeable est proposé dans les deux langues, versionné dans le dépôt plutôt qu'hébergé ailleurs : un lien vers un stockage externe expire sans que personne s'en aperçoive.",
+          "La version du CV proposée en premier est celle de la langue affichée."
+        ]
+      },
+      {
+        "name": "Prise de contact",
+        "user_value": "Un recruteur convaincu peut joindre la personne immédiatement, sans formulaire, sans compte et sans attendre de réponse d'un serveur.",
+        "rules": [
+          "Un seul moyen de contact est mis en avant comme appel à l'action principal, orienté recrutement ; les autres restent accessibles sans occuper le même niveau de visibilité.",
+          "Au moins un moyen de contact est atteignable depuis n'importe quelle page du site.",
+          "Aucun message n'est stocké ni transmis à un tiers : les liens ouvrent l'outil du visiteur — messagerie, LinkedIn, GitHub.",
+          "Un lien de contact cassé est un défaut bloquant : c'est le seul chemin qui transforme une visite en opportunité."
+        ]
+      },
+      {
+        "name": "Site bilingue français / anglais",
+        "user_value": "Un visiteur francophone et un visiteur anglophone lisent chacun le site dans sa langue, et changent de langue sans perdre la page qu'ils consultaient.",
+        "rules": [
+          "Le français est la langue par défaut : la racine du site conduit à la version française.",
+          "Chaque langue a ses propres adresses, de la forme /fr/... et /en/..., afin qu'un lien partagé s'ouvre dans la bonne langue et que chaque version soit indexable.",
+          "Toute page existe dans les deux langues. Une page traduite à moitié n'est pas publiée, et cette complétude est vérifiée par une commande, pas par relecture.",
+          "Les libellés d'interface sont traduits par le mécanisme de la bibliothèque retenue ; le contenu long — projets, parcours — vit dans des fichiers séparés par langue et ne passe jamais par les dictionnaires.",
+          "Le changement de langue conduit à la même page dans l'autre langue, jamais à l'accueil.",
+          "Le changement de langue est utilisable au clavier et annoncé aux lecteurs d'écran."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Un blog ou des articles — écarté explicitement : c'est la section la plus coûteuse à construire et surtout à nourrir, et un blog abandonné date le site plus sûrement qu'une absence de blog.",
+      "Tout formulaire de contact, et donc tout stockage ou transmission de message.",
+      "Une interface d'administration ou un CMS : le contenu est modifié par la personne, dans le dépôt.",
+      "Toute mesure d'audience, statistique ou traceur.",
+      "Un espace commentaires, une newsletter, un flux d'abonnement.",
+      "Une recherche dans le contenu : trois pages ne se cherchent pas, elles se lisent.",
+      "Toute langue autre que le français et l'anglais.",
+      "Une détection automatique de la langue du navigateur : le français est servi par défaut, le visiteur bascule s'il le souhaite. Une détection qui se trompe est plus agaçante qu'un choix explicite, et bien plus difficile à tester.",
+      "Le passage du contenu long par les dictionnaires de traduction : la frontière est fixée pour que les deux mécanismes ne se recouvrent pas.",
+      "Un CV généré automatiquement depuis le contenu du site : c'est une fonctionnalité à part entière, pas un détail de cette spécification."
+    ]
+  },
+  "domain_reading": {
+    "retained": "Ce produit n'a pas de domaine métier : il ne refuse rien pour une raison venant du monde réel. Il n'a ni règle de gestion, ni état à faire évoluer, ni situation où il doive répondre non. C'est un document publié, structuré et traduit — ce que la décision 0001 avait déjà conclu en fixant project_type à frontend. Le round 2 ne change pas cette lecture : hiérarchiser des publics et choisir une langue par défaut sont des décisions éditoriales, pas des règles métier.",
+    "discarded": [
+      "Lire les projets comme des entités persistées avec cycle de vie : il n'y a ni création par un utilisateur, ni transition d'état, ni règle d'accès. Une base de données ici serait une réponse à une question que personne ne pose.",
+      "Lire le bilinguisme comme un domaine : c'est une contrainte de présentation du même contenu, pas une règle métier. Ce qui en découle est une exigence de complétude — pas de page à moitié traduite — et cela se vérifie, ce n'est pas un jugement."
+    ]
+  },
+  "contract_sketch": "Trois pages — projets, à propos, contact — déclinées en deux langues sous /fr et /en, produites à la construction et servies comme fichiers statiques. La racine redirige vers /fr. Les libellés d'interface viennent de dictionnaires par langue ; le contenu éditorial vient de fichiers versionnés, un par langue, séparés des composants qui les affichent. Deux CV PDF versionnés. Aucun appel réseau au moment de l'affichage.",
+  "decomposition_titles": [
+    "Socle bilingue : adressage /fr et /en, redirection de la racine, sélecteur accessible qui reste sur la même page",
+    "Complétude des traductions vérifiée par une commande, sur les dictionnaires comme sur les fichiers de contenu",
+    "Structure du contenu éditorial versionné, une version par langue, séparée de l'affichage",
+    "Page projets : liste et présentation détaillée d'un projet",
+    "Page à propos : parcours, compétences adossées aux projets, et CV téléchargeable",
+    "Contact : appel à l'action principal orienté recrutement, moyens secondaires accessibles depuis toute page",
+    "Mise en forme des pages à partir des tokens existants et des primitives à écrire"
+  ],
+  "decisions_for_operator": [],
+  "context": {
+    "heading": "## Context for operator",
+    "body": "Ce round répond à six décisions et n'en ouvre aucune : d'où scope_final à true, qui est la seule façon d'envoyer une liste de décisions vide sans être refusé — le silence se déclare, il ne se suppose pas. L'installation de la bibliothèque fait l'objet d'une évaluation séparée, pipeline/handoffs/i18n-dependency-assessment.json, rendue dans pipeline/pages/dependency-i18n.html : elle retient @solid-primitives/i18n@2.2.1 et nomme sa faiblesse, seize mois sans publication. Aucun agent n'installe de dépendance : ce geste reste le vôtre. Product a maintenu son désaccord une fois, par écrit, dans operator_feedback.changed, et suit votre décision."
+  },
+  "evidence": {
+    "commands": [
+      {
+        "cmd": "pnpm audit --audit-level high",
+        "exit": 0,
+        "note": "sur main, avant création de la branche spec/portfolio-v1"
+      },
+      {
+        "cmd": "npm view <paquet> version license peerDependencies",
+        "exit": 0,
+        "note": "quatre candidats i18n relevés au registre le 2026-09-04"
+      },
+      {
+        "cmd": "gh api /advisories?ecosystem=npm&affects=<paquet>",
+        "exit": 0,
+        "note": "alertes ouvertes vérifiées, pas supposées"
+      }
+    ],
+    "files": [],
+    "commit_sha": null,
+    "notes": [
+      "Aucune issue dans cette proposition : la décomposition se paie après l'accord, et n'est donnée ici que sous forme de titres."
+    ]
+  },
+  "blockers": []
+}

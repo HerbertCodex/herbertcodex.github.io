@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "document": "perimetre_approuve",
+  "spec_id": "s-5bjp",
+  "round": 9,
+  "title": "L accueil en grille, le contact en fiche, la page a sa largeur, le filet en trop et l icone de theme",
+  "approved_at": "2026-09-07T06:03:26Z",
+  "approved_by": "operator",
+  "archived_at": "2026-09-07T06:15:00Z",
+  "proposal_round_waived": {
+    "waived": true,
+    "by": "operator",
+    "instruction_verbatim": "NOUVELLE DEMANDE. Les onze issues de s-5bjp sont closes ; celle-ci sert d ancrage. Produis un spec_plan avec un scope_change, SANS round de proposition. VISE UNE SEULE ISSUE, c est une consigne de l operateur et non une suggestion.",
+    "consequence": "Aucune page de revue n a ete rendue pour ce perimetre, et aucun decisions_for_operator ne lui a ete soumis. C est la TROISIEME fois de suite sur cette spec, apres les rounds 7 et 8. Ce fichier n est donc pas un round de proposition lu puis approuve : c est l archive de la demande de l operateur, ecrite mot pour mot, plus la lecture produit que le plan en tire, plus les faits mesures avant d ecrire. Il existe pour que le plan derive d un perimetre nomme et relisible sur un depot frais, et non d une intention. La confrontation habituelle — l operateur a-t-il vu ce qu il approuve — n a pas eu lieu. La difference avec les deux rounds precedents est que la maquette, elle, A ete vue : mockups/accueil-contact.html est publiee et retenue par l operateur sur une planche de quatre directions, donc l accueil et le contact sont approuves sur un DESSIN plutot que sur un texte, ce qui est la meilleure forme de revue disponible ici.",
+    "what_was_not_asked": [
+      "Le contenu editorial. Aucun mot du site ne change : la pastille du contact reprend telle quelle la cle contact.lede, qui vaut deja « Disponible immediatement », et les trois lignes de description de l accueil reprennent telles quelles les cles home.entries. Le plan n ecrit aucun texte neuf et n ouvre aucun debat de contenu.",
+      "Le choix de l icone. La decision 0015 autorise lucide-solid ; elle ne dit PAS quelle icone. Le plan laisse le couple soleil / lune a l implementeur, parce que c est ce que la maquette dessine — un croissant pour passer en sombre — et qu aucun critere ne peut departager deux tracees.",
+      "Ce que devient la maquette. mockups/accueil-contact.html porte deja les quatre points qu elle peut porter et elle passe mockup-check sans une seule valeur hors jeton, verifie plutot que suppose. Le plan ne demande donc AUCUNE modification de maquette, et n en reserve aucune. Le cinquieme point, le filet en trop, ne se dessine pas sur une planche qui ne montre ni realisations ni parcours : il se prouve dans l application.",
+      "Le point de rupture. Le plan reprend celui de la maquette et du site, --bp-md a 768 px, sans le soumettre : il est deja la valeur de tout le depot.",
+      "Que faire des deux feuilles qui elargissaient deja leur page a la main. Mesure ci-dessous : --page-max n est pas inutilise, il porte deja main.works et main.journey. Le plan fait remonter la largeur dans src/app.css et retire les deux surcharges devenues redondantes, ainsi que leurs commentaires devenus faux. Ce n est pas une demande de l operateur, c est la consequence mecanique de sa demande, et elle est nommee ici plutot que decouverte dans un diff."
+    ]
+  },
+  "operator_request": {
+    "verbatim_points": [
+      "1. ACCUEIL EN GRILLE. Les trois entrees nommees deviennent trois cellules cote a cote sur ecran large, une par ligne en dessous du point de rupture. Numero, nom, une ligne de description. Aucune hauteur imposee : la maquette en a d abord porte une de 260 px et elle recreait exactement le vide que l operateur reprochait.",
+      "2. CONTACT EN FICHE. L adresse et les liens a gauche sur fond papier, les conditions a droite. Le bandeau vermillon plein disparait. Une pastille « Disponible immediatement » en aplat.",
+      "3. LA LARGEUR DE PAGE. src/app.css limite main a --measure, soit 740 px : le site vit dans 740 px avec 590 px de vide de chaque cote sur un ecran de 1920, et --page-max vaut 1440px sans etre utilise nulle part. La PAGE prend --page-max ; seuls les blocs de TEXTE LONG gardent --measure.",
+      "4. LE DOUBLE FILET. Sur une page de section, le filet haut de la PREMIERE section double celui de la barre : mesure sur /fr/realisations, border-bottom 3px de header.bar a y=68 et border-top 3px de div.section-head a y=172.",
+      "5. L ICONE DE THEME. Le bouton affiche « Sombre » ; il doit afficher une icone qui change avec le mode. lucide-solid est AUTORISEE par la decision 0015. Le nom accessible du bouton doit rester dans la langue de la page et continuer d annoncer le theme EN VIGUEUR."
+    ],
+    "read_from": "pipeline/handoffs/i-841g-product-package.json, contexte « ## Context for Product (SPEC UNCLEAR) », depose le 2026-09-07T06:03:26.151Z",
+    "invariants_stated_by_the_operator": [
+      "Les huit adresses restent a zero debordement horizontal aux largeurs 320, 360, 375, 480, 768, 900, 1100 et 1440.",
+      "Aucune cible tactile n est sous 24 px.",
+      "La cible du lien d evitement n est recouverte par la barre a aucune largeur.",
+      "Aucun arret de tabulation n est recouvert par la barre.",
+      "Sur une fenetre de 740 par 360 la barre rend sa hauteur au contenu.",
+      "Le nom vient d un seul endroit, src/shared/identity.ts."
+    ]
+  },
+  "facts_measured_before_writing_this_scope": [
+    {
+      "fact": "Le vide lateral de 590 px est exact, mais il ne concerne que DEUX pages sur quatre.",
+      "how": "Mesure contre l artefact construit sur b5282d7, getBoundingClientRect de main sur les huit adresses. A 1920 px de large : /fr, /fr/contact, /en, /en/contact rendent main a 740 px, cale a gauche 590 — le chiffre de l operateur au pixel. Mais /fr/realisations, /fr/parcours, /en/work et /en/about rendent main a 1488 px, cale a 216. A 1440 px de large, les memes quatre pages remplissent la fenetre entiere.",
+      "consequence": "Le perimetre du point 3 est plus etroit que sa formulation : seuls l accueil et le contact vivent dans 740 px, et ce sont exactement les deux pages que cette demande refait par ailleurs."
+    },
+    {
+      "fact": "--page-max n est PAS inutilise : quatre feuilles le referencent deja.",
+      "how": "grep -rn page-max src/ : src/shared/SiteBar.css:39, src/shared/SiteFooter.css:12, src/shared/WorksPage.css:10, src/shared/JourneyPage.css:9. La barre et le pied de page l ont pris a leur compte, et les deux pages d inventaire elargissent main a la main, chacune avec un commentaire expliquant que src/app.css les borne trop court.",
+      "consequence": "L affirmation « --page-max vaut 1440px sans etre utilise nulle part » est fausse, et cela CHANGE le travail : faire remonter la largeur dans src/app.css rend main.works et main.journey redondantes et rend leurs commentaires faux. Le plan retire les deux surcharges et leurs commentaires dans le meme changement, sans quoi le depot porterait deux sources pour une seule decision — exactement ce que la decision 0013 refuse ailleurs."
+    },
+    {
+      "fact": "--measure ne vaut pas 740 px : c est une mesure en ch, donc elle depend de la taille de la police de l element qui la porte.",
+      "how": "Sonde dans le navigateur sur l artefact construit : 64ch a 17 px, la taille du corps, vaut 692 px — plus les deux remplissages de --space-4, cela fait les 740 px de main. Mais getComputedStyle(.lede).maxWidth rend 895,81 px, parce que le chapo est a --text-lg, 22 px.",
+      "consequence": "Deux consequences nommees plutot que decouvertes. La premiere : le max-width: var(--measure) du chapo de l accueil ne fait RIEN aujourd hui, main le bornant plus court. Quand main s elargira, le chapo passera de 692 a 896 px — c est ce que la maquette dessine, et c est accepte, mais personne ne doit le decouvrir sur une capture. La seconde : un critere ecrit comme « au plus --measure » serait fragile ; le plan compare donc le chapo a main plutot qu a une valeur."
+    },
+    {
+      "fact": "Le double filet existe, et il ne touche que la page des realisations.",
+      "how": "Mesure a 1440 px sur l artefact construit. /fr/realisations et /en/work : le PREMIER enfant de main est div.section-head, filet superieur 3 px a y=172, sous le filet inferieur 3 px de header.bar a y=68. /fr/parcours et /en/about : le premier enfant de main est un h1, et le premier div.section-head est a y=285, precede d un titre et d un chapo — son filet separe donc de quelque chose qui existe. /fr, /en, /fr/contact et /en/contact ne portent aucun bandeau de section.",
+      "consequence": "Le correctif doit viser le bandeau qui OUVRE une page, pas tout bandeau. Une regle appliquee a tous casserait la separation legitime du parcours. Le plan ecrit donc un critere positif — le bandeau d ouverture perd son filet — et un critere negatif — le bandeau qui suit du contenu garde le sien — parce que sans le second, la sur-application passerait toutes les portes."
+    },
+    {
+      "fact": "L invariant « aucune cible tactile n est sous 24 px » est FAUX aujourd hui, sur les huit adresses.",
+      "how": "Mesure sur l artefact construit, toutes les ancres et tous les boutons des huit adresses aux largeurs 320, 768 et 1440 : une seule cible sort, a.lang, le lien qui mene a l autre langue. Il mesure 22 x 24 px en francais et 20 x 24 px en anglais, aux trois largeurs, sur les huit adresses. Le lien de la langue EN COURS, lui, mesure 39 x 24 : il porte l aplat inverse et son remplissage de --space-2 le sauve. Verifie plutot que suppose : la porte accessibility passe axe avec les etiquettes wcag2a, wcag2aa, wcag21a et wcag21aa, et le critere de taille de cible est 2.5.8, une regle de WCAG 2.2 — aucune de ces quatre etiquettes ne la contient. La porte n a donc jamais eu a la voir.",
+      "consequence": "Le plan CORRIGE ce defaut et en fait un critere, plutot que de reprendre l invariant de l operateur comme s il tenait. C est le seul ajout de perimetre que ce plan s accorde, il coute une declaration de largeur minimale dans src/shared/LanguageSwitch.css, et il est nomme ici pour que l operateur puisse le retirer d un mot. La raison de ne pas le parquer : le point 5 retrecit precisement le bouton voisin dans la meme barre, donc l implementeur va travailler a 24 px de la faute."
+    },
+    {
+      "fact": "Les huit adresses sont a zero debordement horizontal aux huit largeurs, aujourd hui.",
+      "how": "64 combinaisons mesurees sur l artefact construit de b5282d7, document.documentElement.scrollWidth - clientWidth : liste vide. L invariant de l operateur est confirme plutot que repris.",
+      "consequence": "Le plan n en fait PAS un critere de plus : tests/e2e/barre.spec.ts:222 le mesure deja sur les memes huit adresses et les memes huit largeurs, il porte l etiquette @a11y, et test_e2e est une porte de cloture. Un critere qui recopie une porte verte n apprend rien."
+    },
+    {
+      "fact": "La porte coverage a de la marge, contrairement a ce qu une decouverte parquee de i-841g laissait craindre.",
+      "how": "pnpm run test:coverage sur b5282d7 : 94,39 % d instructions (337/357), 76,86 % de branches, 96 % de fonctions, 96,07 % de lignes, pour des seuils de 90 / 45 / 90 / 90. Il faudrait environ dix-huit instructions non couvertes de plus pour repasser sous le seuil.",
+      "consequence": "La decouverte parquee « la porte coverage est repassee au vert avec une marge d une seule instruction » est PERIMEE : i-3l9u et i-2shz ont ajoute du code couvert depuis. Et le plan ne cree aucun ecran nouveau : HomePage.tsx, ContactPage.tsx et les autres ecrans sont deja nommes un par un dans l exclusion de vitest.config.ts, ThemeToggle.tsx est compte et porte deja son test unitaire. Aucun blocage de livraison de la forme de celui de i-841g n est donc attendu, et c est verifie plutot qu espere."
+    },
+    {
+      "fact": "La maquette de reference passe deja le controle, et elle porte quatre des cinq points.",
+      "how": "offenders(mockups/accueil-contact.html) confronte aux jetons de src/shared/tokens.css : aucune valeur hors jeton. Elle dessine la grille de l accueil sans hauteur imposee et le commente en toutes lettres, la fiche de contact avec sa pastille en aplat, la planche a --page-max avec le chapo et la ligne de description bornes a --measure, et une icone de theme dans un carre de --tap-min.",
+      "consequence": "L implementeur ne dessine RIEN et ne reserve aucune maquette. Il transcrit une planche que l operateur a deja retenue. Le seul point qu elle ne montre pas est le filet en trop, parce qu elle ne porte ni realisations ni parcours ; c est nomme comme une limite plutot que laisse a decouvrir."
+    },
+    {
+      "fact": "Aucun mot du site n a besoin d etre ecrit pour le contact en fiche.",
+      "how": "Lecture de src/shared/i18n.ts confrontee au dessin. contact.lede vaut deja « Disponible immediatement » et « Available immediately » : c est le texte de la pastille. contact.write est le « Ecrire un message » du dessin, contact.terms porte les trois lignes de conditions, contact.links porte LinkedIn et GitHub. Et le troisieme lien du dessin n existe pas : contactMeans n ajoute le CV que si resumeOf rend un document, et public/ n en porte aucun.",
+      "consequence": "src/shared/i18n.ts est reserve mais probablement intact. La fiche est une remise en page de textes qui existent, pas une reecriture."
+    }
+  ],
+  "functional_scope": {
+    "features": [
+      {
+        "name": "L accueil qui ouvre sur trois portes plutot que sur une liste",
+        "user_value": "Un recruteur qui arrive sur la page voit d un coup d oeil les trois endroits ou aller, chacun avec sa raison d y aller, au lieu de parcourir une liste empilee qui occupe la moitie basse de l ecran.",
+        "rules": [
+          "Les trois entrees nommees sont cote a cote sur un ecran large et l une sous l autre en dessous du point de rupture.",
+          "Chaque entree dit trois choses : son rang, le nom de la page, et une ligne qui dit ce qu on y trouve.",
+          "Aucune hauteur n est reservee a une cellule : une cellule vaut ce que son contenu vaut, sans quoi la grille refabrique le vide qu elle corrige.",
+          "Les mots ne changent pas : les trois lignes de description sont celles que le site publie deja."
+        ]
+      },
+      {
+        "name": "Le contact qui se lit comme une fiche plutot que comme une affiche",
+        "user_value": "La personne qui veut ecrire trouve l adresse et les profils d un cote, les conditions de l autre, et la disponibilite se voit sans lire — au lieu d un aplat rouge plein qui couvre les deux tiers de la page et repousse les conditions plus bas.",
+        "rules": [
+          "L adresse et les liens d un cote, les conditions de l autre, cote a cote sur un ecran large.",
+          "Le fond de la page reste le papier : plus d aplat plein sous la fiche.",
+          "La disponibilite est dite par une pastille en aplat, assez petite pour etre un signal et pas un fond.",
+          "L appel principal reste la messagerie, avant LinkedIn puis GitHub : l ordre de lecture et l ordre du clavier ne changent pas."
+        ]
+      },
+      {
+        "name": "La page qui prend la largeur de l ecran",
+        "user_value": "Sur un ecran d ordinateur, l accueil et le contact cessent de vivre dans une colonne de 740 px avec 590 px de vide de chaque cote : ils occupent la page comme les deux autres le font deja.",
+        "rules": [
+          "La page prend la largeur de page, sur les quatre pages et dans les deux langues.",
+          "Les blocs de texte long gardent la mesure de lecture : la page s elargit, la ligne ne suit pas.",
+          "La largeur de page est declaree a un seul endroit : une page qui s elargissait a la main cesse de le faire."
+        ]
+      },
+      {
+        "name": "Le haut d une page de section sans son filet en trop",
+        "user_value": "Le lecteur ne voit plus deux traits epais a cent pixels l un de l autre en haut de la page des realisations, dont le second annonce une separation d avec une section qui n existe pas.",
+        "rules": [
+          "Le bandeau qui OUVRE une page ne porte pas de filet superieur.",
+          "Un bandeau qui suit du contenu garde le sien : c est la seule chose qui separe deux blocs."
+        ]
+      },
+      {
+        "name": "Un bouton de theme qui se montre au lieu de se dire",
+        "user_value": "La barre porte une icone qui dit le mode d un coup d oeil, dans la place d un carre, au lieu du mot « Sombre » qui prend la largeur d un mot et ne dit rien a qui ne lit pas cette langue.",
+        "rules": [
+          "Le bouton montre une icone, et l icone change avec le mode.",
+          "Le nom accessible du bouton reste ecrit dans la langue de la page.",
+          "Le bouton continue d annoncer aux technologies d assistance le theme EN VIGUEUR, et cette annonce change quand le theme change.",
+          "Le bouton reste une cible atteignable au doigt : un bouton qui retrecit ne descend pas sous le seuil."
+        ]
+      },
+      {
+        "name": "Les cibles de la barre au seuil qu elles annoncaient deja tenir",
+        "user_value": "Le lien qui mene a l autre langue cesse de mesurer 20 px de large : il se touche au doigt comme les autres.",
+        "rules": [
+          "Aucune cible de la barre ne mesure moins que la cible tactile minimale, dans l une ou l autre dimension, a toutes les largeurs mesurees."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Tout changement du contenu editorial. Aucun mot du site n est ecrit, reecrit ni traduit : la pastille reprend une cle existante, les trois lignes de l accueil sont celles que le site publie deja. Si l implementeur se surprend a ecrire une phrase, il est sorti du perimetre.",
+      "La page des realisations et la page du parcours, hors du seul filet d ouverture. Leur mise en page, leurs cartes, leurs rangees et leurs schemas ne changent pas. Elles sont touchees deux fois seulement : le retrait de leur surcharge de largeur devenue redondante, et le filet du bandeau qui ouvre la page des realisations.",
+      "Toute modification de src/shared/tokens.css. Consequence assumee : la grille, la fiche et l icone se composent avec les pas existants, --tap-min et --space-3 compris, et non avec une valeur creee pour l occasion. Si l implementeur juge qu un jeton nouveau est indispensable, c est une remontee a l operateur, pas un elargissement qu il puisse s accorder.",
+      "Toute modification des maquettes. mockups/accueil-contact.html porte deja le dessin et passe le controle ; mockups/portfolio-v1.html reste la reference des autres pages et n est pas invoquee par cette issue. Aucune des deux n est reservee.",
+      "La barre elle-meme : sa position collee, son opacite, sa reserve de defilement, son comportement sur ecran court. Tout cela est livre et clos par i-2shz. Cette demande ne touche a la barre que par deux cibles : le bouton de theme et le lien de langue.",
+      "Le pied de page, le selecteur de langue autrement que par sa taille de cible, le lien d evitement, la page 404, et le contenu de la barre au-dela des deux cibles nommees.",
+      "Le choix du tracee de l icone. La decision 0015 autorise la bibliotheque, pas une icone en particulier ; le couple soleil / lune est laisse a l implementeur parce qu aucun critere ne peut departager deux dessins.",
+      "Toute reponse a la question « que devient la grille de l accueil entre 320 et 768 px autrement qu empilee ». Le plan ne demande qu une colonne sous le point de rupture ; un palier intermediaire a deux colonnes n est ni demande ni interdit, et il n est prouve nulle part.",
+      "Le retrait de src/shared/LanguageSwitch.tsx de la liste d exclusion de couverture, que la derniere decouverte parquee de i-841g recommande. C est une modification de vitest.config.ts, hors de la politique de fichiers de l implementeur, et cela reste une tache d operateur."
+    ]
+  },
+  "decisions_for_operator": [],
+  "scope_final": true,
+  "notes": [
+    "UNE SEULE ISSUE, et ce n est pas une concession a la consigne : c est ce que la mesure recommande. Les cinq points partagent src/app.css, ils touchent deux ecrans que la MEME maquette dessine, et la decision 0011 interdit de dispatcher ensemble deux issues qui construisent — or tout critere [e2e] construit. Une coupe en trois ne rendrait donc aucune concurrence et couterait trois cycles de revue pour un travail qui se tient. La consigne de l operateur et la lecture du depot disent la meme chose.",
+    "QUINZE CRITERES, ET C EST BEAUCOUP. Le prompt du role donne 2 a 6 comme fourchette usuelle et dit que le compte est un symptome, jamais la regle. Ici le symptome est lisible : cinq demandes distinctes plus deux non-regressions, chacune coutant une assertion de navigateur sur un site deja servi. Aucun critere n a ete ajoute pour remplir, et trois ont ete ECARTES parce qu ils recopiaient une porte verte — le debordement horizontal, que barre.spec.ts mesure deja sur les memes 64 combinaisons, et les deux criteres d accessibilite de la barre que la porte accessibility mesure sur les huit adresses.",
+    "LE SEUL AJOUT DE PERIMETRE EST LA TAILLE DE CIBLE DU LIEN DE LANGUE, et il est fait les yeux ouverts. L operateur l a nomme comme un invariant qui tient aujourd hui ; il ne tient pas, mesure a 20 x 24 px sur les huit adresses. Le laisser aurait voulu dire livrer une issue dont la liste de non-regression est fausse. Il coute une declaration dans une feuille deja reservee, et l operateur peut le retirer d un mot avant le dispatch.",
+    "LE FILET D OUVERTURE EST LE SEUL POINT QUE LA MAQUETTE NE MONTRE PAS. Il se prouve dans l application, par un critere positif et un critere negatif. Le negatif n est pas une formalite : une regle ecrite pour tout bandeau plutot que pour le bandeau d ouverture casserait la separation legitime du parcours, et aucune porte ne la verrait."
+  ]
+}

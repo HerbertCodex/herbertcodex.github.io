@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette portfolio s-0001</title>
+    <style>
+      /*
+       * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité.
+       *
+       * L'IDÉE DE CETTE PAGE : ce que cette personne construit n'a pas
+       * d'écran. Un agent, une file de messages, une machine d'état ne se
+       * photographient pas. Plutôt que de subir ce manque, la page en fait son
+       * sujet : chaque réalisation est montrée par le SCHÉMA DE CE QU'ELLE
+       * FAIT — les rôles, les portes, les données qui circulent. Le mouvement
+       * n'est pas décoratif, il EST l'information : ce point qui avance, c'est
+       * une demande qui traverse le système.
+       *
+       * Et la page se démontre elle-même : elle est construite par
+       * agent-pipeline, qui est la première réalisation qu'elle présente.
+       */
+      :root {
+        --paper: #eeece6;
+        --paper-raised: #f8f7f3;
+        --ink: #121110;
+        --ink-muted: #55524b;
+        --ink-inverse: #f8f7f3;
+        --rule: #c6c2b7;
+        --accent: #b3271a;
+        --accent-strong: #8b1d13;
+        --accent-plate: #b3271a;
+        --on-accent: #f8f7f3;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --space-8: 144px;
+        --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 22px;
+        --text-xl: 32px;
+        --text-2xl: 52px;
+        --text-3xl: 84px;
+        --leading-tight: 0.94;
+        --leading-snug: 1.15;
+        --leading-body: 1.55;
+        --track-tight: -0.03em;
+        --track-wide: 0.08em;
+        --weight-regular: 400;
+        --weight-bold: 700;
+        --radius-1: 0px;
+        --radius-2: 2px;
+        --page-max: 1440px;
+        --bp-md: 768px;
+        --bp-lg: 1024px;
+        --tap-min: 24px;
+        --measure: 64ch;
+        --border-hairline: 1px;
+        --border-heavy: 3px;
+        --motion-fast: 140ms;
+        --motion-base: 320ms;
+        --motion-slow: 620ms;
+        --motion-stagger: 70ms;
+        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --flow-stroke: 2px;
+        --flow-node: 3px;
+        --flow-dash: 6;
+        --motion-flow: 3200ms;
+        --motion-flow-slow: 5200ms;
+        --lift: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      ::selection {
+        background: var(--accent-plate);
+        color: var(--on-accent);
+      }
+
+      :focus-visible {
+        outline: var(--border-heavy) solid var(--focus);
+        outline-offset: var(--space-1);
+      }
+
+      .skip {
+        position: absolute;
+        left: var(--space-3);
+        top: calc(var(--space-8) * -1);
+        z-index: 3;
+        padding: var(--space-2) var(--space-3);
+        background: var(--paper-raised);
+        border: var(--border-heavy) solid var(--accent);
+        transition: top var(--motion-base) var(--ease-out-expo);
+      }
+
+      .skip:focus {
+        top: var(--space-3);
+      }
+
+      .sheet {
+        max-width: var(--page-max);
+        width: 100%;
+        margin: 0 auto;
+        padding: var(--space-4) var(--space-4) var(--space-6);
+      }
+
+      @media (min-width: 768px) {
+        .sheet {
+          padding: var(--space-5) var(--space-5) var(--space-7);
+        }
+      }
+
+      /* ---- Barre ------------------------------------------------------- */
+
+      /*
+       * La barre reste en haut pendant qu'on lit. Elle porte donc un fond
+       * OPAQUE : le texte passe dessous, et sans aplat il se lirait à travers
+       * elle. Le papier de la page, pas un blanc de plus.
+       */
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-4);
+        justify-content: space-between;
+        align-items: baseline;
+        padding-top: var(--space-3);
+        padding-bottom: var(--space-3);
+        background: var(--paper);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        margin-bottom: var(--space-5);
+      }
+
+      /*
+       * Une barre qui reste prend sa hauteur au texte, et elle ne la prend
+       * que si la fenêtre a de quoi la donner. Deux cas la rendent légitime :
+       * une fenêtre d'au moins 768 px de haut, où même la barre repliée sur
+       * trois lignes tient dans le quart de l'écran ; ou, dès 768 px de
+       * large, où elle tient sur une seule ligne, une fenêtre de 420 px.
+       * Un téléphone tenu en paysage ne remplit ni l'un ni l'autre et
+       * récupère toute sa hauteur.
+       *
+       * Une requête de média ne peut pas lire var() : les deux valeurs sont
+       * écrites en clair, mais ce sont les jetons --bp-md et --shape-lg.
+       */
+      @media (min-height: 768px), (min-width: 768px) and (min-height: 420px) {
+        .bar {
+          position: sticky;
+          top: 0;
+          z-index: 2;
+        }
+      }
+
+      /*
+       * Ce que le navigateur garde libre au-dessus de ce vers quoi il
+       * conduit : la cible du lien d'évitement, et tout élément qui reçoit le
+       * focus au clavier. Sans cette réserve, la barre restée en haut les
+       * recouvre, et le lecteur qu'on vient d'y mener ne voit rien.
+       *
+       * Aucune propriété CSS ne mesure la barre : la réserve est écrite comme
+       * une somme de pas de l'échelle, au-dessus de la plus haute barre
+       * observée (186 px, repliée sur trois lignes à 320 px de large). Elle
+       * redescend d'un cran dès que la barre tient sur une ligne. Les deux
+       * requêtes reprennent exactement les conditions ci-dessus : la réserve
+       * n'a de sens que là où la barre reste.
+       */
+      @media (min-height: 768px) {
+        html {
+          scroll-padding-top: calc(var(--space-8) + var(--space-6));
+        }
+      }
+
+      @media (min-width: 768px) and (min-height: 420px) {
+        html {
+          scroll-padding-top: var(--space-8);
+        }
+      }
+
+      .bar > *,
+      .section-head > * {
+        min-width: 0;
+      }
+
+      .bar nav,
+      .langs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+      }
+
+      .mark,
+      .bar a {
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+
+      .mark {
+        font-weight: var(--weight-bold);
+      }
+
+      .bar a,
+      .langs a,
+      .links a,
+      .theme {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+      }
+
+      .langs [aria-current="true"] {
+        color: var(--ink-inverse);
+        background: var(--ink);
+        padding: 0 var(--space-2);
+      }
+
+      /*
+       * Le bouton de thème est une ACTION, pas une destination : il porte un
+       * filet, là où la langue en cours porte l'aplat inversé qui marque une
+       * page en cours. Deux marques identiques pour deux sens différents se
+       * lisent comme un même état, et la barre en porterait deux.
+       *
+       * Cette maquette ne montre que le thème clair. Le thème sombre existe
+       * dans les jetons, jamais ici : `mockup-check` ne retient que la
+       * dernière déclaration de chaque nom, donc un second jeu de valeurs
+       * effacerait le premier de ce qu'il considère comme déclaré.
+       */
+      .theme {
+        padding: 0 var(--space-2);
+        border: var(--border-hairline) solid var(--rule);
+        background: none;
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .theme[aria-pressed="true"] {
+        border-color: var(--ink);
+        font-weight: var(--weight-bold);
+      }
+
+      /* ---- Ouverture --------------------------------------------------- */
+
+      h1 {
+        font-size: clamp(var(--text-2xl), 10vw, var(--text-3xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        font-weight: var(--weight-bold);
+        text-transform: uppercase;
+        overflow-wrap: break-word;
+        margin: 0 0 var(--space-3);
+      }
+
+      .lede {
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+        color: var(--ink-muted);
+        max-width: var(--measure);
+        margin: 0 0 var(--space-4);
+      }
+
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        margin-bottom: var(--space-6);
+      }
+
+      .facts span {
+        border: var(--border-hairline) solid var(--rule);
+        padding: var(--space-1) var(--space-2);
+        color: var(--ink-muted);
+      }
+
+      .facts .now {
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
+      }
+
+      /* ---- Section ----------------------------------------------------- */
+
+      .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2) var(--space-4);
+        align-items: baseline;
+        border-top: var(--border-heavy) solid var(--ink);
+        padding-top: var(--space-2);
+        margin: var(--space-6) 0 var(--space-4);
+      }
+
+      .num {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--accent);
+        font-weight: var(--weight-bold);
+      }
+
+      h2 {
+        font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        font-weight: var(--weight-bold);
+        margin: 0;
+      }
+
+      .count {
+        margin-left: auto;
+        flex: none;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--ink-muted);
+      }
+
+      /* ---- Une réalisation : le schéma d'abord, le récit ensuite -------- */
+
+      .work {
+        display: grid;
+        gap: var(--space-5);
+        border-top: var(--border-hairline) solid var(--rule);
+        padding-top: var(--space-4);
+        margin-bottom: var(--space-5);
+      }
+
+      @media (min-width: 768px) {
+        .work {
+          grid-template-columns: 7fr 5fr;
+          gap: var(--space-6);
+          align-items: start;
+        }
+      }
+
+      .work > * {
+        min-width: 0;
+      }
+
+      .kind {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        display: block;
+        margin-bottom: var(--space-2);
+      }
+
+      .work h3 {
+        font-size: var(--text-xl);
+        line-height: var(--leading-snug);
+        letter-spacing: var(--track-tight);
+        font-weight: var(--weight-bold);
+        margin: 0 0 var(--space-3);
+      }
+
+      .story dt {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
+      .story dd {
+        margin: var(--space-1) 0 var(--space-3);
+        max-width: var(--measure);
+      }
+
+      .result {
+        color: var(--accent);
+      }
+
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        margin: var(--space-3) 0 0;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-top: var(--space-2);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+
+      .links a {
+        border-bottom: var(--border-heavy) solid var(--accent);
+      }
+
+      /* ---- LE SCHÉMA : ce qui remplace la capture d'écran -------------- */
+
+      .diagram {
+        border: var(--border-hairline) solid var(--rule);
+        background: var(--paper-raised);
+        padding: var(--space-3);
+      }
+
+      .diagram figcaption {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+        margin-top: var(--space-2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        justify-content: space-between;
+      }
+
+      .diagram svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .node {
+        fill: var(--paper);
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .node-fill {
+        fill: var(--ink);
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .node-accent {
+        fill: var(--accent-plate);
+        stroke: var(--accent-plate);
+        stroke-width: var(--flow-stroke);
+      }
+
+      .edge {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: var(--flow-stroke);
+      }
+
+      /* L'arête en pointillés : le chemin qu'une donnée peut prendre. */
+      .edge-dash {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: var(--flow-stroke);
+        stroke-dasharray: var(--flow-dash);
+      }
+
+      .edge-dead {
+        stroke: var(--rule);
+      }
+
+      .cap {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        fill: var(--ink);
+        text-transform: uppercase;
+      }
+
+      .cap-invert {
+        fill: var(--ink-inverse);
+      }
+
+      .cap-on-accent {
+        fill: var(--on-accent);
+      }
+
+      .cap-muted {
+        fill: var(--ink-muted);
+      }
+
+      /*
+       * Le point qui circule EST l'information : c'est une requête qui
+       * traverse le système. Il ne tourne que lorsque le schéma est visible,
+       * pour ne pas animer une page qu'on ne regarde pas.
+       */
+      .packet {
+        fill: var(--accent);
+        offset-distance: 0%;
+        animation: travel var(--motion-flow) linear infinite;
+        animation-play-state: paused;
+      }
+
+      .is-in .packet {
+        animation-play-state: running;
+      }
+
+      .packet-2 {
+        animation-delay: calc(var(--motion-flow) / 3);
+      }
+
+      .packet-3 {
+        animation-delay: calc(var(--motion-flow) / 3 * 2);
+      }
+
+      .packet-slow {
+        animation-duration: var(--motion-flow-slow);
+      }
+
+      @keyframes travel {
+        to {
+          offset-distance: 100%;
+        }
+      }
+
+      /* Le trait se dessine quand le schéma entre à l'écran. */
+      .draw {
+        stroke-dasharray: var(--shape-bar);
+        stroke-dashoffset: var(--shape-bar);
+        transition: stroke-dashoffset var(--motion-flow) var(--ease-in-out);
+      }
+
+      .is-in .draw {
+        stroke-dashoffset: 0;
+      }
+
+      /* ---- Parcours et compétences, compacts --------------------------- */
+
+      .rows {
+        display: grid;
+      }
+
+      .row {
+        display: grid;
+        gap: var(--space-2) var(--space-4);
+        padding: var(--space-3) 0;
+        border-bottom: var(--border-hairline) solid var(--rule);
+      }
+
+      /*
+       * Quatre colonnes plutôt que deux : la date, le rail, le poste, et ce
+       * qui y a été employé. La version à deux colonnes laissait les deux
+       * tiers droits de la page vides, ce qui se lit comme un contenu absent
+       * plutôt que comme une respiration.
+       */
+      @media (min-width: 768px) {
+        .row {
+          grid-template-columns: var(--space-8) var(--space-4) 1fr minmax(0, 1fr);
+          align-items: start;
+        }
+      }
+
+      .row > * {
+        min-width: 0;
+      }
+
+      /*
+       * Le rail reprend le trait des schémas : un nœud sur une ligne. Le
+       * parcours devient lui aussi un flux, et la page garde un seul
+       * vocabulaire graphique.
+       */
+      .rail {
+        display: none;
+        position: relative;
+        align-self: stretch;
+      }
+
+      @media (min-width: 768px) {
+        .rail {
+          display: block;
+        }
+      }
+
+      .rail::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: calc(var(--space-4) * -1);
+        width: var(--flow-stroke);
+        background: var(--rule);
+        transform: translateX(calc(var(--flow-stroke) / -2));
+      }
+
+      .row:last-child .rail::before {
+        bottom: 50%;
+      }
+
+      .rail::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: var(--space-2);
+        width: var(--space-2);
+        height: var(--space-2);
+        background: var(--paper);
+        border: var(--flow-stroke) solid var(--ink);
+        transform: translateX(-50%);
+        transition: background var(--motion-base) var(--ease-out-quart);
+      }
+
+      /* Le poste en cours porte un nœud plein : on voit où on en est. */
+      .row.current .rail::after {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .row:hover .rail::after {
+        background: var(--ink);
+      }
+
+      /* La colonne de droite : ce qui a été employé, en petites capitales. */
+      .used {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      /*
+       * Les technologies sortent du gris. C'est la première chose qu'un
+       * lecteur technique cherche, et un filtre automatique de recrutement
+       * les lit aussi : les laisser en gris clair les rendait moins visibles
+       * que la ponctuation autour.
+       */
+      .used span,
+      .tools span {
+        border: var(--border-hairline) solid var(--ink);
+        background: var(--paper-raised);
+        color: var(--ink);
+        padding: var(--space-1) var(--space-2);
+        transition:
+          background var(--motion-fast) var(--ease-out-quart),
+          color var(--motion-fast) var(--ease-out-quart);
+      }
+
+      /* Survolée, la ligne inverse ses étiquettes : elles deviennent l'aplat. */
+      .row:hover .used span,
+      .work:hover .tools span {
+        background: var(--ink);
+        color: var(--ink-inverse);
+      }
+
+      /* Celle qui porte la réalisation est pleine dès le départ. */
+      /*
+       * Le marqueur d'emplacement. Il est ecrit pour NE PAS pouvoir passer
+       * pour une competence reelle : hachure, en capitales, et refuse par
+       * `check:content` des qu'il apparait hors de ce dossier de maquettes.
+       * Une valeur plausible ecrite « en attendant » se publie sans que
+       * personne la relise ; un marqueur laid, non.
+       */
+      .used span.todo,
+      .tools span.todo {
+        border-style: dashed;
+        background: transparent;
+        color: var(--accent);
+      }
+
+      .row:hover .used span.todo {
+        background: transparent;
+        color: var(--accent);
+      }
+
+      .used span.key,
+      .tools span.key {
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
+      }
+
+      .row:hover .used span.key,
+      .work:hover .tools span.key {
+        background: var(--accent-strong);
+        border-color: var(--accent-strong);
+      }
+
+      .row:last-child {
+        border-bottom: 0;
+      }
+
+      .when {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--accent);
+      }
+
+      .row strong {
+        display: block;
+        letter-spacing: var(--track-tight);
+      }
+
+      .row p {
+        margin: var(--space-1) 0 0;
+        color: var(--ink-muted);
+        max-width: var(--measure);
+      }
+
+      /*
+       * Une seule colonne sur petit écran. À deux colonnes, une case est trop
+       * étroite : chaque étiquette occupe sa propre ligne et « intégration
+       * continue » se coupe en deux. Une colonne pleine laisse les étiquettes
+       * se ranger côte à côte, ce qui est le but même de la mise en
+       * étiquettes.
+       */
+      .skills {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--border-hairline);
+        background: var(--rule);
+        border: var(--border-hairline) solid var(--rule);
+      }
+
+      @media (min-width: 768px) {
+        .skills {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .skill {
+        background: var(--paper);
+        padding: var(--space-3);
+        min-width: 0;
+      }
+
+      .skill h4 {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: 0 0 var(--space-2);
+      }
+
+      /*
+       * Les compétences étaient écrites en phrases : « Kafka, API REST, files
+       * de messages ». Un recruteur qui cherche une technologie précise doit
+       * alors LIRE au lieu de BALAYER. Le même vocabulaire d'étiquettes que
+       * dans les réalisations rend chaque nom repérable d'un coup d'œil.
+       */
+      .skill .used {
+        gap: var(--space-1);
+      }
+
+      /* ---- Contact ----------------------------------------------------- */
+
+      .panel {
+        background: var(--accent-plate);
+        color: var(--on-accent);
+        padding: var(--space-5);
+        margin-top: var(--space-6);
+      }
+
+      /*
+       * Le titre de section reprenait sa marge et son filet d'encre alors
+       * qu'il est ici POSÉ SUR l'aplat : il ouvrait une bande rouge vide en
+       * haut du bloc, et le « 05 », coloré en vermillon comme les autres
+       * numéros, disparaissait dans le fond. Sur l'aplat, tout passe en
+       * encre inverse.
+       */
+      .panel .section-head {
+        margin-top: 0;
+        border-top-color: var(--on-accent);
+      }
+
+      .panel .num {
+        color: var(--on-accent);
+      }
+
+      /*
+       * Les conditions sont écrites, pas sous-entendues. Un titre seul
+       * laissait un chargé de recrutement deviner si sa proposition avait une
+       * chance. La ligne CONTRAT nomme les formes acceptées, ce qui fait
+       * gagner un échange aux deux côtés.
+       */
+      .terms {
+        display: grid;
+        gap: var(--space-2) var(--space-4);
+        margin: 0 0 var(--space-4);
+        max-width: var(--measure);
+      }
+
+      @media (min-width: 768px) {
+        .terms {
+          grid-template-columns: auto 1fr;
+        }
+      }
+
+      .terms dt {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        align-self: baseline;
+      }
+
+      /*
+       * Les valeurs restent en graisse normale. Le contrat est déjà annoncé en
+       * grand juste au-dessus ; répéter du gras sur trois lignes ferait de la
+       * mobilité une revendication alors que c'est une simple précision.
+       */
+      .terms dd {
+        margin: 0;
+      }
+
+      .panel-title {
+        font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        text-transform: uppercase;
+        font-weight: var(--weight-bold);
+        overflow-wrap: break-word;
+        margin: 0 0 var(--space-4);
+      }
+
+      .panel a {
+        color: var(--on-accent);
+      }
+
+      .panel .links a {
+        border-bottom-color: var(--on-accent);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(var(--lift));
+        transition:
+          opacity var(--motion-base) var(--ease-out-quart),
+          transform var(--motion-slow) var(--ease-out-expo);
+      }
+
+      .reveal.is-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: var(--motion-fast) !important;
+          animation: none !important;
+        }
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+        .draw {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .note {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--ink-muted);
+        border-left: var(--border-heavy) solid var(--accent);
+        padding-left: var(--space-3);
+        margin: 0 0 var(--space-5);
+        max-width: var(--measure);
+      }
+
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        justify-content: space-between;
+        margin-top: var(--space-5);
+        padding-top: var(--space-3);
+        border-top: var(--border-heavy) solid var(--ink);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#realisations">Aller aux réalisations</a>
+
+    <div class="sheet">
+      <header class="bar">
+        <span class="mark">Donatien Koffi</span>
+        <nav aria-label="Navigation principale">
+          <a href="/fr/realisations">Réalisations</a>
+          <a href="/fr/parcours">Parcours</a>
+          <a href="/fr/contact">Contact</a>
+        </nav>
+        <div class="langs">
+          <a href="/fr/realisations" aria-current="true">FR</a>
+          <a href="/en/work" hreflang="en">EN</a>
+        </div>
+        <button class="theme" type="button" aria-pressed="false">Sombre</button>
+      </header>
+
+      <p class="note">
+        Maquette s-0001. Les schémas remplacent les captures d'écran, et c'est le parti pris de cette page. Les
+        résultats chiffrés restent à renseigner.
+      </p>
+
+      <h1>Ingénieur logiciel</h1>
+      <p class="lede">
+        Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail vérifiable
+        : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, puisqu'elle est construite
+        par lui.
+      </p>
+      <div class="facts">
+        <span class="now">CDI ou freelance</span>
+        <span>Rennes, mobile en France</span>
+        <span>Master MIAGE</span>
+        <span>FR · EN</span>
+      </div>
+
+      <div class="section-head">
+        <span class="num">01</span>
+        <h2 id="realisations">Réalisations</h2>
+        <span class="count">04</span>
+      </div>
+
+      <!-- 1. agent-pipeline : la page est construite par ce qu'elle presente. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Le role Produit definit, le code est ecrit, la revue valide, la cloture enregistre. Les portes de qualite s'interposent et peuvent renvoyer le travail en arriere."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 225 58 H 290" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 330 76 V 125" />
+            <path class="edge-dash draw" d="M 225 143 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">PRODUIT</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">CODE</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">REVUE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-on-accent" x="185" y="148" text-anchor="middle">PORTES</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">CLÔTURE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+          </svg>
+          <figcaption><span>Un cycle d'issue</span><span>Node.js, MIT</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel, open source</span>
+          <h3>agent-pipeline : orchestration multi-agents</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Un développement assisté par IA produit vite et sans trace. Rien ne dit qui a décidé quoi, ni ce qui a été
+              vérifié avant que le code entre.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Séparé les rôles — Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle
+              les transitions. Une machine d'état borne les mouvements, des portes exécutables refusent, et chaque
+              preuve est attachée à un commit par son empreinte.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">
+              Cette page en est la démonstration : elle est construite par cette pipeline, et chaque décision de sa
+              conception est écrite dans son journal.
+            </dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Node.js</span><span>Machine d'état</span><span>NDJSON</span><span>MCP</span>
+            <span>Portes de qualité</span><span>Traçabilité</span><span>Tests automatisés</span>
+          </p>
+          <div class="links"><a href="https://github.com/HerbertCodex/agent-pipeline">Voir le code</a></div>
+        </div>
+      </article>
+
+      <!-- 2. decodevoyage : livre en pilotant des agents, pas en tapant du code. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une specification alimente des agents de code, qui produisent du code, lequel passe en revue critique avant de repartir vers les agents."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 225 58 H 290" />
+            <path class="edge draw" d="M 330 76 V 143 H 225" />
+            <path class="edge-dash draw" d="M 185 125 V 76" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">SPEC</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">AGENTS</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">CODE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-on-accent" x="185" y="148" text-anchor="middle">REVUE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+            <circle class="packet packet-3 packet-slow" r="5" style="offset-path: path(&quot;M 185 125 V 76&quot;)" />
+          </svg>
+          <figcaption><span>Piloter plutôt qu'écrire</span><span>Revue critique</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">Projet personnel</span>
+          <h3>decodevoyage.com, livré en pilotant des agents</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Livrer seul une application publique complète : architecture, modèles de domaine, référencement,
+              conformité.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Écrit les spécifications et l'architecture, puis piloté des agents de code pour la mise en œuvre, avec
+              revue critique de ce qu'ils produisaient plutôt qu'acceptation.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Chiffre à fournir : trafic, performance mesurée, délai de livraison.</dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Spécification</span><span>SEO technique</span><span>RGPD</span><span>Revue de code</span>
+            <span>Documentation technique</span>
+          </p>
+          <div class="links"><a href="https://decodevoyage.com">Voir le site</a></div>
+        </div>
+      </article>
+
+      <!-- 3. Assistants LLM : la demande traverse les droits avant d'atteindre la donnee. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une demande d'un utilisateur metier entre dans l'agent, passe par le controle des droits, atteint les donnees de son entreprise, et la reponse remonte."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 225 143 H 290" />
+            <path class="edge draw" d="M 330 125 V 76" />
+            <path class="edge-dash draw" d="M 225 58 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">MÉTIER</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">AGENT</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">RÉPONSE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-on-accent" x="185" y="148" text-anchor="middle">DROITS</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">DONNÉES</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 225 143 H 290&quot;)" />
+            <circle class="packet packet-slow" r="5" style="offset-path: path(&quot;M 330 125 V 76&quot;)" />
+          </svg>
+          <figcaption><span>Chemin d'une demande</span><span>OpenAI, Claude</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">En entreprise, Modjo GAIA · OloSuite</span>
+          <h3>Assistants et agents LLM en production</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Un assistant qui lit les données d'une entreprise doit ne lire que celles auxquelles son utilisateur a
+              droit, et ne jamais laisser fuiter celles d'un autre client.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Placé le contrôle des droits sur le chemin de la donnée plutôt qu'à côté : cloisonnement entre clients,
+              contrôle par rôle, traçabilité des sources citées. Puis suivi des usages et du coût d'inférence, et
+              itérations à partir des retours utilisateurs.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Chiffre à fournir : utilisateurs servis, volume de demandes, coût par demande.</dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Anthropic Claude</span><span>OpenAI</span><span>RBAC</span><span>RGPD</span
+            ><span>Next.js</span> <span>Function calling</span><span>React</span><span>TypeScript</span>
+          </p>
+        </div>
+      </article>
+
+      <!-- 4. Paiements : le flux traverse une file, donc rien ne se perd. -->
+      <article class="work observe reveal">
+        <figure class="diagram">
+          <svg
+            viewBox="0 0 420 200"
+            role="img"
+            aria-label="Une commande passe par l'API, entre dans une file de messages, puis est ecrite en base. Le cache repond directement aux lectures."
+          >
+            <path class="edge draw" d="M 95 58 H 145" />
+            <path class="edge draw" d="M 185 76 V 125" />
+            <path class="edge draw" d="M 225 143 H 290" />
+            <path class="edge-dash draw" d="M 225 58 H 290" />
+
+            <rect class="node" x="15" y="40" width="80" height="36" />
+            <text class="cap" x="55" y="63" text-anchor="middle">CLIENT</text>
+
+            <rect class="node-fill" x="145" y="40" width="80" height="36" />
+            <text class="cap cap-invert" x="185" y="63" text-anchor="middle">API</text>
+
+            <rect class="node" x="290" y="40" width="80" height="36" />
+            <text class="cap" x="330" y="63" text-anchor="middle">CACHE</text>
+
+            <rect class="node-accent" x="145" y="125" width="80" height="36" />
+            <text class="cap cap-on-accent" x="185" y="148" text-anchor="middle">FILE</text>
+
+            <rect class="node" x="290" y="125" width="80" height="36" />
+            <text class="cap" x="330" y="148" text-anchor="middle">BASE</text>
+
+            <circle class="packet" r="5" style="offset-path: path(&quot;M 95 58 H 145&quot;)" />
+            <circle class="packet packet-2" r="5" style="offset-path: path(&quot;M 185 76 V 125&quot;)" />
+            <circle class="packet packet-3" r="5" style="offset-path: path(&quot;M 225 143 H 290&quot;)" />
+            <circle class="packet packet-slow" r="5" style="offset-path: path(&quot;M 225 58 H 290&quot;)" />
+          </svg>
+          <figcaption><span>Flux d'un paiement</span><span>Kafka, Redis</span></figcaption>
+        </figure>
+
+        <div>
+          <span class="kind">En entreprise, Everest Consulting</span>
+          <h3>Microservice de paiement</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Chaque paiement bloquait la commande jusqu'à la réponse de la banque. Quand un service tombait, les
+              commandes en cours étaient perdues.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Placé une file de messages entre l'interface et les traitements : la commande est acceptée tout de suite,
+              traitée ensuite, et rien ne disparaît si un service redémarre. Architecture en couches, séparation stricte
+              du domaine et de l'accès aux données.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Chiffre à fournir : temps de réponse, volume, disponibilité.</dd>
+          </dl>
+          <p class="tools">
+            <span class="key">Kafka</span><span>Redis</span><span>PostgreSQL</span><span>MongoDB</span
+            ><span>Stripe</span>
+          </p>
+        </div>
+      </article>
+
+      <div class="section-head">
+        <span class="num">02</span>
+        <h2>Expérience</h2>
+        <span class="count">04</span>
+      </div>
+
+      <div class="rows reveal observe">
+        <div class="row">
+          <span class="when">05/2025–08/2026</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Modjo GAIA · OloSuite</strong>
+            <p>Développeur, agents et assistants LLM en production. Éditeur SaaS.</p>
+          </div>
+          <div class="used">
+            <span class="key">Anthropic Claude</span><span>OpenAI</span><span>Next.js</span><span>React</span
+            ><span>TypeScript</span><span>RBAC</span><span>RGPD</span> <span>Prompt engineering</span
+            ><span>Cloisonnement</span><span>Coûts d'inférence</span><span>React</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="when">11/2023–08/2024</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Everest Consulting</strong>
+            <p>Développeur back-end. Microservices métier, paiement et échanges entre services.</p>
+          </div>
+          <div class="used">
+            <span class="key">Kafka</span><span>Redis</span><span>PostgreSQL</span><span>MongoDB</span
+            ><span>Stripe</span><span>JWT</span> <span>Microservices</span><span>RBAC</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="when">08/2023–10/2023</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Compagnie Ivoirienne d'Électricité</strong>
+            <p>Développeur fullstack Angular. Applications métier d'un opérateur national d'électricité.</p>
+          </div>
+          <div class="used">
+            <span class="key">Angular</span><span>PostgreSQL</span><span>Docker</span><span>UML</span>
+          </div>
+        </div>
+        <div class="row">
+          <span class="when">05/2022–11/2022</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Synelia Group</strong>
+            <p>Développeur front-end Angular. Interfaces web et contribution à une application mobile.</p>
+          </div>
+          <div class="used"><span class="key">Angular</span><span>Flutter</span><span>API REST</span></div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="num">03</span>
+        <h2>Formation</h2>
+        <span class="count">03</span>
+      </div>
+
+      <div class="rows reveal observe">
+        <div class="row">
+          <span class="when">2026</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Master MIAGE</strong>
+            <p>Université de Rennes. Informatique et gestion d'entreprise.</p>
+          </div>
+          <div class="used"><span>Architecture</span><span>Bases de données</span><span>Gestion de projet</span></div>
+        </div>
+        <div class="row">
+          <span class="when">2021</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Licence MIAGE</strong>
+            <p>Université Félix Houphouët-Boigny, Abidjan.</p>
+          </div>
+          <div class="used"><span>Développement</span><span>Systèmes d'information</span></div>
+        </div>
+        <div class="row">
+          <span class="when">À venir</span>
+          <span class="rail" aria-hidden="true"></span>
+          <div>
+            <strong>Certification</strong>
+            <p>Organisme et objet à préciser.</p>
+          </div>
+          <div class="used"><span class="todo">A RENSEIGNER</span></div>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <span class="num">04</span>
+        <h2>Compétences</h2>
+        <span class="count">44</span>
+      </div>
+
+      <div class="skills reveal observe">
+        <div class="skill">
+          <h4>Agents & assistants LLM</h4>
+          <div class="used">
+            <span>Anthropic Claude</span><span>OpenAI</span><span>Prompt engineering</span><span>Function calling</span
+            ><span>RAG</span><span>Bases vectorielles</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Plateforme agentique</h4>
+          <div class="used">
+            <span>MCP</span><span>LangChain</span><span>LangGraph</span><span>Machine d'état</span
+            ><span>Portes de qualité</span><span>Traçabilité</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Sécurité & gouvernance</h4>
+          <div class="used">
+            <span>RBAC</span><span>Row Level Security</span><span>Cloisonnement</span><span>RGPD</span
+            ><span>Coûts d'inférence</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Développement</h4>
+          <div class="used">
+            <span>Python</span><span>FastAPI</span><span>Flask</span><span>TypeScript</span><span>Node.js</span
+            ><span>NestJS</span><span>Express</span><span>Java</span><span>API REST</span><span>Microservices</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Données</h4>
+          <div class="used"><span>PostgreSQL</span><span>MongoDB</span><span>Redis</span><span>SQL</span></div>
+        </div>
+        <div class="skill">
+          <h4>DevOps</h4>
+          <div class="used">
+            <span>Docker</span><span>Kubernetes</span><span>GitLab CI</span><span>GitHub Actions</span><span>Git</span
+            ><span>Observabilité</span>
+          </div>
+        </div>
+        <div class="skill">
+          <h4>Interfaces</h4>
+          <div class="used"><span>React</span><span>Next.js</span><span>Angular</span></div>
+        </div>
+        <div class="skill">
+          <h4>Méthodes</h4>
+          <div class="used">
+            <span>TDD</span><span>BDD</span><span>Tests automatisés</span><span>Documentation technique</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="panel reveal observe">
+        <div class="section-head">
+          <span class="num">05</span>
+          <h2>Contact</h2>
+        </div>
+        <p class="panel-title">Disponible en CDI ou freelance</p>
+        <dl class="terms">
+          <dt>Contrat</dt>
+          <dd>CDI ou mission freelance</dd>
+          <dt>Lieu</dt>
+          <dd>Rennes, mobile partout en France, ou à distance</dd>
+          <dt>Début</dt>
+          <dd>Immédiat</dd>
+        </dl>
+        <div class="links">
+          <a href="mailto:kraherbertdonatienkoffi@gmail.com">Écrire un message</a>
+          <a href="https://linkedin.com/in/donatien-koffi">LinkedIn</a>
+          <a href="https://github.com/HerbertCodex">GitHub</a>
+          <a href="/cv/donatien-koffi-fr.pdf">CV en PDF</a>
+        </div>
+      </section>
+
+      <footer>
+        <span>Donatien Koffi, 2026</span>
+        <span>Rennes, France</span>
+      </footer>
+    </div>
+
+    <script>
+      /*
+       * Les schémas ne s'animent que lorsqu'ils sont visibles : un point qui
+       * circule dans une page qu'on ne regarde pas consomme de la batterie
+       * pour rien.
+       */
+      const seen = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            entry.target.classList.toggle("is-in", entry.isIntersecting);
+          }
+        },
+        { rootMargin: "0px 0px -5% 0px" },
+      );
+      for (const node of document.querySelectorAll(".observe")) seen.observe(node);
+    </script>
+  </body>
+</html>

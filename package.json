@@ -24,12 +24,15 @@
     "check:docs": "node agent-pipeline/scripts/doc-lint.mjs",
     "check:security": "node agent-pipeline/scripts/sast.mjs",
     "scan:secrets": "node scripts/scan-secrets.mjs",
-    "project-map": "node scripts/project-map.mjs"
+    "project-map": "node scripts/project-map.mjs",
+    "check:content": "node scripts/check-content.mjs"
   },
   "dependencies": {
+    "@solid-primitives/i18n": "2.2.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.0",
+    "lucide-solid": "^1.41.0",
     "nitro": "^3.0.260610-beta",
     "solid-js": "^1.9.14",
     "vite": "^8.0.0"

@@ -1,23 +1,93 @@
 /**
- * The single source of truth for colour, spacing and type.
+ * The single source of truth for colour, spacing, type and motion.
  *
  * Every value the interface states traces back here. Two sources drift apart
  * in silence and the drift is only ever found in a screenshot, which is why
  * `check:tokens` refuses a literal colour or length written anywhere else.
  *
- * Genre: quiet editorial. A portfolio is read before it is admired, and what
- * it is judged on is the clarity of the work it presents.
+ * Genre: Swiss studio. Visible grid, flat colour, dense grotesque type,
+ * numbered sections, and motion that is mechanical rather than soft. Retained
+ * by the operator after a run of directions; see
+ * docs/decisions/0004-design-system.md.
  */
+
+/*
+ * Le bloc sombre est placé AVANT les valeurs claires, et ce n'est pas
+ * cosmétique. `mockup-check.mjs` lit ce fichier avec un parseur volontairement
+ * peu profond, qui ne retient que la DERNIÈRE déclaration de chaque nom. Le
+ * bloc sombre placé en dernier faisait disparaître les couleurs claires de ce
+ * que l'outil considère comme déclaré, et il refusait une maquette qui les
+ * utilisait pourtant correctement.
+ *
+ * L'ordre ne change rien au rendu : `:root:not([data-theme="light"])` a une
+ * spécificité supérieure à `:root` et l'emporte quelle que soit sa position.
+ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #100f0e;
+    --paper-raised: #1a1917;
+    --ink: #edeae1;
+    --ink-muted: #a29d92;
+    --ink-inverse: #100f0e;
+    --rule: #35332e;
+    --accent: #e04a33;
+    --accent-strong: #f47257;
+    --accent-plate: #c93a24;
+    --on-accent: #f8f7f3;
+    --focus: #7fa8ff;
+  }
+}
+
+/*
+ * Le choix explicite. Le bloc ci-dessus suit le systeme ; celui-ci l'emporte
+ * quand le lecteur a tranche, et il est place AVANT les valeurs claires pour
+ * la meme raison que lui : le parseur de `mockup-check.mjs` ne retient que la
+ * DERNIERE declaration de chaque nom, et un bloc sombre place en dernier
+ * ferait disparaitre les valeurs claires de ce qu'il considere comme declare.
+ */
+:root[data-theme="dark"] {
+  --paper: #100f0e;
+  --paper-raised: #1a1917;
+  --ink: #edeae1;
+  --ink-muted: #a29d92;
+  --ink-inverse: #100f0e;
+  --rule: #35332e;
+  --accent: #e04a33;
+  --accent-strong: #f47257;
+  --accent-plate: #c93a24;
+  --on-accent: #f8f7f3;
+  --focus: #7fa8ff;
+}
+
 :root {
-  --paper: #f6f3ec;
-  --paper-raised: #fffefb;
-  --ink: #1b1917;
-  --ink-muted: #56504a;
-  --rule: #d8d0c2;
-  --accent: #8a3a1e;
-  --accent-strong: #6b2c16;
+  /* Le papier est chaud et légèrement gris : une affiche suisse est imprimée, jamais rétroéclairée. */
+  --paper: #eeece6;
+  --paper-raised: #f8f7f3;
+  --ink: #121110;
+  --ink-muted: #55524b;
+  /* Texte posé sur un aplat de couleur. */
+  --ink-inverse: #f8f7f3;
+  --rule: #c6c2b7;
+  /* Vermillon : l'aplat autour duquel la grille est construite. Jamais un dégradé. */
+  /*
+   * L'aplat et le texte qu'il porte sont des jetons DISTINCTS de l'accent.
+   * Un seul jeton ne peut pas faire les deux metiers : en theme sombre,
+   * l'accent doit etre assez clair pour se lire comme TEXTE sur la page noire
+   * (#e04a33 y vaut 4,74) et devient alors trop clair pour porter du texte
+   * clair en APLAT (3,77, refuse). Le panneau de contact virait donc au noir
+   * sur orange, ce qui inverse le rapport tenu en theme clair et se lit comme
+   * une bande d'alerte au lieu d'une affiche.
+   *
+   * La regle vaut dans les deux themes : du texte clair sur un aplat sature.
+   */
+  --accent: #b3271a;
+  --accent-strong: #8b1d13;
+  --accent-plate: #b3271a;
+  --on-accent: #f8f7f3;
   --focus: #1e40af;
 
+  /* Base de 4px, volontairement grossière : une grille suisse a peu de pas et s'y tient. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;
@@ -25,35 +95,103 @@
   --space-5: 40px;
   --space-6: 64px;
   --space-7: 96px;
+  --space-8: 144px;
 
-  --font-sans: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  /*
+   * Une grotesque, pas une police d'affichage achetée pour l'occasion. L'école
+   * suisse composait avec ce que l'imprimeur avait déjà ; Helvetica ici EST le
+   * genre, là où Syne ou Space Grotesk seraient le signe d'un pastiche.
+   */
+  --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
 
+  /* Amplitude large : c'est l'échelle qui porte la hiérarchie, pas la graisse ni la couleur. */
+  --text-xs: 12px;
   --text-sm: 14px;
   --text-base: 17px;
-  --text-lg: 21px;
-  --text-xl: 28px;
-  --text-2xl: 40px;
+  --text-lg: 22px;
+  --text-xl: 32px;
+  --text-2xl: 52px;
+  --text-3xl: 84px;
 
-  --leading-tight: 1.2;
-  --leading-body: 1.6;
+  --leading-tight: 0.94;
+  --leading-snug: 1.15;
+  --leading-body: 1.55;
 
-  --radius-1: 2px;
-  --radius-2: 6px;
+  /* Un interlettrage resserré fait la moitié de la lisibilité d'une grotesque en grand. */
+  --track-tight: -0.03em;
+  --track-wide: 0.08em;
 
-  --measure: 68ch;
+  --weight-regular: 400;
+  --weight-bold: 700;
+
+  --radius-1: 0px;
+  --radius-2: 2px;
+
+  /*
+   * La largeur de page et le point de rupture sont des décisions de mise en
+   * page, donc des jetons. Une media query ne peut pas lire var(), la valeur y
+   * est donc écrite en clair, mais elle est déclarée ici et `mockup-check` la
+   * reconnaît à ce titre plutôt que comme une valeur choisie à l'œil.
+   */
+  --page-max: 1440px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+
+  /*
+   * La cible tactile minimale. 24px est le seuil que WCAG 2.5.8 demande : en
+   * dessous, un lien se rate au doigt, et c'est un défaut qu'aucune relecture
+   * sur écran d'ordinateur ne révèle.
+   */
+  --tap-min: 24px;
+
+  --measure: 64ch;
   --border-hairline: 1px;
-}
+  --border-heavy: 3px;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #17161a;
-    --paper-raised: #211f24;
-    --ink: #f2eee7;
-    --ink-muted: #b4aca1;
-    --rule: #3a3640;
-    --accent: #e79170;
-    --accent-strong: #f3b295;
-    --focus: #93b4ff;
-  }
+  /*
+   * Le mouvement. Le genre décide de la courbe : une mise en page suisse se
+   * déplace comme une feuille qu'on fait glisser sur une table. Elle part
+   * vite, arrive à plat, et ne rebondit jamais. Un dépassement élastique
+   * appartiendrait à un autre genre.
+   */
+  --motion-fast: 140ms;
+  --motion-base: 320ms;
+  --motion-slow: 620ms;
+  --motion-stagger: 70ms;
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Le volet qui découvre un bloc : plus lent qu'une transition, plus court qu'un balayage. */
+  --motion-wipe: 900ms;
+
+  /*
+   * Les formes de fond. Carré, cercle, barre : le vocabulaire de l'école, pas
+   * des particules ni des orbes. Leurs tailles sont des jetons parce qu'une
+   * forme choisie à l'œil est une échelle de plus à maintenir.
+   */
+  --shape-lg: 420px;
+  --shape-md: 260px;
+  --shape-bar: 620px;
+  --motion-float: 32000ms;
+  --motion-turn: 44000ms;
+
+  /* Le balayage de fond : lent, parce qu'il ne doit jamais attirer l'œil. */
+  --motion-sweep: 18000ms;
+
+  /* Distance parcourue par un bloc révélé. Faible : le mouvement signale, il ne performe pas. */
+  /*
+   * Les schémas de flux. Ce sont eux qui remplacent les captures d'écran :
+   * un service back-end n'a pas d'interface à montrer, il a des échanges.
+   * Leurs mesures sont des jetons pour que tous les schémas du site aient
+   * exactement le même trait et le même rythme.
+   */
+  --flow-stroke: 2px;
+  --flow-node: 3px;
+  --flow-dash: 6;
+  --motion-flow: 3200ms;
+  --motion-flow-slow: 5200ms;
+
+  --lift: 18px;
 }

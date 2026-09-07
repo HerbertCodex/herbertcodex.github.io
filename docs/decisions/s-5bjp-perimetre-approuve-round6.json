@@ -1,0 +1,419 @@
+{
+  "schema_version": 1,
+  "mode": "spec_proposal",
+  "agent": "product",
+  "produced_at": "2026-09-05T21:22:00Z",
+  "round": 6,
+  "title": "Le portfolio dit ce que le CV dit : périmètre arrêté, accueil compris",
+  "scope": {
+    "spec_id": "s-5bjp"
+  },
+  "basis": {
+    "record_hash": "3f28472621bab429cbe8aca1db3886efe4c41a311393683b7002803e4e31104d",
+    "pipeline_version": 8,
+    "note": "record_hash et state_version du task package i-841g-product-package.json, l'enregistrement lu pour ce round."
+  },
+  "outcome": "awaiting_operator",
+  "review_page": {
+    "path": "pipeline/pages/proposal-portfolio-v1-round6.html"
+  },
+  "scope_final": true,
+  "operator_feedback": {
+    "verbatim": "« Round 5 lu. Tes trois questions sont tranchees par l operateur. Produis le round final avec scope_final true et sans question restante, puis le spec_plan une fois approuve. D-A ACCUEIL : ta recommandation. L accueil porte l ouverture — titre, accroche, quatre faits — plus une entree nommee vers chacune des trois autres pages, sans republier aucune section en entier. Ta remarque sur l accueil qu aucun segment dynamique ne peut servir est exacte et la decision 0009 ne l avait pas prevue : /fr et /en n ont pas de slug a faire correspondre, il faut donc une route propre a l accueil a cote de la route dynamique. Ecris-le comme critere, avec la table qui porte quand meme l accueil sous un nom vide pour que le selecteur de langue et le controle de prerendu le traitent comme les autres. D-B PORTE CONTENT : ta recommandation, et c est deja fait. Tu avais raison, la porte ne refusait qu un des cinq emplacements. Elle refuse desormais A RENSEIGNER, a renseigner, chiffre a fournir, a preciser, a completer, a venir, LOREM IPSUM et TODO-CONTENU. Chacune des quatre tournures ajoutees a ete prouvee individuellement : plantee dans src, la porte sort en 1 ; retiree, elle sort en 0. Elle a ete elargie en tache d operateur comme tu le recommandais, hors du pipeline, parce que scripts est en revue humaine. Inscris la regle : toute nouvelle formulation d attente s ajoute dans scripts/check-content.mjs, jamais a cote. D-C CONTACT : l adresse de la maquette est retenue, kraherbertdonatienkoffi@gmail.com, qui est celle du CV. La messagerie reste l appel principal, LinkedIn et GitHub au second rang comme la maquette les dessine. Rien d autre ne change. Ta decomposition en huit issues, tes regles et ton intention de parallelisme sont retenues telles quelles. »",
+    "summary": "Vos trois réponses sont intégrées et le périmètre est arrêté : ce round ne pose plus aucune question. L'accueil porte l'ouverture et trois entrées nommées, la porte `content` est élargie et vérifiée ici, l'adresse de contact du CV est retenue. Ce que leur composition fait apparaître et qu'aucune ne montre seule : la table doit porter l'accueil sous un nom vide sans que la route unique le serve, sans quoi /fr/ devient une seconde adresse pour la même page ; le lien d'évitement de la maquette pointe sur une ancre qui n'existe nulle part, mesuré — le fichier ne contient aucun attribut id ; la porte élargie ne lit que certaines extensions, donc un fichier de contenu écrit en YAML sous src/ lui serait invisible, mesuré aussi ; et deux adresses de contact également bien formées existent, qu'aucune vérification de format ne peut départager, d'où un critère qui fixe la chaîne exacte. La décision 0010 contredit toujours le titre que vous avez rétabli : l'amendement signalé au round 5 n'a pas été porté au journal.",
+    "decided": [
+      "D-A — Accueil : l'ouverture — titre, accroche, quatre faits — plus une entrée nommée vers chacune des trois autres pages, sans republier aucune section en entier. L'accueil garde une route propre à côté de la route dynamique, puisque /fr et /en n'ont aucun slug à faire correspondre ; la table porte quand même l'accueil sous un nom vide, pour que le sélecteur de langue et le contrôle de prérendu le traitent comme les autres pages. Écrit comme critère.",
+      "D-B — Porte `content` : élargie, et déjà faite, en tâche d'opérateur hors du pipeline parce que scripts/ est en revue humaine. Elle refuse désormais A RENSEIGNER, à renseigner, chiffre à fournir, à préciser, à compléter, à venir, LOREM IPSUM et TODO-CONTENU, chacune des quatre tournures ajoutées ayant été prouvée individuellement. La règle inscrite au périmètre : toute nouvelle formulation d'attente s'ajoute dans scripts/check-content.mjs, jamais à côté.",
+      "D-C — Contact : l'adresse de la maquette est retenue, kraherbertdonatienkoffi@gmail.com, qui est celle du CV. La messagerie reste l'appel principal, LinkedIn et GitHub au second rang comme la maquette les dessine."
+    ],
+    "changed": [
+      "Une fonctionnalité naît : « Accueil : l'ouverture, et une entrée nommée vers chacune des trois autres pages ». Elle porte ce que la page montre, ce qu'elle ne recopie pas, et le fait qu'elle est la seule des quatre à ne pas être servie par la route unique.",
+      "La règle d'adressage dit désormais comment l'accueil vit dans la table : il y figure sous un nom vide, le sélecteur de langue et la liste de prérendu le lisent comme les autres, et la route unique ne le sert jamais. Une conséquence est écrite comme règle plutôt que laissée à l'implémenteur : /fr/ et /en/ ne sont pas des adresses produites, sans quoi le nom vide donnerait une seconde adresse à la même page.",
+      "Une règle d'accessibilité est ajoutée : chaque page porte un lien d'évitement dont la cible existe sur cette page. Mesuré sur la maquette validée : elle écrit « Aller aux réalisations » vers l'ancre #realisations et ne contient aucun attribut id — zéro occurrence dans le fichier. L'ancre est donc morte dans le dessin, et la répartition en quatre adresses la transforme de toute façon en lien vers une autre page.",
+      "La règle du contenu provisoire nomme la commande : les tournures d'attente sont refusées par scripts/check-content.mjs, et toute nouvelle formulation s'y ajoute plutôt qu'à côté. La porte est ré-mesurée pour ce round sur les cinq emplacements provisoires de la maquette : elle les refuse tous les cinq, alors qu'elle en refusait un au round 5.",
+      "Une règle est ajoutée au contenu éditorial : les fichiers de contenu sont écrits dans un format que cette commande lit réellement. Mesuré sur un arbre témoin : ses motifs sont liés aux extensions — src/**/*.{ts,tsx,css,json,md} et public/**/*.{html,json,md,txt} — donc un src/shared/content/fr.yaml lui est invisible là où src/shared/content/fr.ts est lu. Écrire le contenu en YAML rendrait la porte aveugle exactement là où le contenu vit.",
+      "La prise de contact nomme l'adresse exacte, kraherbertdonatienkoffi@gmail.com, et l'ordre des moyens : messagerie en appel principal, LinkedIn et GitHub au second rang, le CV rappelé au même rang secondaire et sous sa condition d'existence.",
+      "Les exclusions gagnent quatre lignes : aucune section republiée en entier sur l'accueil, aucune adresse d'accueil servie par la route unique, aucune obfuscation de l'adresse de contact, aucun élargissement de la porte écrit ailleurs que dans la commande.",
+      "Les engagements pour le plan gagnent cinq critères correspondants — le nom vide dans la table, l'absence de /fr/ et /en/, le lien d'évitement, le format des fichiers de contenu, la chaîne exacte de l'adresse — et rien d'autre ne bouge : les huit titres, les trois vagues et les réservations du round 5 sont repris tels quels, comme vous le demandez."
+    ]
+  },
+  "answers_composition_check": {
+    "pairs_checked": [
+      {
+        "pair": [
+          "D-A : l'accueil garde une route propre, et la table le porte quand même sous un nom vide",
+          "D2 et la décision 0009 : la table est lue par trois consommateurs — la route unique, le sélecteur de langue, scripts/routes.mjs — et par eux seuls"
+        ],
+        "composes": false,
+        "note": "L'entrée de l'accueil est la première que la route unique ne consomme pas : un segment dynamique ne s'apparie pas à une chaîne vide. La table a donc désormais deux sortes de lignes, et 0009 n'en décrit qu'une — c'est ce que vous notez vous-même. Le risque n'est pas théorique : si l'implémenteur alimente la route depuis la table entière, le nom vide produit /fr/ et /en/, c'est-à-dire une seconde adresse pour une page qui n'en a qu'une, et la règle de la barre finale tombe par un chemin que personne ne surveille — le contrôle de construction ne voit pas la barre finale, c'est mesuré depuis le round 4. Résolu par deux critères plutôt que par une note : la route unique ne sert jamais l'entrée au nom vide, et /fr/ comme /en/ ne sont pas des adresses produites. Un amendement à 0009 est signalé à l'Orchestrateur, parce que la prochaine lecture du journal doit trouver la table décrite telle qu'elle est."
+      },
+      {
+        "pair": [
+          "D-A : une entrée nommée vers chacune des trois autres pages, sans republier aucune section",
+          "La règle d'accessibilité : l'accès aux quatre pages et à un moyen de contact depuis n'importe quelle page, au clavier seul"
+        ],
+        "composes": false,
+        "note": "Mesuré sur la maquette validée : elle porte un lien d'évitement « Aller aux réalisations » vers #realisations, et le fichier ne contient aucun attribut id — zéro occurrence de id=\" sur 1 312 lignes. L'ancre ne mène nulle part dans le dessin lui-même, et la répartition en quatre adresses achève de la vider de sens : sur l'accueil, « réalisations » est une autre page, pas un fragment. Sans règle, l'implémenteur recopie le lien tel quel et livre sur chaque page un premier élément focalisable qui ne fait rien — la défaillance d'accessibilité la plus difficile à remarquer, puisqu'elle n'est visible qu'au clavier et que rien ne l'écrit dans une console. Résolu par une règle de périmètre : chaque page porte un lien d'évitement dont la cible existe sur cette page, et les entrées nommées de l'accueil sont des liens vers /fr/realisations, /fr/parcours et /fr/contact, jamais des ancres."
+      },
+      {
+        "pair": [
+          "D-A : l'accueil porte l'ouverture et rien de plus",
+          "D5 : une section dont le contenu réel n'existe pas encore est vide ou absente"
+        ],
+        "composes": true,
+        "note": "Elles composent, et c'est ce qui rend l'accueil tenable : les quatre faits de l'ouverture — CDI ou freelance, Rennes mobile en France, Master MIAGE, FR · EN — sont tous vrais et vérifiables aujourd'hui, et l'accroche décrit un travail fait, pas un chiffre à produire. L'accueil est donc la seule des quatre pages qui naisse complète. C'est aussi ce qui justifie qu'elle soit courte : elle ne devient pas mince par retrait, elle l'est par choix, et vous l'avez tranché en connaissant les deux autres options."
+      },
+      {
+        "pair": [
+          "D-B : la porte élargie aux huit tournures",
+          "D5 : rien de plausible n'est écrit en attendant le fait réel"
+        ],
+        "composes": true,
+        "note": "Vérifié pour ce round, et le résultat est celui que vous annoncez : les cinq emplacements provisoires de la maquette sont désormais refusés — « A RENSEIGNER », « restent à renseigner », « Chiffre à fournir : ... », « Organisme et objet à préciser. », « À venir · Certification » — là où un seul l'était au round 5. La porte reste verte sur l'état courant du dépôt, donc l'élargissement n'a pas de faux positif à payer aujourd'hui. Ce qu'elle ne fait toujours pas est inchangé et reste écrit au périmètre : « Kubernetes » passe, mesuré, parce qu'aucune commande ne distingue un fait inventé d'un fait vrai. La porte refuse les aveux d'attente ; elle ne refuse pas les mensonges bien formés, et c'est pour cela que la règle du contenu provisoire vit dans le périmètre et pas seulement dans un script."
+      },
+      {
+        "pair": [
+          "D-B : toute nouvelle formulation d'attente s'ajoute dans scripts/check-content.mjs, jamais à côté",
+          "Le contenu éditorial versionné, écrit par l'implémenteur sous src/shared/content/"
+        ],
+        "composes": false,
+        "note": "Deux choses ne s'accordent pas, et les deux sont réparables au plan. La première : la règle désigne un fichier que le rôle qui en découvrira le besoin ne peut pas écrire — scripts/ est en revue humaine, mesuré au round 5. L'implémenteur qui rencontrera une sixième tournure n'aura qu'une action affordable, reformuler son texte, ce qui est légitime et même souhaitable, mais laisse la porte inchangée pour la fois suivante. Le plan exige donc que ce cas soit remonté comme découverte plutôt qu'absorbé en silence, et l'élargissement reste une tâche d'opérateur. La seconde est mesurée sur un arbre témoin : les motifs de la porte sont liés aux extensions, si bien que src/shared/content/fr.ts est lu et src/shared/content/fr.yaml ne l'est pas. Un contenu écrit en YAML rendrait la garde aveugle précisément là où le contenu vit, et rien ne le signalerait — la commande sortirait en 0. D'où la règle ajoutée : les fichiers de contenu sont écrits dans un format que la porte lit réellement."
+      },
+      {
+        "pair": [
+          "D-C : l'adresse retenue est celle du CV, kraherbertdonatienkoffi@gmail.com",
+          "La règle de contact : un lien vide ou mal formé fait échouer la construction"
+        ],
+        "composes": false,
+        "note": "La règle vérifie une forme, et deux adresses de forme irréprochable coexistent : celle du CV, que vous retenez, et celle depuis laquelle ce dépôt est opéré. Une vérification de format serait verte sur les deux, donc elle ne protège pas de la seule erreur qui compte ici — publier la mauvaise. C'est le mode de défaillance nommé au round 5 et il n'a pas changé : personne ne signale un message qui n'est jamais arrivé. Résolu en fixant la chaîne exacte dans un critère de l'issue Contact, de sorte qu'une modification ultérieure fasse échouer un test au lieu de passer inaperçue. Ce que cela ne prouve toujours pas est dit : qu'une boîte relève cette adresse. Aucune commande de ce dépôt ne peut l'établir, et un envoi d'essai est de votre côté."
+      },
+      {
+        "pair": [
+          "D-C : la messagerie en appel principal sur une page publique et statique",
+          "La règle : aucun message n'est stocké ni transmis à un tiers, et le déploiement statique de la décision 0003"
+        ],
+        "composes": true,
+        "note": "Cela compose exactement parce qu'il n'y a pas de serveur : le lien ouvre l'outil du visiteur, rien ne transite par le site, et il n'y a donc ni stockage ni sous-traitant. Le coût est nommé plutôt que traité : une adresse personnelle écrite en clair sur une page publique sera collectée. Aucune obfuscation n'est retenue — une adresse en image ou reconstruite par script casse le lien pour un lecteur d'écran et pour un clavier, ce qui contredit la règle d'accessibilité, et n'arrête aucun collecteur sérieux. La surface est donc exclue du périmètre technique et nommée pour la relecture humaine de la pull request : donnée personnelle publiée délibérément, sur votre décision."
+      },
+      {
+        "pair": [
+          "D-C : le CV rappelé dans le bloc de contact, au second rang",
+          "D4 et la règle du CV : le lien n'apparaît que si le fichier de la langue existe dans le dépôt"
+        ],
+        "composes": true,
+        "note": "La maquette dessine quatre liens dans le panneau, la messagerie d'abord, puis LinkedIn, GitHub et « CV en PDF » vers /cv/donatien-koffi-fr.pdf. L'ordre que vous fixez est celui-là, et le CV reste au rang secondaire sans devenir un appel à l'action. La condition d'existence s'applique aux deux emplacements sans les coupler : public/ ne contient aujourd'hui que favicon.ico, re-mesuré pour ce round, donc les deux liens naissent absents ensemble et réapparaîtront ensemble le jour où le fichier sera versionné. Le point de décomposition tient toujours : seule l'issue du parcours réserve public/cv, l'issue Contact ne fait que pointer un chemin, et les deux restent dispatchables séparément."
+      },
+      {
+        "pair": [
+          "D-A, D-B et D-C prises ensemble",
+          "D7 : les huit issues, les trois vagues et les réservations du round 5, retenues telles quelles"
+        ],
+        "composes": true,
+        "note": "Aucune des trois réponses ne crée de fichier que la décomposition ne réservait pas déjà. L'accueil est écrit par l'issue des adresses, qui réserve de toute façon la table, la route unique et la route de l'accueil ; la porte élargie est déjà faite et hors du pipeline, donc elle ne consomme aucune issue ; l'adresse de contact est une chaîne dans le contenu de l'issue Contact. Les cinq critères ajoutés se répartissent sur des issues existantes — trois sur les adresses, un sur le contenu, un sur le contact — et le nombre reste huit. C'est ce qui permet de dire que le périmètre est arrêté sans qu'une neuvième issue naisse au moment du plan, ce que ni vous ni moi ne pourrions vérifier après coup."
+      },
+      {
+        "pair": [
+          "D1, confirmé au round 5 : le titre reste « Ingénieur logiciel »",
+          "docs/decisions/0010, inchangé depuis : « Le titre passe de « Ingénieur logiciel » à « Agents LLM en production » »"
+        ],
+        "composes": false,
+        "note": "Signalé au round 5, non porté : la ligne 35 du journal dit toujours le contraire de la maquette validée et de votre choix. Je le redis sans le corriger, mon rôle m'interdisant d'écrire dans docs/decisions, parce qu'un amendement signalé une fois et perdu entre deux rôles est exactement la défaillance que 0007 et 0009 ont déjà payée sur ce dépôt. C'est le document que le prochain Produit lira en premier et croira. Il ne bloque rien : aucune issue n'en dépend, et la maquette fait foi pour l'implémenteur."
+      }
+    ],
+    "conflicts_found": [
+      "L'accueil porté par la table sous un nom vide produirait /fr/ et /en/ si la route unique consommait la table entière — une seconde adresse pour une page qui n'en a qu'une, invisible au contrôle de construction qui ne voit pas la barre finale. Résolu par deux critères de l'issue des adresses, et un amendement à la décision 0009 est signalé à l'Orchestrateur, la table ayant désormais une ligne que la route ne sert pas.",
+      "Le lien d'évitement de la maquette pointe sur #realisations et le fichier ne contient aucun attribut id : mesuré, zéro occurrence. La cible est morte dans le dessin, et la répartition en quatre adresses la rendrait de toute façon fausse. Résolu par une règle de périmètre sur la cible du lien d'évitement de chaque page.",
+      "La porte `content` est liée aux extensions qu'elle balaie : un fichier de contenu écrit en YAML sous src/ lui serait invisible, mesuré sur un arbre témoin. Résolu par une règle qui impose au contenu éditorial un format que la porte lit réellement.",
+      "Deux adresses de contact également bien formées existent, et la règle du périmètre ne vérifie qu'une forme. Résolu en fixant la chaîne exacte dans un critère ; ce qu'aucune commande ne prouvera reste dit — qu'une boîte relève cette adresse.",
+      "La règle « toute nouvelle tournure s'ajoute dans la porte » désigne un fichier que l'implémenteur ne peut pas écrire. Résolu en exigeant que le cas soit remonté comme découverte, l'élargissement restant une tâche d'opérateur.",
+      "docs/decisions/0010 écrit toujours que le titre passe à « Agents LLM en production », alors que vous l'avez rétabli et que la maquette le porte. Signalé au round 5, non porté ; hors de mon périmètre d'écriture, re-signalé à l'Orchestrateur."
+    ],
+    "closed_from_previous_round": [
+      "D-A est fermée : l'accueil porte l'ouverture et trois entrées nommées, la répartition des cinq sections numérotées sur les quatre adresses est arrêtée, et aucune section n'est republiée.",
+      "D-B est fermée et vérifiée ici : la porte refuse les cinq emplacements provisoires de la maquette, contre un au round 5, et reste verte sur l'état courant.",
+      "D-C est fermée : l'adresse du CV est retenue, la messagerie reste l'appel principal.",
+      "Tout ce que les rounds 4 et 5 avaient fermé le reste : les huit adresses, l'ordre des quatre réalisations, les cinq parties nommées du parcours, la règle des compétences et son manque assumé de dix-huit noms, la décomposition en huit issues et l'intention de parallélisme."
+    ]
+  },
+  "functional_scope": {
+    "intent": "Un portfolio qui dit ce que le CV dit — des agents et des assistants LLM en production, et le cadre qui rend ce travail vérifiable — et qui n'affiche rien qui ne soit encore vrai.",
+    "summary": "Un portfolio personnel bilingue qui présente une personne, quatre réalisations, un parcours et un moyen de la joindre. Il s'adresse en priorité à un recruteur du marché français. Il ne possède aucune donnée : il ne stocke rien, ne demande aucun compte, n'enregistre aucun message et ne mesure aucune audience. Son parti pris tient en une phrase : ce que cette personne construit n'a pas d'écran, donc chaque réalisation est montrée par le schéma de ce qu'elle fait plutôt que par une capture. Et il obéit à une contrainte inhabituelle : une section dont le contenu réel n'existe pas encore paraît vide ou ne paraît pas, jamais remplie de valeurs plausibles.",
+    "features": [
+      {
+        "name": "Site bilingue, une adresse par langue",
+        "user_value": "Un visiteur francophone et un visiteur anglophone lisent chacun le site dans sa langue, à une adresse qui est de sa langue, et changent de langue sans perdre la page qu'ils consultaient.",
+        "rules": [
+          "Le français est la langue par défaut : la racine du site conduit à la version française.",
+          "Les quatre pages sont : l'accueil sur /fr et /en ; les réalisations sur /fr/realisations et /en/work ; le parcours sur /fr/parcours et /en/about ; le contact sur /fr/contact et /en/contact.",
+          "L'adresse de l'accueil est le préfixe de langue seul, sans nom de page et sans barre finale : /fr et /en, jamais /fr/ ni /en/. Une même page n'a qu'une adresse par langue.",
+          "L'accueil est la seule des quatre pages que la route commune ne sert pas : le préfixe de langue seul n'a aucun nom de page à faire correspondre. Il garde donc sa propre route, à côté de celle qui sert les trois autres.",
+          "La correspondance des adresses porte quand même l'accueil, sous un nom vide, pour que le changement de langue et le contrôle des pages à produire le traitent comme les trois autres : une page absente de cette correspondance est une page que personne ne bascule et que personne ne vérifie.",
+          "Aucune page n'est servie deux fois : la route commune ne rend jamais l'accueil, et /fr/ comme /en/ ne sont pas des adresses produites.",
+          "Une adresse qui mélange les deux langues — le nom d'une page dans une langue sous le préfixe de l'autre — n'existe pas : elle conduit à la page « introuvable », jamais à la page dans l'autre langue. /en/realisations et /fr/work sont introuvables.",
+          "/fr/about, qui répond aujourd'hui, cesse de répondre : « about » est le nom anglais du parcours, et son adresse française est /fr/parcours. Aucune redirection n'est mise en place, le site n'étant pas publié.",
+          "La correspondance entre les deux adresses d'une même page est écrite à un seul endroit : ajouter une page, c'est y ajouter une ligne, et il n'existe aucun second endroit où cette correspondance pourrait se contredire.",
+          "Une adresse annoncée par le site est une adresse réellement produite : la publication est refusée si une page déclarée n'a pas été construite.",
+          "Le changement de langue conduit à la même page dans l'autre langue, jamais à l'accueil : depuis /fr/realisations, il conduit à /en/work ; depuis /fr, il conduit à /en.",
+          "Le changement de langue est utilisable au clavier seul et annoncé aux technologies d'assistance, et la langue active se distingue autrement que par la seule couleur.",
+          "Le lien qui change de langue annonce la langue vers laquelle il conduit, de sorte qu'un moteur de recherche puisse relier deux adresses qui ne se ressemblent plus.",
+          "Un moyen de contact et l'accès aux quatre pages sont atteignables depuis n'importe quelle page, y compris au clavier seul.",
+          "Chaque page porte un lien d'évitement dont la cible existe sur cette page : un lien d'évitement qui ne mène nulle part est le premier élément qu'un visiteur au clavier rencontre, et le seul défaut d'accessibilité qu'aucun écran ne montre."
+        ]
+      },
+      {
+        "name": "Accueil : l'ouverture, et une entrée nommée vers chacune des trois autres pages",
+        "user_value": "Un recruteur qui arrive à l'adresse par défaut du site sait en une lecture qui est cette personne et ce qu'elle cherche, et voit nommément où aller ensuite plutôt que trois mots dans une barre.",
+        "rules": [
+          "L'accueil porte l'ouverture : le titre du poste, l'accroche qui dit ce que cette personne fait, et quatre faits — forme de contrat, lieu et mobilité, formation, langues.",
+          "Le titre affiché est « Ingénieur logiciel », choisi et non déduit du contenu.",
+          "L'accueil porte une entrée nommée vers chacune des trois autres pages : réalisations, parcours, contact. Une entrée dit où elle conduit et pourquoi y aller, en une ligne.",
+          "L'accueil ne republie aucune section des trois autres pages en entier : ni une réalisation complète, ni la liste des compétences, ni le panneau de contact.",
+          "Les entrées nommées sont des liens vers les autres adresses, jamais des ancres vers un fragment de la même page.",
+          "Les quatre faits de l'ouverture sont vrais et vérifiables au jour de la publication ; aucun n'est un ordre de grandeur ni une intention."
+        ]
+      },
+      {
+        "name": "Contenu éditorial versionné, complet, et jamais inventé",
+        "user_value": "Un recruteur ne lit jamais une page à moitié traduite, ni une valeur qui semble être un fait sans en être un. Ce qu'il lit est vrai ou n'est pas là.",
+        "rules": [
+          "Une section dont le contenu réel n'existe pas encore est soit vide, soit absente, jamais remplie de valeurs plausibles. Une valeur plausible écrite en attendant passe toutes les portes, parce qu'aucune commande ne distingue un fait inventé d'un fait vrai.",
+          "Un marqueur d'emplacement est refusé partout hors du dossier des maquettes, et cette interdiction est une commande, pas une relecture.",
+          "Toute nouvelle formulation d'attente s'ajoute dans cette commande et nulle part ailleurs : une interdiction écrite à côté de la garde ne s'applique jamais. La commande refuse aujourd'hui huit tournures et couvre les cinq emplacements provisoires de la maquette.",
+          "Les fichiers de contenu sont écrits dans un format que cette commande lit réellement : un contenu déposé dans un format qu'elle ne balaie pas la rendrait aveugle exactement là où le contenu vit, et elle sortirait verte.",
+          "Un compteur de section est calculé à partir de ce qui est réellement affiché, jamais écrit à la main : une section qui annonce trois entrées et en montre deux est un fait faux à un endroit que personne ne relit.",
+          "Toute page existe dans les deux langues. Une page traduite à moitié n'est pas publiée, et cette complétude est vérifiée par une commande, pas par relecture.",
+          "Le texte long — réalisations, parcours, compétences — vit dans des fichiers de contenu versionnés, une version par langue, hors des composants ; ajouter une réalisation ou une ligne de parcours n'est pas une modification de composant.",
+          "Les libellés d'interface sont traduits par le mécanisme de la bibliothèque retenue ; le contenu long ne passe jamais par les dictionnaires.",
+          "Un champ obligatoire manquant dans un fichier de contenu est refusé à la construction plutôt qu'affiché vide."
+        ]
+      },
+      {
+        "name": "Réalisations : quatre, dans l'ordre choisi, chacune avec sa provenance",
+        "user_value": "Un recruteur comprend en quelques secondes ce que cette personne sait construire, et voit d'un coup d'œil si c'est un travail personnel ou un travail livré en entreprise.",
+        "rules": [
+          "Les quatre réalisations paraissent dans cet ordre, choisi et non trié automatiquement : agent-pipeline, decodevoyage.com, les assistants et agents LLM de Modjo GAIA · OloSuite, le microservice de paiement d'Everest Consulting.",
+          "Chaque réalisation porte son bandeau de provenance : « projet personnel », le cas échéant open source, ou « en entreprise » suivi du nom de l'employeur. Un travail salarié n'a pas moins de valeur, il a souvent servi à quelqu'un.",
+          "Chaque réalisation dit le problème, ce que la personne y a fait précisément, et — seulement s'il existe — le résultat obtenu. La ligne de résultat est absente quand aucun résultat réel n'est disponible ; elle n'est jamais remplie d'un ordre de grandeur vraisemblable.",
+          "Ce que cette personne construit n'a pas d'écran : chaque réalisation est montrée par un schéma de ce qu'elle fait — les rôles, les portes, les données qui circulent — et non par une capture. Le mouvement du schéma porte l'information ; il s'arrête quand le lecteur demande moins d'animation.",
+          "Une réalisation dont ni la démonstration ni le code ne sont consultables l'annonce par l'absence de lien, plutôt que d'exposer un lien qui ne mène nulle part.",
+          "Une réalisation sans schéma ni image s'affiche sans rompre la mise en page.",
+          "Les technologies affichées sous une réalisation sont celles qui y ont réellement servi."
+        ]
+      },
+      {
+        "name": "Expérience professionnelle",
+        "user_value": "Un recruteur sait où cette personne est passée, pendant combien de temps, et surtout ce qu'elle y a fait — pas seulement une liste d'employeurs.",
+        "rules": [
+          "Chaque ligne nomme l'employeur exactement — « Compagnie Ivoirienne d'Électricité », jamais une abréviation qui ne désigne aucune entreprise réelle — la période exacte, le rôle tenu, et ce qui y a été fait.",
+          "Les technologies affichées sur une ligne d'expérience sont celles employées dans cette mission, reprises du CV et non déduites.",
+          "Le poste en cours se distingue des postes passés autrement que par sa position dans la liste.",
+          "Une ligne d'expérience dont la période ou l'employeur n'est pas certain n'est pas publiée approximativement : elle est corrigée ou retirée."
+        ]
+      },
+      {
+        "name": "Formation",
+        "user_value": "Un recruteur situe le niveau de formation et l'établissement sans avoir à ouvrir le CV.",
+        "rules": [
+          "Chaque diplôme nomme son intitulé, son établissement et son année.",
+          "Un diplôme en cours d'obtention le dit ; un diplôme non obtenu n'est pas annoncé comme obtenu.",
+          "Une formation dont l'établissement ou l'année manque n'est pas affichée avec une valeur approchée."
+        ]
+      },
+      {
+        "name": "Certifications",
+        "user_value": "Un recruteur voit les certifications obtenues — et, tant qu'il n'y en a aucune, ne voit rien plutôt qu'une promesse.",
+        "rules": [
+          "Une certification nomme son organisme, son objet et sa date d'obtention.",
+          "Tant qu'aucune certification n'existe, la partie ne rend rien : ni ligne « à venir », ni organisme à préciser, ni marqueur d'emplacement.",
+          "Ajouter une certification est une ligne de contenu et rien d'autre : aucune modification de composant, aucun compteur à corriger à la main."
+        ]
+      },
+      {
+        "name": "Compétences techniques",
+        "user_value": "Un recruteur, humain ou automatique, retrouve d'un balayage les technologies qu'il cherche, et chacune de celles qu'il lit est adossée à quelque chose de vérifiable sur la page.",
+        "rules": [
+          "Toute compétence annoncée est adossée à au moins un projet présenté ou à une expérience professionnelle listée. Une compétence sans adossement n'est pas annoncée.",
+          "Cet adossement est vérifié par une commande, pas par relecture : une compétence orpheline fait échouer la construction.",
+          "Les compétences sont présentées en étiquettes repérables d'un balayage, groupées par domaine, jamais en phrases.",
+          "Un groupe dont plus aucune compétence n'est adossée disparaît au lieu de rester en titre vide.",
+          "Le nombre affiché de compétences est celui des compétences réellement affichées."
+        ]
+      },
+      {
+        "name": "CV téléchargeable",
+        "user_value": "Un recruteur convaincu repart avec un document qu'il peut transmettre en interne, dans la langue où il lisait la page.",
+        "rules": [
+          "Le CV est versionné dans le dépôt, une version par langue, plutôt qu'hébergé ailleurs : un lien vers un stockage externe expire sans que personne s'en aperçoive.",
+          "La version proposée en premier est celle de la langue affichée.",
+          "Le lien n'est affiché que si le fichier de cette langue existe réellement dans le dépôt : aucun lien de téléchargement ne mène à une page introuvable.",
+          "Le CV est accessible depuis le parcours, où un recruteur le cherche, et rappelé dans le bloc de contact au rang secondaire."
+        ]
+      },
+      {
+        "name": "Prise de contact",
+        "user_value": "Un recruteur convaincu peut joindre la personne immédiatement, sans formulaire, sans compte et sans attendre la réponse d'un serveur, et sait avant d'écrire si sa proposition a une chance.",
+        "rules": [
+          "La messagerie est l'appel à l'action principal, orienté recrutement : c'est le canal par lequel une offre se transmet.",
+          "L'adresse publiée est celle du CV, kraherbertdonatienkoffi@gmail.com, écrite exactement : une adresse de contact fausse échoue en silence, personne ne signale un message qui n'est jamais arrivé.",
+          "LinkedIn et GitHub restent accessibles au second rang visuel, comme la maquette les dessine, et le lien du CV les rejoint à ce rang sous sa condition d'existence.",
+          "Les conditions sont écrites plutôt que sous-entendues : forme de contrat acceptée, lieu et mobilité, disponibilité.",
+          "Aucun message n'est stocké ni transmis à un tiers : les liens ouvrent l'outil du visiteur — messagerie, LinkedIn, GitHub.",
+          "Chaque lien de contact pointe vers une cible renseignée et exacte ; un lien vide ou mal formé fait échouer la construction. La vérification porte sur la chaîne exacte et pas seulement sur sa forme : deux adresses également bien formées peuvent exister, et une seule est relevée."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Toute compétence que ni un projet présenté ni une expérience listée n'adosse : les dix-huit nommées par la décision 0010 ne paraissent pas tant que leur attribution à une mission n'est pas fournie. C'est un manque réel, mesuré et assumé, pas un oubli.",
+      "Toute valeur plausible écrite en attendant la valeur vraie : un chiffre de résultat, un organisme de certification, une durée, un volume. La page en manque plutôt qu'elle n'en invente.",
+      "La partie Certifications tant qu'aucune certification n'existe, et la ligne de résultat des réalisations qui n'en ont pas encore.",
+      "Un lien de téléchargement du CV tant que le fichier de la langue concernée n'existe pas dans le dépôt.",
+      "Toute capture d'écran de produit : le schéma la remplace, et c'est le parti pris de la maquette, pas un pis-aller.",
+      "Toute autre adresse pour l'accueil que le préfixe de langue seul : ni /fr/accueil, ni /en/home, ni /fr/ avec sa barre finale.",
+      "Toute adresse d'accueil servie par la route commune : l'entrée au nom vide existe pour le changement de langue et pour la liste des pages à produire, jamais pour fabriquer une seconde adresse.",
+      "Toute republication d'une section entière sur l'accueil : les entrées nommées conduisent aux pages, elles n'en recopient pas le contenu.",
+      "Toute redirection entre les adresses des deux langues, et toute redirection depuis /fr/about qui cesse de répondre : une redirection ferait vivre deux adresses pour une même page et diluerait l'indexation que la règle d'adressage cherche à obtenir.",
+      "Toute adresse fabriquée automatiquement à partir du titre d'une page : les adresses sont choisies et écrites une fois, parce qu'elles sont publiques.",
+      "Toute obfuscation de l'adresse de contact — image, script, entités HTML : elle casse le lien pour un lecteur d'écran et pour un clavier, et n'arrête pas un collecteur. L'adresse est publiée en clair, sciemment.",
+      "Toute seconde adresse de contact publiée à côté de celle du CV.",
+      "Tout élargissement de la porte du contenu écrit ailleurs que dans la commande elle-même : une liste de tournures interdites recopiée dans un composant ou dans une revue est une liste que rien n'exécute.",
+      "Un blog ou des articles : c'est la section la plus coûteuse à nourrir, et un blog abandonné date le site plus sûrement qu'une absence de blog.",
+      "Tout formulaire de contact, et donc tout stockage ou transmission de message.",
+      "Une interface d'administration ou un CMS : le contenu est modifié par la personne, dans le dépôt.",
+      "Toute mesure d'audience, statistique ou traceur.",
+      "Un espace commentaires, une newsletter, un flux d'abonnement.",
+      "Une recherche dans le contenu : quatre pages ne se cherchent pas, elles se lisent.",
+      "Toute langue autre que le français et l'anglais, et toute détection automatique de la langue du navigateur.",
+      "Le passage du contenu long par les dictionnaires de traduction : la frontière est fixée pour que les deux mécanismes ne se recouvrent pas.",
+      "Un CV généré automatiquement depuis le contenu du site : c'est une fonctionnalité à part entière.",
+      "Toute reprise du contenu de mockups/exploration/portfolio-v1-rempli.html : ses chiffres et ses projets sont faux et son propre README l'écrit."
+    ]
+  },
+  "domain_reading": {
+    "retained": "Ce produit n'a pas de domaine métier : il ne refuse rien pour une raison venant du monde réel, il publie. La lecture qui structure ce périmètre est ailleurs : la vérité du contenu est ici une propriété du produit, pas une qualité de rédaction. Un portfolio dont un chiffre est inventé ne se distingue pas d'un portfolio exact — pour un lecteur comme pour toutes les commandes de ce dépôt — jusqu'au jour où quelqu'un le vérifie en entretien. C'est pourquoi « ce qui n'existe pas encore n'est pas affiché » est écrit comme une règle fonctionnelle, au même rang qu'une adresse ou qu'un ordre d'affichage. La deuxième lecture retenue est celle de la décision 0009 : l'adresse d'une page fait partie de ce que le produit publie, au même titre que son titre. La troisième naît de ce round : l'accueil n'est pas une page comme les trois autres. Il est la seule adresse qu'un visiteur atteint sans l'avoir choisie, et la seule que le mécanisme d'adressage ne peut pas servir, ce qui en fait à la fois la plus exposée et la plus particulière à construire.",
+    "discarded": [
+      "Lire la table des pages comme un modèle de données : elle n'a ni cycle de vie, ni écriture à l'exécution, ni requête. C'est une constante du programme, et la traiter comme des données appellerait une persistance dont personne n'a besoin.",
+      "Lire les compétences comme un référentiel à modéliser — niveaux, années d'expérience, notation. Le CV ne porte pas cette information, la produire serait l'inventer, et la règle d'adossement fait déjà tout le travail qu'un référentiel ferait.",
+      "Lire l'absence des dix-huit compétences comme un défaut à contourner : c'est le résultat attendu de la règle, et un contournement — une section « déclaré, non démontré », une mention « en cours d'acquisition » — remettrait sur la page exactement les mots que la règle en retire, avec une nuance qu'aucun filtre de recrutement ne lit.",
+      "Lire la disparition de /fr/about comme une régression de i-3388 : ses quatre critères restent satisfaits, seule la forme de l'adressage change.",
+      "Lire le schéma de chaque réalisation comme une illustration décorative : il porte l'information que la capture d'écran ne peut pas porter, et son texte de remplacement est du contenu, pas un attribut technique.",
+      "Lire l'accueil comme un cas particulier à contourner par une redirection vers l'une des trois autres pages : l'adresse par défaut du site conduirait alors ailleurs qu'à elle-même, et le changement de langue n'aurait plus de page d'origine à faire correspondre.",
+      "Lire l'élargissement de la porte comme une garantie de véracité : elle refuse les aveux d'attente, mesurés au nombre de huit tournures, et laisse passer « Kubernetes » écrit en attendant la vraie liste. Confondre les deux ferait cesser de regarder ce que la porte ne voit pas."
+    ]
+  },
+  "contract_sketch": "Quatre pages en deux langues, soit huit adresses : /fr, /en, /fr/realisations, /en/work, /fr/parcours, /en/about, /fr/contact, /en/contact. Une table unique associe chaque page à son nom dans chaque langue et au composant qui l'affiche ; l'accueil y figure sous un nom vide. Elle est typée de sorte qu'un nom manquant soit refusé à la compilation. Trois lecteurs et trois seulement : la route dynamique [locale]/[slug], le sélecteur de langue, et la liste des pages que la construction doit produire, dérivée de la table — la route étant le seul des trois à écarter l'entrée au nom vide, que l'accueil sert par sa propre route, et la liste de prérendu énonçant /fr et /en sans barre finale. Les cinq sections numérotées de la maquette se répartissent ainsi : l'ouverture et les trois entrées nommées à l'accueil, la section 01 aux réalisations, les sections 02, 03 et 04 au parcours, la section 05 au contact. Le contenu long vit dans des fichiers versionnés par langue, dans un format que la porte du contenu balaie, lus par les pages et par une commande de complétude qui vérifie trois choses : que les deux langues disent la même chose, qu'aucun champ obligatoire ne manque, et qu'aucune compétence annoncée n'est orpheline. Toute adresse absente de la table conduit à la page « introuvable ». Le déploiement reste statique : rien ne répond à une requête que la construction n'a pas écrite.",
+  "decomposition_titles": {
+    "titles": [
+      "Socle bilingue : adressage /fr et /en, redirection de la racine — livré et clos",
+      "Les adresses du site : la table des pages, la route unique qui la sert, la liste de prérendu qui en dérive, et l'accueil qu'aucun segment dynamique ne peut servir",
+      "Sélecteur de langue accessible conduisant à la même page dans l'autre langue, et la barre qui le porte",
+      "Structure du contenu éditorial versionné, une version par langue, séparée de l'affichage",
+      "Complétude des traductions, du contenu et de l'adossement des compétences, vérifiée par une commande",
+      "Page réalisations : quatre réalisations, leur provenance, et le schéma qui remplace la capture",
+      "Page parcours : expérience, formation, certifications, compétences adossées et CV téléchargeable",
+      "Contact : appel à l'action principal orienté recrutement, moyens secondaires atteignables depuis toute page"
+    ],
+    "parallelism_intent": "Trois vagues, dont deux réellement parallèles, inchangées depuis le round 5 comme vous le demandez. Vague 1, une seule issue : les adresses. Elle porte la preuve que le prérendu traverse deux segments dynamiques imbriqués, et si cette preuve échoue la forme retenue tombe — je reviens alors vers vous avec la forme à un fichier par langue plutôt qu'avec un contournement. Elle livre les huit adresses, l'ouverture et les trois entrées nommées de l'accueil, et la liste de prérendu dérivée de la table, ce qui permet ensuite aux pages de n'écrire que leur propre composant sans jamais retoucher la table. Les trois critères que D-A ajoute tombent tous dans cette issue, qui réservait déjà la table, la route commune et la route de l'accueil : le nombre d'issues ne bouge donc pas. Vague 2, deux issues en parallèle : le sélecteur de langue avec la barre qui le porte, et la structure du contenu éditorial — réservations disjointes, donc dispatchables ensemble. Vague 3, quatre issues en parallèle : les trois pages, chacune sur son composant et sa feuille de style, et la complétude, qui réserve sa fonction de la couche partagée et sa suite unitaire. La page parcours réserve seule public/cv ; l'issue Contact ne fait que pointer ce chemin, donc les deux ne se recouvrent pas. Aucune réservation ne porte sur un chemin généré : docs/project-map.md n'est réservé par personne.",
+    "commitments_for_the_plan": [
+      "Le critère numéro un de l'issue des adresses est la preuve du prérendu à travers deux segments dynamiques imbriqués, avant toute autre écriture. La preuve que la liste de prérendu dérive de la table vient immédiatement après.",
+      "Un critère de l'issue des adresses exige que la table porte l'accueil sous un nom vide, et qu'il soit lu comme les autres par le sélecteur de langue et par la liste des pages à produire.",
+      "Un critère de l'issue des adresses exige que la route commune ne serve jamais l'accueil, et que ni /fr/ ni /en/ ne soient des adresses produites : c'est la seule façon dont le nom vide pourrait fabriquer une seconde adresse pour une page qui n'en a qu'une.",
+      "Un critère de l'issue des adresses porte sur l'absence de barre finale pour /fr et /en, puisque le contrôle de construction ne peut pas la voir.",
+      "Un critère de l'issue des adresses exige que l'accueil porte l'ouverture et une entrée nommée vers chacune des trois autres pages, ces entrées étant des liens vers les autres adresses et non des ancres.",
+      "Un critère porte sur le lien d'évitement : sur chaque page, sa cible existe sur cette page. La maquette ne peut pas servir de référence sur ce point — elle vise #realisations et ne contient aucun attribut id, mesuré.",
+      "Le critère négatif du 404 porte sur réalisations ou sur parcours, jamais sur contact, dont le nom est identique dans les deux langues : écrit sur contact il serait vert dès le premier jour et le resterait quoi qu'il arrive à la route.",
+      "Le type de la table exige les deux noms pour chaque page : une page dont l'adresse manque dans une langue est une erreur de compilation, non une découverte en production.",
+      "Le critère de bascule de i-841g est réécrit sur /fr/realisations vers /en/work ; celui du 4 septembre, qui nommait /fr/projets et /en/projects, est retiré. Un second critère porte la bascule depuis l'accueil, /fr vers /en, qui est le cas que le nom vide rend particulier. i-841g dépend de l'issue des adresses et non plus seulement du socle bilingue.",
+      "Un critère de l'issue du contenu éditorial exige que les fichiers de contenu soient déposés dans un format que la porte du contenu balaie réellement, et l'issue le prouve en plantant une tournure d'attente dans un fichier de contenu et en observant la porte sortir en 1.",
+      "L'issue du contenu éditorial et celle de la complétude remontent comme découverte, sans la contourner en silence, toute tournure d'attente que la porte ne refuse pas encore : l'élargissement est une tâche d'opérateur, scripts/ n'étant pas écrivable par l'implémenteur.",
+      "L'adossement des compétences est prouvé par la suite unitaire de l'issue de complétude, sur le contenu, et non par un critère de rendu de la page parcours : la règle vit dans le contenu, la page ne fait que l'afficher.",
+      "Un critère de l'issue des réalisations exige qu'une réalisation sans résultat réel paraisse sans ligne de résultat, et qu'aucune valeur plausible n'y figure.",
+      "Un critère de l'issue du parcours exige que la partie Certifications ne rende rien tant qu'aucune certification n'existe, et qu'un compteur de section suive ce qui est affiché.",
+      "Un critère de l'issue du parcours exige que le lien du CV n'apparaisse que si le fichier de la langue affichée existe, dans les deux langues.",
+      "Un critère de l'issue Contact fixe la chaîne exacte de l'adresse publiée, kraherbertdonatienkoffi@gmail.com, et l'ordre des moyens : messagerie en appel principal, LinkedIn, GitHub et CV au second rang.",
+      "Les réservations de l'issue du contenu éditorial sont src/shared/content/ et src/shared/content.ts ; celles de l'issue de complétude sont un module de la couche partagée et sa suite unitaire. Les deux emplacements sont écrivables par l'implémenteur, mesuré ; « content » et « scripts/check-translations.mjs » ne le sont pas, mesuré aussi.",
+      "Le plan nomme mockups/portfolio-v1.html comme maquette unique de la spec, et déclare la limite : elle dessine l'état français, pose les cinq sections sur une seule page, et son lien d'évitement vise une ancre inexistante. Elle ne peut donc vérifier ni les libellés anglais, ni la répartition par adresse, ni la cible du lien d'évitement.",
+      "La pull request nomme comme surface de relecture humaine la publication délibérée d'une adresse personnelle en clair, ainsi que l'élargissement de la porte du contenu déjà porté hors du pipeline."
+    ]
+  },
+  "decisions_for_operator": [],
+  "context": {
+    "heading": "## Context for Operator",
+    "body": "Vos trois réponses sont intégrées et ce round ne vous demande plus rien : decisions_for_operator est vide et scope_final reste vrai. Rien de ce que les rounds précédents ont arrêté n'est rouvert — positionnement, quatre réalisations et leur ordre, huit adresses, cinq parties nommées du parcours, règle des compétences et son manque assumé, décomposition en huit issues et intention de parallélisme sont repris tels quels, comme vous le demandez. Ce que ce round ajoute vient de la composition de vos trois réponses, et rien n'en sort qui ne soit mesuré. D-A d'abord. Votre remarque sur la route propre à l'accueil se prolonge d'un cran, et c'est le seul endroit où la forme retenue pouvait se retourner : si l'implémenteur alimente la route commune avec la table entière, le nom vide fabrique /fr/ et /en/, soit une seconde adresse pour une page qui n'en a qu'une, et le contrôle de construction ne la verrait pas puisqu'il ne voit pas la barre finale. Deux critères ferment ce chemin plutôt qu'une note. Toujours sur D-A, la maquette porte un lien d'évitement « Aller aux réalisations » vers #realisations, et le fichier ne contient aucun attribut id : mesuré, zéro occurrence sur 1 312 lignes. La cible est morte dans le dessin, et la répartition en quatre adresses la rendrait fausse de toute façon. Une règle d'accessibilité le fixe, et le plan déclare que la maquette ne fait pas foi sur ce point. D-B ensuite. J'ai revérifié la porte plutôt que de reprendre votre affirmation : elle refuse désormais les cinq emplacements provisoires de la maquette, contre un au round 5, et elle reste verte sur l'état courant du dépôt. Ce qu'elle ne fait toujours pas est écrit au périmètre : « Kubernetes » passe, parce qu'aucune commande ne distingue un fait inventé d'un fait vrai. Une chose est apparue en la lisant, et elle change une règle : ses motifs sont liés aux extensions, si bien qu'un fichier de contenu écrit en YAML sous src/ lui serait invisible — mesuré sur un arbre témoin, fr.ts est lu, fr.yaml ne l'est pas. Le contenu éditorial doit donc être déposé dans un format qu'elle balaie, faute de quoi la garde serait aveugle précisément là où le contenu vit, en sortant verte. Votre règle est inscrite telle quelle, avec sa conséquence opérationnelle : l'implémenteur ne peut pas écrire dans scripts/, donc une sixième tournure sera remontée comme découverte au lieu d'être absorbée par une reformulation silencieuse. D-C enfin. L'adresse du CV est retenue et écrite. La règle de contact vérifiait une forme, or deux adresses de forme irréprochable existent — celle du CV et celle depuis laquelle ce dépôt est opéré — et une vérification de format serait verte sur les deux. Le critère fixe donc la chaîne exacte. Ce qu'aucune commande de ce dépôt ne prouvera reste dit : qu'une boîte relève cette adresse. Un envoi d'essai est de votre côté, et c'est la seule vérification qui compte pour le canal par lequel une offre arrive. Deux points hors de mon périmètre d'écriture. Le premier est le même qu'au round 5 et il n'a pas été porté : docs/decisions/0010 écrit toujours, ligne 35, que le titre passe de « Ingénieur logiciel » à « Agents LLM en production », alors que vous l'avez rétabli et que la maquette le porte. Le journal contredit l'artefact validé, et c'est le document que le prochain Produit lira en premier. Le second est nouveau : la décision 0009 décrit une table lue par trois consommateurs, et l'accueil y ajoute une ligne que la route ne sert pas. Les deux sont signalés à l'Orchestrateur comme amendements. Aucune dépendance nouvelle n'est proposée. Mesures de ce round : pnpm audit --audit-level high vert, pnpm run check:content vert, mockup-check vert avec 317 valeurs confrontées à 62 jetons, public/ ne contenant toujours que favicon.ico, et 44 étiquettes de compétences recomptées dans la maquette, groupe par groupe. Une seule hypothèse reste non vérifiée et c'est la même depuis le round 3 : le prérendu à travers deux segments dynamiques imbriqués n'a jamais été exécuté ici, et l'issue des adresses le prouve avant d'écrire quoi que ce soit d'autre. Sur votre accord, je produis le plan : la copie de ce round sous docs/decisions, les huit issues et leurs relations dans Sudocode, et les réservations qui rendent les trois vagues dispatchables."
+  },
+  "evidence": {
+    "commands": [
+      {
+        "cmd": "pnpm run check:content",
+        "exit": 0,
+        "note": "« content: no placeholder outside mockups/. » La porte élargie est verte sur l'état courant de spec/portfolio-v1 au commit 1b3a8a3 : l'élargissement ne coûte aucun faux positif aujourd'hui."
+      },
+      {
+        "cmd": "node -e \"MARKERS.some(m => m.test(phrase))\" sur les cinq emplacements provisoires de la maquette, avec la liste actuelle de scripts/check-content.mjs",
+        "exit": 0,
+        "note": "REFUSE les cinq : « <span class=\"todo\">A RENSEIGNER</span> », « Les résultats chiffrés restent à renseigner. », « Chiffre à fournir : trafic, performance mesurée, délai de livraison. », « Organisme et objet à préciser. », « À venir · Certification ». PASSE « Kubernetes ». Au round 5, un seul des cinq était refusé. C'est la vérification de D-B, faite plutôt que reprise."
+      },
+      {
+        "cmd": "node --input-type=module -e \"globSync('src/**/*.{ts,tsx,css,json,md}')\" sur un arbre témoin contenant src/shared/content/fr.ts et src/shared/content/fr.yaml",
+        "exit": 0,
+        "note": "scanned: [ 'src/shared/content/fr.ts' ] ; present: [ 'src/shared/content/fr.ts', 'src/shared/content/fr.yaml' ]. Les motifs de la porte sont liés aux extensions : un contenu en YAML sous src/ lui est invisible et elle sortirait verte. C'est la mesure derrière la règle de format ajoutée au contenu éditorial. L'arbre témoin a été créé hors du dépôt, dans le répertoire de travail temporaire de la session, puis supprimé."
+      },
+      {
+        "cmd": "grep -c 'id=\"' mockups/portfolio-v1.html",
+        "exit": 1,
+        "note": "0. Le fichier fait 1 312 lignes et ne contient aucun attribut id, alors que sa ligne 834 porte « <a class=\"skip\" href=\"#realisations\">Aller aux réalisations</a> ». Le lien d'évitement de la maquette validée ne mène nulle part : c'est la mesure derrière la règle d'accessibilité ajoutée et derrière la limite déclarée de la maquette."
+      },
+      {
+        "cmd": "grep -n 'mailto\\|linkedin\\|github.com' mockups/portfolio-v1.html",
+        "exit": 0,
+        "note": "Le panneau de contact dessine quatre liens dans cet ordre : mailto:kraherbertdonatienkoffi@gmail.com, https://linkedin.com/in/donatien-koffi, https://github.com/HerbertCodex, /cv/donatien-koffi-fr.pdf. L'ordre retenu par D-C est celui que la maquette dessine déjà."
+      },
+      {
+        "cmd": "lecture des huit groupes de mockups/portfolio-v1.html lignes 1215-1265",
+        "exit": 0,
+        "note": "6 + 6 + 5 + 10 + 4 + 6 + 3 + 4 = 44 étiquettes, et le compteur écrit en tête de section dit 44. Le décompte du round 5 est confirmé groupe par groupe ; les 18 sans preuve de la décision 0010 y sont toutes, donc 26 adossées."
+      },
+      {
+        "cmd": "pnpm audit --audit-level high",
+        "exit": 0,
+        "note": "« No known vulnerabilities found » sur spec/portfolio-v1 au commit 1b3a8a3. Aucune dépendance nouvelle n'est proposée par ce round."
+      },
+      {
+        "cmd": "node agent-pipeline/scripts/mockup-check.mjs mockups/portfolio-v1.html",
+        "exit": 0,
+        "note": "317 valeurs confrontées à 62 jetons, aucune valeur non déclarée. La maquette validée reste conforme aux jetons de src/shared/tokens.css après les commits 7e48c32 et b97dccf."
+      },
+      {
+        "cmd": "find public -type f",
+        "exit": 0,
+        "note": "public/favicon.ico et rien d'autre : aucun CV n'existe dans le dépôt, ce qui est la mesure derrière la règle d'affichage conditionnel du lien de téléchargement, aux deux emplacements."
+      },
+      {
+        "cmd": "node agent-pipeline/scripts/next-issues.mjs s-5bjp",
+        "exit": 0,
+        "note": "i-841g dispatchable ; i-8m5b « no eligible role can write the complete reserved scope » et quatre issues en attente derrière elle. C'est le blocage que le déplacement des chemins réservés lève au moment du plan, inchangé depuis le round 5."
+      },
+      {
+        "cmd": "grep -n 'Ingénieur logiciel\\|Agents LLM en production' docs/decisions/0010-positionnement-ia-agentique.md",
+        "exit": 0,
+        "note": "Ligne 35 : « Le titre passe de « Ingénieur logiciel » à « Agents LLM en production ». » L'amendement signalé au round 5 n'a pas été porté ; le journal contredit toujours la maquette validée et la décision D1."
+      },
+      {
+        "cmd": "git status --short",
+        "exit": 0,
+        "note": "seul pipeline/store/issues.jsonl est modifié, écriture de l'orchestrateur lors du dispatch ; aucun fichier de produit n'est touché. La branche spec/portfolio-v1 existe déjà, aucune création de branche n'est nécessaire."
+      }
+    ],
+    "files": [],
+    "commit_sha": null,
+    "notes": [
+      "Aucune issue dans cette proposition : la décomposition se paie après l'accord, et n'est donnée ici que sous forme de titres, d'intention de parallélisme et d'engagements pour le plan.",
+      "Lus pour ce round : le paquet de tâche i-841g, la proposition du round 5, mockups/portfolio-v1.html, docs/project-map.md, les décisions 0009 et 0010, scripts/check-content.mjs, scripts/routes.mjs, src/routes/[locale]/index.tsx, src/shared/i18n.ts, pipeline/rules.json et le brief compilé du rôle.",
+      "Les cinq critères que ce round ajoute tombent tous dans des issues qui réservaient déjà les fichiers concernés — trois sur les adresses, un sur le contenu éditorial, un sur le contact. Le nombre d'issues reste huit et aucune réservation ne change, ce qui est ce que « rien d'autre ne change » exige d'être vérifié plutôt qu'affirmé.",
+      "Point hors de mon périmètre d'écriture, adressé à l'Orchestrateur : docs/decisions/0009 décrit une table lue par trois consommateurs, alors que l'entrée de l'accueil sous un nom vide n'est lue que par deux d'entre eux. La table a désormais deux sortes de lignes, et le journal n'en décrit qu'une.",
+      "Point hors de mon périmètre d'écriture, re-signalé : docs/decisions/0010 ligne 35 écrit un titre que la maquette et la décision D1 ont remplacé. Signalé au round 5, non porté.",
+      "Surface nommée pour la relecture humaine de la pull request : une adresse électronique personnelle est publiée en clair sur une page statique publique, sur décision de l'opérateur. Aucune obfuscation n'est retenue, parce qu'elle casserait le lien pour un lecteur d'écran sans arrêter un collecteur.",
+      "La maquette dessine l'état français, pose les cinq sections numérotées sur une seule page, et son lien d'évitement vise une ancre que le fichier ne contient pas. Le plan la nommera comme maquette unique de la spec en déclarant ces trois limites."
+    ]
+  },
+  "blockers": []
+}

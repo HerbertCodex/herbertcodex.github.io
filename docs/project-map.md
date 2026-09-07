@@ -14,7 +14,7 @@ required of every addition is judged against this document.
 
 ### src/app.tsx
 
-- `App` (default) — function — The application shell: metadata provider, navigation and route outlet.
+- `App` (default) — function — The application shell: metadata provider and route outlet.
 
 ### src/entry-client.tsx
 
@@ -28,15 +28,71 @@ required of every addition is judged against this document.
 
 - no public export
 
-## src/components
+## src/features/contact
 
-### src/components/Counter.css
+### src/features/contact/ContactLinks.tsx
+
+- `CONTACT_EMAIL` — constant — The address the site publishes, which is the one the résumé carries.
+- `ContactMeans` — type — A way of reaching the person other than the message itself, and its target.
+- `contactMeans` — function — The means of contact at the second rank, in the order the design fixes.
+- `malformedContactLinks` — function — The contact targets stated empty or malformed, which are never published.
+- `ContactLinks` (default) — function — The second rank of the contact block: the profiles, then the résumé.
+
+### src/features/contact/ContactPage.css
 
 - stylesheet
 
-### src/components/Counter.tsx
+### src/features/contact/ContactPage.tsx
 
-- `Counter` (default) — function — A counter button demonstrating local signal state.
+- `ContactPage` (default) — function — The page saying how to get in touch, and under which conditions.
+
+## src/features/home
+
+### src/features/home/HomePage.css
+
+- stylesheet
+
+### src/features/home/HomePage.tsx
+
+- `HomePage` (default) — function — The opening of the portfolio, and the way into each of the other pages.
+
+## src/features/journey
+
+### src/features/journey/JourneyPage.css
+
+- stylesheet
+
+### src/features/journey/JourneyPage.tsx
+
+- `JourneyPage` (default) — function — The page presenting experience, education, certifications and skills.
+
+## src/features/not-found
+
+### src/features/not-found/NotFoundPage.css
+
+- stylesheet
+
+### src/features/not-found/NotFoundPage.tsx
+
+- `NotFoundPage` (default) — function — The screen an address the site does not publish leads to.
+
+## src/features/works
+
+### src/features/works/WorkCard.css
+
+- stylesheet
+
+### src/features/works/WorkCard.tsx
+
+- `WorkCard` (default) — function — One work: the schema of what it does, then what it was and what came of it.
+
+### src/features/works/WorksPage.css
+
+- stylesheet
+
+### src/features/works/WorksPage.tsx
+
+- `WorksPage` (default) — function — The page presenting what has been built, in the order the content declares.
 
 ## src/routes
 
@@ -44,20 +100,151 @@ required of every addition is judged against this document.
 
 - `NotFound` (default) — function — The catch-all route, answering 404 for an address that matches nothing.
 
-### src/routes/about.tsx
+### src/routes/[locale].tsx
 
-- `About` (default) — function — The about route.
+- `route` — constant — The route configuration: a segment naming no published language matches nothing, so it reaches the catch-all rather than rendering the default.
+- `LocaleLayout` (default) — function — The layout every localized page sits under.
 
 ### src/routes/index.tsx
 
-- `Home` (default) — function — The home route.
+- `RootRedirect` (default) — function — The root address, which leads to the default language.
+
+## src/routes/[locale]
+
+### src/routes/[locale]/[slug].tsx
+
+- `NamedPageRoute` (default) — function — The route serving every page the table names, home excepted.
+
+### src/routes/[locale]/index.tsx
+
+- `Home` (default) — function — The home route, which the common route never serves: the language prefix alone carries no page name for it to match.
 
 ## src/shared
 
-### src/shared/StarterNote.tsx
+### src/shared/completeness.ts
 
-- `StarterNote` (default) — function — The starter's pointer to the SolidStart documentation.
+- `SectionName` — type — A section of the site whose entries are counted rather than announced.
+- `missingInterfaceKeys` — function — The interface keys one published language carries and another does not.
+- `missingContentEntries` — function — The content entries one published language carries and another does not.
+- `unbackedSkills` — function — The announced skills that no presented work and no listed experience backs.
+- `countedEntries` — function — How many entries each section actually shows.
+- `miscountedSections` — function — The sections whose announced count is not the count of what they show.
+- `completenessFaults` — function — Everything the published site leaves incomplete, on the state of the repository.
+
+### src/shared/content.ts
+
+- `Work` — type — One work, in the language in force.
+- `Journey` — type — What the journey page tells: experience, education, certifications, skills.
+- `Content` — type — The editorial content of the site in one language.
+- `missingRequiredFields` — function — The required fields a content document leaves absent, blank or empty.
+- `contentFor` — function — The editorial content of one language.
+
+### src/shared/i18n.ts
+
+- `Locale` — type — A language the site publishes, written as it appears in an address.
+- `LOCALES` — constant — The languages the site publishes, in the order the interface offers them.
+- `DEFAULT_LOCALE` — constant — The language an address carrying no prefix leads to.
+- `DICTIONARIES` — constant — What the interface says, one tree per published language.
+- `I18n` — type — The language in force, and the translator bound to it.
+- `I18nContext` — constant — The context carrying the language in force down to every component.
+- `isLocale` — function — Answers whether a segment read from an address names a published language.
+- `createI18n` — function — Binds a translator to a language that may change while the page stays open.
+- `useI18n` — function — Reads the language in force from the nearest provider.
+
+### src/shared/identity.ts
+
+- `PERSON` — constant — The person this site is, written once for every place that shows it.
+
+### src/shared/LanguageSwitch.css
+
+- stylesheet
+
+### src/shared/LanguageSwitch.tsx
+
+- `LanguageSwitch` (default) — function — The links leading to the page being read, in each published language.
+
+### src/shared/pages.ts
+
+- `PageKey` — type — A page of the site, named by what it is rather than by where it lives.
+- `NamedPageKey` — type — A page the common route serves, which home is never one of.
+- `Page` — type — One page, and the name it carries in each published language.
+- `NamedPage` — type — A page whose name is written in every language, therefore addressable.
+- `PAGES` — constant — The pages the site publishes, and the only place their names are written.
+- `NAMED_PAGES` — constant — The pages the common route serves, in the order the table declares them.
+- `addressOf` — function — The address of a page in one language.
+- `addressesToPrerender` — function — The addresses a build must produce for a table of pages.
+- `pageForSlug` — function — The page a name designates in one language, for the common route alone.
+
+### src/shared/resume.ts
+
+- `Resume` — type — Where the résumé of a language is served, and the file that must carry it.
+- `RESUME_FOLDER` — constant — The directory of the repository the published résumés are read from.
+- `resumeOf` — function — The résumé of one language.
+
+### src/shared/SiteBar.css
+
+- stylesheet
+
+### src/shared/SiteBar.tsx
+
+- `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, the languages and the theme.
+
+### src/shared/SiteFooter.css
+
+- stylesheet
+
+### src/shared/SiteFooter.tsx
+
+- `signatureAt` — function — The signature the foot of the page carries.
+- `SiteFooter` (default) — function — The foot every page carries: who the site is, since when, and from where.
+
+### src/shared/theme.ts
+
+- `Theme` — type — A theme the portfolio can be read in.
+- `THEME_KEY` — constant — The name the reader's choice is kept under, on their own machine.
+- `PRERENDERED_THEME` — constant — The theme a prerendered document is written in, whatever the reader's own.
+- `readChoice` — function — The theme the reader chose, or nothing when they have not chosen.
+- `themeInForce` — function — The theme in force: the reader's choice, or their system while they have not chosen.
+- `chooseTheme` — function — Records the reader's choice and puts it on the document at once.
+- `watchSystemTheme` — function — Follows a change of the system theme while the page stays open.
+
+### src/shared/ThemeToggle.css
+
+- stylesheet
+
+### src/shared/ThemeToggle.tsx
+
+- `ThemeToggle` (default) — function — The button passing the portfolio from dark to light and back.
 
 ### src/shared/tokens.css
 
 - stylesheet
+
+## src/shared/content
+
+### src/shared/content/en.ts
+
+- `ENGLISH` — constant — Everything the site says in English.
+
+### src/shared/content/facts.ts
+
+- `Provenance` — type — Where a work comes from, which decides the provenance banner it carries.
+- `WorkLink` — type — Something a work can be consulted through, when anything is consultable.
+- `DiagramEmphasis` — type — The weight a box carries in a schema: the subject it is about, or the gate on its path.
+- `DiagramEdge` — type — An arrow of a schema: a flow going forward, or the feedback that returns.
+- `DiagramShape` — type — The shape of a schema, which is the same whatever the language.
+- `DiagramWords` — type — The words one language gives a schema, one per box included.
+- `WorkFacts` — type — What a work is, apart from the words that tell it.
+- `WorkWords` — type — The words one language gives a work.
+- `Period` — type — The months a line of experience spans, its end absent while it lasts.
+- `Certification` — type — A certification, of which the site publishes none until one is obtained.
+- `Words` — type — Everything one language says, and the only thing a translation adds.
+- `TERMS` — constant — The technologies whose name is the same in every language.
+- `WORKS` — constant — The works, in the order they are shown, which is chosen and never computed.
+- `EXPERIENCES` — constant — The lines of professional experience, the most recent first.
+- `EDUCATION` — constant — The diplomas, the most recent first.
+- `SKILL_GROUPS` — constant — The groups the skills are shown in, in the order they are shown.
+
+### src/shared/content/fr.ts
+
+- `FRENCH` — constant — Everything the site says in French.

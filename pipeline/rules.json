@@ -146,14 +146,21 @@
 		},
 		"product": {
 			"allow": [
-				".sudocode/**"
+				".sudocode/**",
+				"pipeline/pages/**",
+				"pipeline/handoffs/**"
 			],
 			"deny": [
 				"src/**",
 				"tests/**",
 				"scripts/**",
 				"public/**",
-				"pipeline/**",
+				"pipeline/store/**",
+				"pipeline/rules.json",
+				"pipeline/agents/**",
+				"pipeline/briefs/**",
+				"pipeline/skills/**",
+				"pipeline/profiles/**",
 				"agent-pipeline/**",
 				"pipeline.config.json",
 				"AGENTS.md",
@@ -167,11 +174,12 @@
 				"tests/**",
 				"public/**",
 				"mockups/**",
-				"docs/**"
-			],
-			"deny": [
+				"docs/**",
 				"package.json",
 				"pnpm-lock.yaml",
+				"scripts/routes.mjs"
+			],
+			"deny": [
 				"pnpm-workspace.yaml",
 				"pipeline.config.json",
 				"AGENTS.md",

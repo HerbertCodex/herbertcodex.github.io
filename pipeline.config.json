@@ -24,7 +24,8 @@
     "audit": "pnpm audit --audit-level high",
     "tracker_sync": "node agent-pipeline/scripts/tracker-sync.mjs",
     "project_map": "pnpm run project-map -- --check",
-    "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs"
+    "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs",
+    "content": "pnpm run check:content"
   },
   "architecture": {
     "id": "feature-modules",
@@ -32,21 +33,22 @@
     "decided_at": "2026-09-04",
     "layers": {
       "shared": ["src/shared/**"],
-      "features": ["src/*/**"]
+      "features": ["src/features/**"]
     },
     "allowed": {
       "features": ["shared"],
       "shared": []
     },
-    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possède déjà src/routes, et une couche pages supplémentaire dupliquerait cette frontière sans rien refuser de plus. Deux couches, une seule direction autorisée."
+    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possede deja src/routes, et une couche pages supplementaire dupliquerait cette frontiere sans rien refuser de plus. Deux couches, une seule direction autorisee. AMENDEE le 2026-09-07 : features valait src/*/**, motif qui matchait AUSSI src/shared/**. Les deux couches se recouvraient entierement et la porte ne pouvait rien refuser — verte a vide. Elle designe desormais src/features/** seul. Le defaut a ete repere par l'operateur en lisant le code, jamais par une porte."
   },
   "design_system": {
     "tokens": "src/shared/tokens.css",
     "primitives": "own",
-    "decided_at": "2026-09-04",
+    "decided_at": "2026-09-05",
+    "mockup": "mockups/portfolio-v1.html",
     "direction": {
-      "genre": "éditorial sobre",
-      "because": "un portfolio est lu avant d'être admiré : ce qui doit ressortir est le travail présenté, pas l'interface qui le présente. Le genre éditorial fait porter la hiérarchie par la typographie et le blanc, ce qui reste lisible quand le contenu grandit, et il écarte le rendu par défaut vers lequel un agent converge sans direction nommée."
+      "genre": "studio suisse",
+      "because": "le produit est un inventaire de réalisations et de compétences, et la grille suisse est faite pour ordonner un inventaire sans l'uniformiser : la hiérarchie passe par l'échelle typographique et la position, pas par la couleur ni par l'effet. Retenue par l'opérateur après avoir écarté huit autres directions, ce qui rend le choix éprouvé plutôt que par défaut."
     }
   },
   "test_suites": {
@@ -59,7 +61,7 @@
       "replay": "closure"
     }
   },
-  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit"],
+  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit", "content"],
   "project_map": {
     "out": "docs/project-map.md",
     "roots": ["src"],
@@ -69,7 +71,7 @@
   "duplication": {
     "roots": ["src", "tests"],
     "min_lines": 6,
-    "skip": "\\.generated\\."
+    "skip": "\\.generated\\.|shared/tokens\\.css$"
   },
   "doc_policy": {
     "roots": ["src", "tests"],
@@ -85,13 +87,18 @@
       "deny": ["src/**", "tests/**", "scripts/**"]
     },
     "product": {
-      "allow": [".sudocode/**"],
+      "allow": [".sudocode/**", "pipeline/pages/**", "pipeline/handoffs/**"],
       "deny": [
         "src/**",
         "tests/**",
         "scripts/**",
         "public/**",
-        "pipeline/**",
+        "pipeline/store/**",
+        "pipeline/rules.json",
+        "pipeline/agents/**",
+        "pipeline/briefs/**",
+        "pipeline/skills/**",
+        "pipeline/profiles/**",
         "agent-pipeline/**",
         "pipeline.config.json",
         "AGENTS.md",
@@ -100,10 +107,17 @@
       ]
     },
     "implementer": {
-      "allow": ["src/**", "tests/**", "public/**", "mockups/**", "docs/**"],
-      "deny": [
+      "allow": [
+        "src/**",
+        "tests/**",
+        "public/**",
+        "mockups/**",
+        "docs/**",
         "package.json",
         "pnpm-lock.yaml",
+        "scripts/routes.mjs"
+      ],
+      "deny": [
         "pnpm-workspace.yaml",
         "pipeline.config.json",
         "AGENTS.md",
@@ -166,6 +180,19 @@
       "-p",
       "--permission-mode",
       "acceptEdits",
+      "--allowedTools",
+      "Bash(pnpm:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(date:*)",
+      "--",
       "Tu es le rôle {role} du pipeline. Lis le task package JSON : {package}. Ses champs `prompt` et `brief` désignent ton prompt de rôle et ton brief compilé : lis-les intégralement et suis-les. Le champ `record` est ton issue. Termine par ton handoff JSON entre AGENT_HANDOFF_START et AGENT_HANDOFF_END, sans aucun texte après la balise de fermeture."
     ]
   },
@@ -180,7 +207,7 @@
   "findings_path": "pipeline/findings.md",
   "ci": {
     "provider": "github",
-    "install": "corepack enable && pnpm install --frozen-lockfile",
+    "install": "corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium",
     "runtime_setup": {
       "uses": "actions/setup-node@v6",
       "with": {

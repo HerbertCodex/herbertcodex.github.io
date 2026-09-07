@@ -1,47 +1,88 @@
-# 0004 — Quiet editorial, tokens owned, primitives written here
+# 0004 — Studio suisse, jetons possédés, primitives écrites ici
 
-- **Date**: 2026-09-04
-- **Status**: accepted
+- **Date** : 2026-09-05 (remplace la version du 2026-09-04, qui retenait « éditorial sobre »)
+- **Statut** : accepté. Direction validée comme base le 2026-09-05, maquette validée le 2026-09-05
 
-## Context
+## Contexte
 
-`apply-profile` refuses a frontend project with no `design_system` block, and the
-reason is the architecture's reason one level down: tokens, primitives, components and
-screens form an order that cannot be reversed afterwards. Left undeclared, the agent
-taking the first issue settles all of it alone — it needs a colour and a spacing to
-write anything — and every issue after inherits a decision nobody approved.
+`apply-profile` refuse un projet frontend sans bloc `design_system`, et la raison est
+celle de l'architecture un niveau plus bas : jetons, primitives, composants et écrans
+forment un ordre qu'on ne peut pas inverser après coup. Laissé indéclaré, l'agent qui
+prend la première issue tranche tout seul, parce qu'il lui faut une couleur et un
+espacement pour écrire quoi que ce soit.
 
-## Decision
+## Décision
 
 ```json
-{ "tokens": "src/shared/tokens.css", "primitives": "own", "direction": { "genre": "éditorial sobre" } }
+{
+  "tokens": "src/shared/tokens.css",
+  "primitives": "own",
+  "direction": { "genre": "studio suisse" },
+  "mockup": "mockups/portfolio-v1.html"
+}
 ```
 
-**Genre**: quiet editorial. This genre suits the product because a portfolio is read
-before it is admired: what has to carry is the work presented, not the interface
-presenting it. Hierarchy is carried by type and whitespace, which keeps holding as the
-content grows.
+**Genre : studio suisse.** Ce genre convient au produit parce que celui-ci est un
+inventaire — des réalisations, un parcours, des compétences — et que la grille suisse
+est faite pour ordonner un inventaire sans l'uniformiser. La hiérarchie y passe par
+l'échelle typographique et la position dans la grille, jamais par la couleur ni par
+l'effet.
 
-Naming it is also what stops the convergence. An agent with no direction reaches for a
-plausible value, and plausible converges — the same near-black `#0a0a0f`, the same blue
-`#3b82f6`, the same Inter. The palette here is a warm paper and a burnt-sienna accent,
-on a serif stack, because those were chosen against a stated genre rather than reached
-for.
+Ce qui le caractérise ici : une grille de douze colonnes dont les filets sont visibles à
+l'écran, des sections numérotées, un aplat vermillon plein pour le contact, une
+grotesque dense avec une forte amplitude d'échelle (84px contre 17px), et un mouvement
+mécanique qui part vite, arrive à plat, et ne rebondit jamais.
 
-**Primitives: own.** There are almost none yet, and a component library would arrive
-with an accessibility contract this project would then have to verify anyway. When a
-button and a link primitive earn their place they are written here, above the tokens.
+**Helvetica plutôt qu'une police d'affichage.** L'école suisse composait avec ce que
+l'imprimeur avait déjà. Reprendre Syne ou Space Grotesk ici serait le signe d'un
+pastiche, pas du genre.
 
-**Tokens: one file.** `src/shared/tokens.css`, and `check:tokens` refuses any colour,
-length or font-family stated anywhere else, because two sources of truth drift apart in
-silence and the drift is only ever found in a screenshot.
+## Huit directions écartées, et pourquoi les nommer
 
-## Consequence
+Avant d'arriver ici, huit directions ont été proposées et rejetées : éditorial sobre,
+bento technique, rail fixe cuivre, rail avec matière, premium sombre à verre et halos,
+sobre monochrome, console à chasse fixe, CV en ligne.
 
-`src/shared/tokens.css` is in `human_review_paths`: a change to the palette or the
-spacing scale is not approved by a machine alone.
+Elles sont listées non par nostalgie mais parce qu'une direction écartée qu'on ne
+consigne pas revient : quelqu'un la reproposera dans six mois, avec les mêmes arguments,
+et il faudra refaire le chemin. Deux enseignements en sont sortis :
 
-The tokens have not yet been read on the rendered contrast page
-(`render-tokens.mjs`) against a real design review. The values were chosen to pass
-`accessibility` on the current pages, and axe confirms no violation on both routes —
-which is a floor, not a design review.
+- **Le vide se lit comme un défaut de design.** Les rejets successifs portaient souvent
+  le mot « plat » ou « pas pro », sur des maquettes dont les visuels disaient « capture à
+  fournir » et les résultats « chiffre à fournir ». Aucune mise en page ne compense
+  l'absence de contenu, et chercher à corriger par le style ce qui manque en substance
+  fait tourner en rond.
+- **Une direction se départage sur une planche, pas en série.** Neuf propositions
+  successives n'ont pas convergé ; une planche de quatre directions contrastées sur le
+  même extrait a produit une réponse en un tour.
+
+## Conséquences
+
+- `src/shared/tokens.css` est dans `human_review_paths` : une modification de la palette
+  ou de l'échelle n'est pas approuvée par une machine seule.
+- La maquette `mockups/portfolio-v1.html` est déclarée dans `design_system.mockup`,
+  validée par l'opérateur, et vérifiée par `mockup-check` : 315 valeurs contrôlées contre
+  62 jetons, aucune valeur inventée. Elle est la référence des écrans à venir : un écran
+  qui s'en écarte est un écart à justifier, pas une variante.
+- Le bloc sombre du fichier de jetons est placé **avant** les valeurs claires, pour une
+  raison technique documentée dans le fichier lui-même et dans `pitfalls.md`.
+- Ce qui manque pour que la base soit complète n'est pas du design, c'est du contenu :
+  l'expérience 2024-2026, la certification, les quatre résultats chiffrés et les vraies
+  adresses des liens. Les emplacements portent « à renseigner » dans la maquette plutôt
+  que d'être comblés par du texte creux, pour qu'un trou reste visible tant qu'il existe.
+
+## Ce que la maquette validée a fixé au-delà du genre
+
+Trois partis pris ont été tranchés pendant l'itération et valent d'être nommés, parce
+qu'ils ne se déduisent pas du genre et qu'un écran futur doit les respecter :
+
+- **Le schéma remplace la capture.** Un ingénieur back-end n'a pas d'écran à montrer.
+  Plutôt que de subir ce manque, chaque réalisation est représentée par le schéma animé
+  de ce qu'elle fait : les services, les files, le chemin d'une donnée. Le mouvement y
+  est l'information, pas une décoration, ce qui interdit de l'ajouter ailleurs « pour
+  faire vivant ».
+- **Les technologies sont des étiquettes, pas des phrases.** Écrites en prose, elles
+  obligent à lire là où un recruteur balaye, et un filtre automatique les lit aussi. Une
+  technologie par réalisation est en vermillon : celle qui porte le projet.
+- **Les conditions sont écrites.** Contrat, lieu et début figurent en clair dans le bloc
+  contact. Un titre seul laissait deviner si une proposition avait une chance.

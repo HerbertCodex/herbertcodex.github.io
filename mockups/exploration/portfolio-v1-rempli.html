@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette remplie, démonstration</title>
+    <style>
+      /*
+       * Jetons recopiés depuis src/shared/tokens.css, seule source de vérité :
+       * mockup-check.mjs confronte ce fichier à celui-là et refuse toute valeur
+       * qui n'y figure pas.
+       *
+       * Pas de bloc sombre ici : une maquette montre un assemblage, pas deux
+       * thèmes. Le mode sombre est porté par les jetons et se vérifie dans
+       * l'application.
+       */
+      :root {
+        --paper: #eeece6;
+        --paper-raised: #f8f7f3;
+        --ink: #121110;
+        --ink-muted: #55524b;
+        --ink-inverse: #f8f7f3;
+        --rule: #c6c2b7;
+        --accent: #b3271a;
+        --accent-strong: #8b1d13;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --space-8: 144px;
+        --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 22px;
+        --text-xl: 32px;
+        --text-2xl: 52px;
+        --text-3xl: 84px;
+        --leading-tight: 0.94;
+        --leading-snug: 1.15;
+        --leading-body: 1.55;
+        --track-tight: -0.03em;
+        --track-wide: 0.08em;
+        --weight-regular: 400;
+        --weight-bold: 700;
+        --radius-1: 0px;
+        --radius-2: 2px;
+        --page-max: 1440px;
+        --bp-md: 768px;
+        --tap-min: 24px;
+        --measure: 64ch;
+        --border-hairline: 1px;
+        --border-heavy: 3px;
+        --motion-fast: 140ms;
+        --motion-base: 320ms;
+        --motion-slow: 620ms;
+        --motion-stagger: 70ms;
+        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --lift: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---- La grille, et elle se voit -------------------------------- */
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: var(--space-3);
+        padding: 0 var(--space-4);
+        max-width: var(--page-max);
+        margin: 0 auto;
+      }
+
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(12, 1fr);
+          gap: var(--space-4);
+          padding: 0 var(--space-5);
+        }
+      }
+
+      /* Les filets de colonne : la grille est un élément graphique, pas un outil caché. */
+      .rules {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        display: none;
+        max-width: var(--page-max);
+        margin: 0 auto;
+        padding: 0 var(--space-5);
+        opacity: 0.5;
+      }
+
+      @media (min-width: 768px) {
+        .rules {
+          display: grid;
+          grid-template-columns: repeat(12, 1fr);
+          gap: var(--space-4);
+        }
+        .rules span {
+          border-left: var(--border-hairline) solid var(--rule);
+        }
+      }
+
+      /* ---- Barre : marque, navigation, langue ------------------------- */
+
+      .bar {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        justify-content: space-between;
+        align-items: baseline;
+        padding: var(--space-3) 0;
+        border-bottom: var(--border-heavy) solid var(--ink);
+        margin-bottom: var(--space-5);
+      }
+
+      .bar nav,
+      .langs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-4);
+      }
+
+      .mark {
+        font-size: var(--text-sm);
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      /* Le soulignement se déploie : mécanique, pas un fondu. */
+      .bar a,
+      .links a {
+        position: relative;
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+
+      .bar a::after,
+      .links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: calc(var(--space-1) * -1);
+        height: var(--border-heavy);
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--motion-base) var(--ease-out-expo);
+      }
+
+      .bar a:hover::after,
+      .bar a:focus-visible::after,
+      .links a:hover::after,
+      .links a:focus-visible::after {
+        transform: scaleX(1);
+      }
+
+      .langs [aria-current="true"] {
+        color: var(--ink-inverse);
+        background: var(--ink);
+        padding: var(--space-1) var(--space-2);
+      }
+
+      :focus-visible {
+        outline: var(--border-heavy) solid var(--focus);
+        outline-offset: var(--space-1);
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: var(--ink-inverse);
+      }
+
+      /* ---- Titrage ---------------------------------------------------- */
+
+      .hero {
+        grid-column: 1 / -1;
+        margin-bottom: var(--space-5);
+      }
+
+      h1 {
+        overflow-wrap: break-word;
+        /*
+         * Fluide entre deux jetons de l'échelle. La borne haute est une
+         * taille d'affiche : mesurée, elle débordait largement d'un écran de
+         * téléphone. Les bornes restent des jetons, seule l'interpolation
+         * est libre.
+         */
+        font-size: clamp(var(--text-2xl), 11vw, var(--text-3xl));
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        font-weight: var(--weight-bold);
+        margin: 0;
+        text-transform: uppercase;
+      }
+
+      .hero p {
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+        max-width: var(--measure);
+        margin: var(--space-3) 0 0;
+        color: var(--ink-muted);
+      }
+
+      /* Le numéro de section : marque de fabrique du genre. */
+      .section-head {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2) var(--space-4);
+        align-items: baseline;
+        border-top: var(--border-heavy) solid var(--ink);
+        padding-top: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .num {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--accent);
+        font-weight: var(--weight-bold);
+      }
+
+      h2 {
+        font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+        line-height: var(--leading-snug);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        font-weight: var(--weight-bold);
+        margin: 0;
+      }
+
+      .count {
+        margin-left: auto;
+        flex: none;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--ink-muted);
+      }
+
+      /* ---- Bandeau d'identité : dense, tabulaire ---------------------- */
+
+      .facts {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+        border-top: var(--border-hairline) solid var(--rule);
+        border-bottom: var(--border-hairline) solid var(--rule);
+        padding: var(--space-3) 0;
+        margin-bottom: var(--space-5);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      @media (min-width: 768px) {
+        .facts {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .facts dt {
+        color: var(--ink-muted);
+      }
+
+      .facts dd {
+        margin: var(--space-1) 0 0;
+        color: var(--ink);
+      }
+
+      .status {
+        display: inline-block;
+        background: var(--accent);
+        color: var(--ink-inverse);
+        padding: var(--space-1) var(--space-2);
+      }
+
+      /* ---- Réalisations : le visuel a une vraie place ------------------ */
+
+      .piece {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: subgrid;
+        border-top: var(--border-hairline) solid var(--rule);
+        padding: var(--space-4) 0;
+      }
+
+      /*
+       * Le cas par défaut est SANS visuel, parce que c'est le cas réel : la
+       * plupart des réalisations n'ont pas de capture publiable. Le récit
+       * occupe alors la largeur utile et la colonne de droite porte les
+       * métadonnées, au lieu de rester vide en attendant une image.
+       */
+      @media (min-width: 768px) {
+        .piece > .body {
+          grid-column: 1 / 9;
+        }
+        .piece > .aside {
+          grid-column: 9 / -1;
+        }
+        .piece.with-shot > .shot {
+          grid-column: 1 / 5;
+        }
+        .piece.with-shot > .body {
+          grid-column: 5 / 10;
+        }
+        .piece.with-shot > .aside {
+          grid-column: 10 / -1;
+        }
+      }
+
+      /* La colonne latérale : nature, outils, liens. Elle porte le poids
+         que le visuel ne porte pas. */
+      .aside {
+        grid-column: 1 / -1;
+        margin-top: var(--space-3);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
+      .aside ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .aside li {
+        padding: var(--space-1) 0;
+        border-bottom: var(--border-hairline) solid var(--rule);
+      }
+
+      .aside .links {
+        flex-direction: column;
+        gap: var(--space-2);
+        align-items: flex-start;
+        margin-top: var(--space-3);
+      }
+
+      .shot {
+        grid-column: 1 / -1;
+        aspect-ratio: 4 / 3;
+        background: var(--rule);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Le visuel se dévoile par un volet, jamais par un fondu. */
+      .shot::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform-origin: right;
+        transition: transform var(--motion-slow) var(--ease-in-out);
+      }
+
+      .reveal.is-in .shot::after {
+        transform: scaleX(0);
+      }
+
+      /* Une capture simulée : des blocs, pour montrer la place que prend un
+         visuel réel sans prétendre en être un. */
+      .mock-ui {
+        position: absolute;
+        inset: var(--space-3);
+        display: grid;
+        grid-template-rows: var(--space-4) 1fr;
+        gap: var(--space-2);
+        z-index: 1;
+      }
+
+      .mock-ui .bar-sim {
+        background: var(--ink);
+        opacity: 0.15;
+      }
+
+      .mock-ui .body-sim {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: var(--space-2);
+      }
+
+      .mock-ui .body-sim span {
+        background: var(--ink);
+        opacity: 0.1;
+      }
+
+      .mock-ui .body-sim span:last-child {
+        background: var(--accent);
+        opacity: 0.2;
+      }
+
+      .shot span {
+        position: absolute;
+        left: var(--space-3);
+        bottom: var(--space-3);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--ink-muted);
+      }
+
+      .body {
+        grid-column: 1 / -1;
+        margin-top: var(--space-2);
+      }
+
+      .kind {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        color: var(--accent);
+        display: block;
+        margin-bottom: var(--space-2);
+      }
+
+      .piece h3 {
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+        letter-spacing: var(--track-tight);
+        margin: 0 0 var(--space-2);
+        font-weight: var(--weight-bold);
+      }
+
+      /* Le récit en trois temps : problème, action, résultat. */
+      .story dt {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin-bottom: var(--space-1);
+      }
+
+      .story dd {
+        margin: 0 0 var(--space-2);
+        max-width: var(--measure);
+      }
+
+      .result {
+        color: var(--accent);
+      }
+
+      .stack {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--ink-muted);
+        margin-top: var(--space-3);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      .links {
+        display: flex;
+        gap: var(--space-4);
+        margin-top: var(--space-3);
+      }
+
+      .unavailable {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--ink-muted);
+        border-left: var(--border-heavy) solid var(--rule);
+        padding-left: var(--space-2);
+        margin-top: var(--space-3);
+      }
+
+      /* ---- Parcours : une frise compacte ------------------------------- */
+
+      .entry {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: subgrid;
+        border-top: var(--border-hairline) solid var(--rule);
+        padding: var(--space-3) 0;
+      }
+
+      @media (min-width: 768px) {
+        .entry > .when {
+          grid-column: 1 / 3;
+        }
+        .entry > .what {
+          grid-column: 3 / 8;
+        }
+        .entry > .detail {
+          grid-column: 8 / -1;
+        }
+      }
+
+      /* Le détail à droite : ce qui a été fait, pas une étiquette de contrat. */
+      .detail {
+        grid-column: 1 / -1;
+        color: var(--ink-muted);
+        max-width: var(--measure);
+      }
+
+      .when {
+        grid-column: 1 / -1;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        color: var(--accent);
+      }
+
+      .what {
+        grid-column: 1 / -1;
+      }
+
+      .what strong {
+        display: block;
+        font-size: var(--text-lg);
+        letter-spacing: var(--track-tight);
+      }
+
+      .what p {
+        margin: var(--space-1) 0 0;
+        max-width: var(--measure);
+        color: var(--ink-muted);
+      }
+
+      /* ---- Le panneau de contact : un aplat plein ---------------------- */
+
+      .panel {
+        grid-column: 1 / -1;
+        background: var(--accent);
+        color: var(--ink-inverse);
+        padding: var(--space-5);
+        margin-top: var(--space-5);
+      }
+
+      .panel h2,
+      .panel .num {
+        color: var(--ink-inverse);
+      }
+
+      .panel .section-head {
+        border-top-color: var(--ink-inverse);
+        margin-bottom: var(--space-4);
+      }
+
+      .panel-title {
+        /*
+         * Fluide, et coupable si nécessaire : « DISPONIBLE » en capitales à
+         * 52px est plus large qu'un écran de 320, et un mot unique ne se
+         * répartit pas sur deux lignes tout seul.
+         */
+        font-size: clamp(var(--text-lg), 7vw, var(--text-2xl));
+        overflow-wrap: break-word;
+        line-height: var(--leading-tight);
+        letter-spacing: var(--track-tight);
+        text-transform: uppercase;
+        font-weight: var(--weight-bold);
+        margin: 0 0 var(--space-4);
+        max-width: var(--measure);
+      }
+
+      .cta {
+        display: inline-block;
+        background: var(--ink-inverse);
+        color: var(--accent);
+        padding: var(--space-3) var(--space-5);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+        border-radius: var(--radius-1);
+        transition:
+          background var(--motion-fast) var(--ease-out-quart),
+          color var(--motion-fast) var(--ease-out-quart),
+          transform var(--motion-fast) var(--ease-out-expo);
+      }
+
+      .cta:hover,
+      .cta:focus-visible {
+        background: var(--accent-strong);
+        color: var(--ink-inverse);
+        transform: translateY(calc(var(--space-1) * -1));
+      }
+
+      .secondary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+      }
+
+      .panel a {
+        color: var(--ink-inverse);
+      }
+
+      .panel .secondary a::after {
+        background: var(--ink-inverse);
+      }
+
+      /* ---- Technologies ------------------------------------------------ */
+
+      .stack-grid {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--border-hairline);
+        background: var(--rule);
+        border: var(--border-hairline) solid var(--rule);
+        margin-bottom: var(--space-5);
+      }
+
+      @media (min-width: 768px) {
+        .stack-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .cell {
+        background: var(--paper);
+        padding: var(--space-3);
+        transition:
+          background var(--motion-fast) var(--ease-out-quart),
+          color var(--motion-fast) var(--ease-out-quart);
+      }
+
+      .cell:hover {
+        background: var(--ink);
+        color: var(--ink-inverse);
+      }
+
+      .cell h4 {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: 0 0 var(--space-2);
+      }
+
+      .cell:hover h4 {
+        color: var(--ink-inverse);
+      }
+
+      .cell p {
+        margin: 0 0 var(--space-2);
+        font-size: var(--text-sm);
+      }
+
+      .cell ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: var(--text-sm);
+        line-height: var(--leading-snug);
+      }
+
+      .cell li {
+        padding: var(--space-1) 0;
+      }
+
+      /* ---- Mouvement : révélation au défilement, en cascade ------------ */
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(var(--lift));
+        transition:
+          opacity var(--motion-base) var(--ease-out-quart),
+          transform var(--motion-slow) var(--ease-out-expo);
+        transition-delay: calc(var(--motion-stagger) * var(--i, 0));
+      }
+
+      .reveal.is-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: var(--motion-fast) !important;
+          transition-delay: 0ms !important;
+        }
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+        .shot::after {
+          transform: scaleX(0);
+        }
+      }
+
+      .note {
+        grid-column: 1 / -1;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--ink-muted);
+        border-left: var(--border-heavy) solid var(--accent);
+        padding-left: var(--space-3);
+        margin: var(--space-4) 0 var(--space-5);
+        max-width: var(--measure);
+      }
+
+      footer {
+        grid-column: 1 / -1;
+        border-top: var(--border-heavy) solid var(--ink);
+        margin-top: var(--space-5);
+        padding: var(--space-4) 0 var(--space-6);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
+      @media print {
+        .rules,
+        .note {
+          display: none;
+        }
+        .piece,
+        .entry {
+          break-inside: avoid;
+        }
+      }
+
+      /* ---- L'animation de fond : c'est la grille qui vit -------------- */
+
+      /*
+       * Le genre décide de l'animation comme il décide du reste. Une orbe
+       * floue ou des particules appartiendraient à un autre vocabulaire ;
+       * ici l'élément identitaire est la grille, donc c'est elle qui bouge.
+       * Une colonne s'emplit de vermillon, très pâle, et le remplissage se
+       * déplace de colonne en colonne. Lentement : dix-huit secondes pour
+       * traverser, pour que le mouvement se remarque sans se regarder.
+       */
+      .rules span {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .rules span::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        opacity: 0;
+        animation: sweep var(--motion-sweep) var(--ease-in-out) infinite;
+        animation-delay: calc(var(--motion-sweep) / 12 * var(--col, 0));
+      }
+
+      @keyframes sweep {
+        0%,
+        88%,
+        100% {
+          opacity: 0;
+        }
+        94% {
+          opacity: 0.06;
+        }
+      }
+
+      /* Une bande horizontale accompagne le défilement, alignée sur la grille. */
+      .sweepline {
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: var(--border-hairline);
+        background: var(--accent);
+        opacity: 0.2;
+        pointer-events: none;
+        z-index: 0;
+        animation: drift var(--motion-sweep) linear infinite;
+      }
+
+      @keyframes drift {
+        from {
+          top: 0;
+        }
+        to {
+          top: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .rules span::before,
+        .sweepline {
+          animation: none;
+          opacity: 0;
+        }
+      }
+
+      /* ---- Six mouvements de plus, tous mécaniques -------------------- */
+
+      /*
+       * 1. Le titre se découvre derrière un volet vermillon qui balaie vers
+       * la droite. C'est le geste d'une affiche qu'on décolle, pas un fondu.
+       */
+      .hero h1 {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero h1::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform-origin: right;
+        transform: scaleX(1);
+        transition: transform var(--motion-wipe) var(--ease-in-out);
+      }
+
+      .hero.is-in h1::after {
+        transform: scaleX(0);
+      }
+
+      /*
+       * 2. Le filet des en-têtes de section se trace de gauche à droite : la
+       * section s'ouvre au lieu d'apparaître.
+       */
+      .section-head {
+        position: relative;
+        border-top-color: transparent;
+      }
+
+      .section-head::before {
+        content: "";
+        position: absolute;
+        top: calc(var(--border-heavy) * -1);
+        left: 0;
+        right: 0;
+        height: var(--border-heavy);
+        background: var(--ink);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--motion-slow) var(--ease-out-expo);
+      }
+
+      .section-head.is-in::before {
+        transform: scaleX(1);
+      }
+
+      /*
+       * 3. Le numéro de section arrive de la gauche, décalé après le filet :
+       * l'ordre de lecture est reproduit par l'ordre d'apparition.
+       */
+      .section-head .num {
+        display: inline-block;
+        transform: translateX(calc(var(--space-4) * -1));
+        opacity: 0;
+        transition:
+          transform var(--motion-base) var(--ease-out-expo),
+          opacity var(--motion-base) var(--ease-out-quart);
+        transition-delay: var(--motion-base);
+      }
+
+      .section-head.is-in .num {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      /*
+       * 4. Les lignes du bandeau de faits se posent l'une après l'autre.
+       */
+      .facts div {
+        opacity: 0;
+        transform: translateY(var(--space-2));
+        transition:
+          opacity var(--motion-base) var(--ease-out-quart),
+          transform var(--motion-base) var(--ease-out-expo);
+      }
+
+      .facts.is-in div {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .facts.is-in div:nth-child(1) {
+        transition-delay: calc(var(--motion-stagger) * 1);
+      }
+      .facts.is-in div:nth-child(2) {
+        transition-delay: calc(var(--motion-stagger) * 2);
+      }
+      .facts.is-in div:nth-child(3) {
+        transition-delay: calc(var(--motion-stagger) * 3);
+      }
+      .facts.is-in div:nth-child(4) {
+        transition-delay: calc(var(--motion-stagger) * 4);
+      }
+
+      /*
+       * 5. Une entrée survolée avance et son filet passe au vermillon. Le
+       * déplacement est franc et court : la ligne coulisse, elle ne flotte pas.
+       */
+      .entry,
+      .piece {
+        position: relative;
+        transition:
+          border-top-color var(--motion-fast) var(--ease-out-quart),
+          transform var(--motion-base) var(--ease-out-expo);
+      }
+
+      .entry:hover,
+      .piece:hover {
+        border-top-color: var(--accent);
+        transform: translateX(var(--space-2));
+      }
+
+      /*
+       * 6. L'aplat de contact se déploie depuis la gauche quand il entre à
+       * l'écran : le bloc le plus lourd de la page mérite son entrée.
+       */
+      .panel {
+        position: relative;
+        background: transparent;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--motion-wipe) var(--ease-in-out);
+        z-index: 0;
+      }
+
+      .panel.is-in::before {
+        transform: scaleX(1);
+      }
+
+      .panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hero h1::after,
+        .panel::before {
+          transform: scaleX(0);
+        }
+        .section-head::before {
+          transform: scaleX(1);
+        }
+        .section-head .num,
+        .facts div {
+          opacity: 1;
+          transform: none;
+        }
+        .entry:hover,
+        .piece:hover {
+          transform: none;
+        }
+      }
+
+      /* ---- Les formes de fond ------------------------------------------ */
+
+      /*
+       * Carré, cercle, barre : les trois formes primaires de l'école suisse.
+       * Elles dérivent lentement, en translations et en rotations franches,
+       * jamais en flottement organique. Très pâles : elles donnent de la vie
+       * au papier sans jamais disputer la lecture.
+       */
+      .shapes {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .shapes i {
+        position: absolute;
+        display: block;
+        background: var(--accent);
+        opacity: 0.05;
+      }
+
+      /* Le carré tourne par quarts, comme une plaque qu'on repositionne. */
+      .shape-square {
+        width: var(--shape-lg);
+        height: var(--shape-lg);
+        top: calc(var(--space-8) * -1);
+        right: calc(var(--space-7) * -1);
+        animation: turn var(--motion-turn) steps(4, end) infinite;
+      }
+
+      @keyframes turn {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Le cercle descend, puis remonte : un aller simple serait un saut. */
+      .shape-circle {
+        width: var(--shape-md);
+        height: var(--shape-md);
+        border-radius: var(--shape-md);
+        left: calc(var(--space-6) * -1);
+        top: 30%;
+        background: transparent;
+        border: var(--border-heavy) solid var(--accent);
+        animation: rise var(--motion-float) var(--ease-in-out) infinite alternate;
+      }
+
+      @keyframes rise {
+        from {
+          transform: translateY(calc(var(--space-8) * -1));
+        }
+        to {
+          transform: translateY(var(--space-8));
+        }
+      }
+
+      /* La barre traverse à plat, à la vitesse la plus lente de la page. */
+      .shape-bar {
+        width: var(--shape-bar);
+        height: var(--space-4);
+        left: 0;
+        bottom: 18%;
+        animation: cross var(--motion-sweep) var(--ease-in-out) infinite alternate;
+      }
+
+      @keyframes cross {
+        from {
+          transform: translateX(calc(var(--shape-bar) * -1));
+        }
+        to {
+          transform: translateX(var(--page-max));
+        }
+      }
+
+      /* Un second carré, plus petit, décalé et à contretemps du premier. */
+      .shape-tile {
+        width: var(--shape-md);
+        height: var(--shape-md);
+        right: 12%;
+        bottom: calc(var(--space-8) * -1);
+        background: transparent;
+        border: var(--border-heavy) solid var(--ink);
+        opacity: 0.04;
+        animation: lift var(--motion-float) var(--ease-in-out) infinite alternate;
+        animation-delay: calc(var(--motion-float) / 2);
+      }
+
+      @keyframes lift {
+        from {
+          transform: translateY(0) rotate(0deg);
+        }
+        to {
+          transform: translateY(calc(var(--space-8) * -1)) rotate(45deg);
+        }
+      }
+
+      /* Le contenu passe devant : les formes ne sont qu'un fond. */
+      .grid {
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .shapes i {
+          animation: none;
+        }
+      }
+
+      /*
+       * Toute zone cliquable atteint la cible tactile minimale. Sans cela un
+       * lien de 17px de haut se rate au doigt, et le défaut ne se voit pas
+       * sur un écran d'ordinateur où l'on vise à la souris.
+       */
+      .bar a,
+      .langs a,
+      .links a,
+      .secondary a,
+      .aside .links a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rules" aria-hidden="true">
+      <span style="--col: 0"></span>
+      <span style="--col: 1"></span>
+      <span style="--col: 2"></span>
+      <span style="--col: 3"></span>
+      <span style="--col: 4"></span>
+      <span style="--col: 5"></span>
+      <span style="--col: 6"></span>
+      <span style="--col: 7"></span>
+      <span style="--col: 8"></span>
+      <span style="--col: 9"></span>
+      <span style="--col: 10"></span>
+      <span style="--col: 11"></span>
+    </div>
+
+    <div class="sweepline" aria-hidden="true"></div>
+
+    <div class="shapes" aria-hidden="true">
+      <i class="shape-square"></i>
+      <i class="shape-circle"></i>
+      <i class="shape-bar"></i>
+      <i class="shape-tile"></i>
+    </div>
+
+    <div class="grid">
+      <header class="bar">
+        <span class="mark">Donatien Koffi, ingénieur logiciel</span>
+        <nav aria-label="Navigation principale">
+          <a href="/fr/realisations">Réalisations</a>
+          <a href="/fr/experience">Expérience</a>
+          <a href="/fr/contact">Contact</a>
+        </nav>
+        <div class="langs">
+          <a href="/fr/realisations" aria-current="true">FR</a>
+          <a href="/en/work" hreflang="en">EN</a>
+        </div>
+      </header>
+
+      <p class="note">
+        DÉMONSTRATION. Contenu inventé de bout en bout, pour montrer à quoi ressemble cette même maquette une fois
+        pleine. Aucune de ces phrases n'est vraie : ni les chiffres, ni le poste 2024–2026, ni les certifications. Le
+        fichier de référence reste portfolio-v1.html.
+      </p>
+
+      <div class="hero reveal observe" style="--i: 0">
+        <h1>Ingénieur logiciel</h1>
+        <p>
+          Je construis ce qui fait tourner une application quand personne ne regarde : le traitement des données, les
+          échanges entre services, la mise en production.
+        </p>
+      </div>
+
+      <dl class="facts reveal observe" style="--i: 1">
+        <div>
+          <dt>Statut</dt>
+          <dd><span class="status">Recherche CDI</span></dd>
+        </div>
+        <div>
+          <dt>Base</dt>
+          <dd>Rennes, mobile en France</dd>
+        </div>
+        <div>
+          <dt>Formation</dt>
+          <dd>Master MIAGE, Rennes</dd>
+        </div>
+        <div>
+          <dt>Langues</dt>
+          <dd>Français, anglais</dd>
+        </div>
+      </dl>
+
+      <div class="section-head reveal observe" style="--i: 0">
+        <span class="num">01</span>
+        <h2>Réalisations</h2>
+        <span class="count">04</span>
+      </div>
+
+      <article class="piece reveal" style="--i: 1">
+        <div class="body">
+          <span class="kind">En entreprise, Everest Consulting</span>
+          <h3>Paiements en ligne d'une plateforme</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              La plateforme devait encaisser des paiements et rester disponible même quand un service tombait, ce qu'une
+              architecture monolithique ne permettait pas.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Développé les services de paiement et mis en place une file de messages pour que les traitements longs
+              n'immobilisent plus le reste, avec un cache pour les données les plus demandées.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">
+              Temps de réponse divisé par trois aux heures de pointe, et aucune commande perdue pendant les six mois
+              suivants.
+            </dd>
+          </dl>
+        </div>
+        <div class="aside">
+          <ul>
+            <li>Kafka</li>
+            <li>Redis</li>
+            <li>MongoDB</li>
+            <li>Stripe</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="piece with-shot reveal" style="--i: 2">
+        <div class="shot">
+          <div class="mock-ui" aria-hidden="true">
+            <div class="bar-sim"></div>
+            <div class="body-sim"><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="body">
+          <span class="kind">Projet personnel, Android</span>
+          <h3>Navigation hors connexion</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Une application de navigation devient inutile là où elle sert le plus : en déplacement, sans réseau.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Conçu et développé seul l'application, avec une base locale qui conserve les itinéraires et les points
+              d'intérêt déjà consultés.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">L'application reste utilisable sans connexion.</dd>
+          </dl>
+        </div>
+        <div class="aside">
+          <ul>
+            <li>Kotlin</li>
+            <li>Jetpack Compose</li>
+            <li>Room</li>
+            <li>Retrofit</li>
+          </ul>
+          <div class="links"><a href="#">Voir le code</a></div>
+        </div>
+      </article>
+
+      <article class="piece reveal" style="--i: 3">
+        <div class="body">
+          <span class="kind">Projet personnel, service</span>
+          <h3>Logiciel de gestion hôtelière</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>Gérer des réservations suppose d'éviter les doubles réservations et de contrôler qui accède à quoi.</dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Construit le service complet : modèle de données des chambres et des clients, règles de réservation,
+              authentification, et une documentation permettant à d'autres de s'y brancher.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Quarante chambres gérées, réservation confirmée en moins d'une seconde.</dd>
+          </dl>
+        </div>
+        <div class="aside">
+          <ul>
+            <li>NestJS</li>
+            <li>Prisma</li>
+            <li>PostgreSQL</li>
+            <li>Swagger</li>
+          </ul>
+          <div class="links"><a href="#">Voir le code</a></div>
+        </div>
+      </article>
+
+      <article class="piece reveal" style="--i: 4">
+        <div class="body">
+          <span class="kind">En entreprise, CIE DSTD</span>
+          <h3>Modernisation d'une application interne</h3>
+          <dl class="story">
+            <dt>Le problème</dt>
+            <dd>
+              Une application dont l'installation dépendait de la machine sur laquelle elle tournait, avec les écarts
+              que cela suppose entre les environnements.
+            </dd>
+            <dt>Ce que j'ai fait</dt>
+            <dd>
+              Mis l'application en conteneur pour qu'elle se déploie de la même façon partout, et travaillé sur la
+              structure de sa base de données.
+            </dd>
+            <dt>Le résultat</dt>
+            <dd class="result">Déploiement passé de deux heures manuelles à huit minutes automatisées.</dd>
+          </dl>
+        </div>
+        <div class="aside">
+          <ul>
+            <li>Docker</li>
+            <li>PostgreSQL</li>
+            <li>NestJS</li>
+            <li>Angular</li>
+          </ul>
+          <p class="unavailable">Application interne : ni démonstration ni code publics.</p>
+        </div>
+      </article>
+
+      <div class="section-head reveal observe" style="--i: 0">
+        <span class="num">02</span>
+        <h2>Expérience</h2>
+        <span class="count">04</span>
+      </div>
+
+      <div class="entry reveal" style="--i: 1">
+        <div class="when">09/2024–06/2026</div>
+        <div class="what">
+          <strong>Atos</strong>
+        </div>
+        <p class="detail">Ingénieur logiciel. Refonte de la chaîne de traitement des commandes d'un distributeur.</p>
+      </div>
+
+      <div class="entry reveal" style="--i: 2">
+        <div class="when">11/2023–08/2024</div>
+        <div class="what">
+          <strong>Everest Consulting</strong>
+        </div>
+        <p class="detail">Développeur back-end. Services de paiement et échanges entre services.</p>
+      </div>
+
+      <div class="entry reveal" style="--i: 3">
+        <div class="when">08/2023–11/2023</div>
+        <div class="what">
+          <strong>CIE DSTD</strong>
+        </div>
+        <p class="detail">Développeur back-end. Conteneurisation et base relationnelle.</p>
+      </div>
+
+      <div class="entry reveal" style="--i: 4">
+        <div class="when">05/2022–11/2022</div>
+        <div class="what">
+          <strong>Synelia / Smile Group</strong>
+        </div>
+        <p class="detail">Développeur front-end. Applications mobiles et web.</p>
+      </div>
+
+      <div class="section-head reveal observe" style="--i: 0">
+        <span class="num">03</span>
+        <h2>Formation</h2>
+      </div>
+
+      <div class="entry reveal" style="--i: 1">
+        <div class="when">2024</div>
+        <div class="what">
+          <strong>Master MIAGE</strong>
+        </div>
+        <p class="detail">Université de Rennes. Informatique et gestion d'entreprise, mention bien.</p>
+      </div>
+
+      <div class="section-head reveal observe" style="--i: 0">
+        <span class="num">04</span>
+        <h2>Certifications</h2>
+      </div>
+
+      <div class="entry reveal" style="--i: 1">
+        <div class="when">2025</div>
+        <div class="what">
+          <strong>Certified Kubernetes Administrator</strong>
+        </div>
+        <p class="detail">Cloud Native Computing Foundation. Administration d'un cluster en production.</p>
+      </div>
+
+      <div class="section-head reveal observe" style="--i: 0">
+        <span class="num">05</span>
+        <h2>Compétences</h2>
+      </div>
+
+      <div class="stack-grid reveal" style="--i: 1">
+        <div class="cell">
+          <h4>Côté serveur</h4>
+          <p>Traitement des demandes, règles de gestion, sécurité des accès.</p>
+          <ul>
+            <li>Java, TypeScript, Kotlin, Python</li>
+            <li>NestJS, Spring Boot, Express</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Données</h4>
+          <p>Structurer et interroger ce que l'application conserve.</p>
+          <ul>
+            <li>PostgreSQL, MySQL</li>
+            <li>MongoDB, Redis</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h4>Mise en production</h4>
+          <p>Livrer de façon répétable, sans interruption de service.</p>
+          <ul>
+            <li>Docker, Kubernetes</li>
+            <li>GitHub Actions, GitLab CI</li>
+          </ul>
+        </div>
+      </div>
+
+      <section class="panel reveal observe" style="--i: 0">
+        <div class="section-head">
+          <span class="num">06</span>
+          <h2>Contact</h2>
+        </div>
+        <p class="panel-title">Disponible en CDI</p>
+        <a class="cta" href="mailto:donatien.koffi@exemple.fr">Écrire un message</a>
+        <div class="secondary">
+          <a href="#">LinkedIn</a>
+          <a href="#">GitHub</a>
+          <a href="/cv/donatien-koffi-fr.pdf">CV en PDF</a>
+        </div>
+      </section>
+
+      <footer>
+        <span>Donatien Koffi, 2026</span>
+        <span>Rennes, France</span>
+      </footer>
+    </div>
+
+    <script>
+      /*
+       * La révélation au défilement, sans dépendance : la maquette montre
+       * l'intention du mouvement, elle ne préjuge pas de l'outil qui
+       * l'implémentera dans l'application.
+       */
+      const seen = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-in");
+            seen.unobserve(entry.target);
+          }
+        },
+        { rootMargin: "0px 0px -12% 0px" },
+      );
+      for (const node of document.querySelectorAll(".reveal")) seen.observe(node);
+    </script>
+  </body>
+</html>

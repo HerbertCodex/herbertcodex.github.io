@@ -29,7 +29,7 @@ jobs:
           node-version: 24
 
       - name: install
-        run: corepack enable && pnpm install --frozen-lockfile
+        run: corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
 
       - name: check
         run: pnpm run check
@@ -98,6 +98,9 @@ jobs:
       - name: map-coverage
         if: ${{ github.event_name == 'pull_request' }}
         run: node agent-pipeline/scripts/map-coverage.mjs
+
+      - name: content
+        run: pnpm run check:content
 
       - name: core-tests
         run: node --test "agent-pipeline/test/**/*.test.mjs"

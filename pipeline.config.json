@@ -33,13 +33,13 @@
     "decided_at": "2026-09-04",
     "layers": {
       "shared": ["src/shared/**"],
-      "features": ["src/*/**"]
+      "features": ["src/features/**"]
     },
     "allowed": {
       "features": ["shared"],
       "shared": []
     },
-    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possède déjà src/routes, et une couche pages supplémentaire dupliquerait cette frontière sans rien refuser de plus. Deux couches, une seule direction autorisée."
+    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possede deja src/routes, et une couche pages supplementaire dupliquerait cette frontiere sans rien refuser de plus. Deux couches, une seule direction autorisee. AMENDEE le 2026-09-07 : features valait src/*/**, motif qui matchait AUSSI src/shared/**. Les deux couches se recouvraient entierement et la porte ne pouvait rien refuser — verte a vide. Elle designe desormais src/features/** seul. Le defaut a ete repere par l'operateur en lisant le code, jamais par une porte."
   },
   "design_system": {
     "tokens": "src/shared/tokens.css",

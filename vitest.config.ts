@@ -26,6 +26,12 @@ export default defineConfig({
       // declared test_suite replayed at closure. Counting them as uncovered here
       // would report a file that is proven, only elsewhere — and a threshold set
       // to absorb that noise stops refusing anything real.
+      // Les chemins suivent les ecrans : l'issue i-2q07 les deplace de
+      // `src/shared` vers `src/features/<page>`, et une liste qui ne suit pas
+      // laisse un ecran compter a 0 %. Mesure par Produit avant le travail :
+      // sans ce deplacement, coverage sort a 89,96 % pour un seuil de 90, la
+      // cause etant HomePage.tsx seul.
+      //
       // Screens are listed ONE BY ONE, never by a name pattern. A first attempt
       // excluded `src/shared/*Page.tsx`, and QA named the flaw before it bit: that
       // is a rule about NAMES, not about PROOF. It let `SiteBar.tsx` — a screen the
@@ -42,10 +48,10 @@ export default defineConfig({
         "src/global.d.ts",
         "src/app.tsx",
         "src/routes/**",
-        "src/shared/HomePage.tsx",
-        "src/shared/WorksPage.tsx",
-        "src/shared/JourneyPage.tsx",
-        "src/shared/ContactPage.tsx",
+        "src/features/home/HomePage.tsx",
+        "src/features/works/WorksPage.tsx",
+        "src/features/journey/JourneyPage.tsx",
+        "src/features/contact/ContactPage.tsx",
         "src/shared/SiteBar.tsx",
         "src/shared/LanguageSwitch.tsx",
       ],

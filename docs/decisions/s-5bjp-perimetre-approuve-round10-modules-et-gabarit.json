@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "document": "perimetre_approuve",
+  "spec_id": "s-5bjp",
+  "round": 10,
+  "title": "Les quatre pages deviennent des modules de fonctionnalite, le gabarit SolidStart s en va, et la page introuvable recoit un contenu bilingue",
+  "approved_at": "2026-09-07T07:29:28Z",
+  "approved_by": "operator",
+  "archived_at": "2026-09-07T08:15:00Z",
+  "proposal_round_waived": {
+    "waived": true,
+    "by": "operator",
+    "instruction_verbatim": "NOUVELLE DEMANDE, deux sujets lies. L operateur a lu le code et repere deux choses. Produis un spec_plan avec scope_change, SANS round de proposition. Une ou deux issues a ton jugement, mais elles se recouvrent : separer les pages de shared touche les memes fichiers que retirer le gabarit.",
+    "consequence": "Aucune page de revue n a ete rendue pour ce perimetre et aucun decisions_for_operator ne lui a ete soumis AVANT le plan. C est la QUATRIEME fois de suite sur cette spec, apres les rounds 7, 8 et 9. Ce fichier n est donc pas un round de proposition lu puis approuve : c est l archive de la demande de l operateur, ecrite mot pour mot, plus la lecture produit que le plan en tire, plus les faits mesures avant d ecrire. Il existe pour que le plan derive d un perimetre nomme et relisible sur un depot frais, et non d une intention. La confrontation habituelle — l operateur a-t-il vu ce qu il approuve — n a pas eu lieu. Difference avec le round 9 : celui-la s appuyait sur une maquette que l operateur avait vue et retenue. Ici il n y a rien a voir — aucun ecran ne change d apparence — mais il y a SIX choix que l operateur pourrait faire autrement, et ils sont ecrits ci-dessous sous decisions_for_operator plutot que fondus dans le plan. Le plan avance sur les recommandations parce que la consigne est de ne pas faire de round ; chacune se renverse d un mot avant le dispatch.",
+    "what_was_not_asked": [
+      "L apparence des quatre pages. Aucun ecran ne change de forme, de couleur, d espacement ni de texte. Le lot est un DEPLACEMENT de fichiers plus une page introuvable ecrite. Si l implementeur se surprend a ouvrir une feuille de style pour autre chose que la deplacer telle quelle, il est sorti du perimetre.",
+      "Le contenu editorial existant. Les seuls mots neufs du depot sont ceux de la page introuvable, dans les deux langues. Rien d autre n est ecrit, reecrit ni traduit.",
+      "La table des pages. src/shared/pages.ts n est pas reservee : la page introuvable n est pas une page adressable, elle n entre pas dans la table, et les huit adresses comme la liste de prerendu restent identiques.",
+      "Les deux reglages hors pipeline. pipeline.config.json et vitest.config.ts sont en revue humaine et hors de portee de tout agent. Le plan dit exactement quelle declaration et quelle mesure il attend, sous expected_operator_changes, et ne les fait pas.",
+      "La correction du point aveugle de dead_code. Mesuree : desactiver le greffon vitest de knip fait bien apparaitre src/components/Counter.tsx, mais fait apparaitre AUSSI src/shared/completeness.ts, qui n est prouve que par son test et l est deliberement. Fermer le point aveugle signalerait donc un vrai module comme mort. Le retrait du compteur est un critere, pas un changement de porte."
+    ]
+  },
+  "operator_request": {
+    "verbatim_points": [
+      "1. L ARCHITECTURE EST VERTE A VIDE. La configuration declare deux couches : shared vaut src/shared/** et features vaut src/*/**, avec features autorise a dependre de shared et shared de rien. DEFAUT MESURE : src/*/** matche AUSSI src/shared/**, donc les deux couches se recouvrent entierement et la porte ne peut rien refuser. Etat reel : 28 fichiers dans src/shared, 2 dans src/components, 3 dans src/routes. Il n existe aucune feature.",
+      "Ce que src/shared melange, classe a la main : vraiment partage — i18n, identity, pages, theme, content, completeness, resume ; la coquille du site — SiteBar, SiteFooter, LanguageSwitch, ThemeToggle ; les pages — HomePage, WorksPage, WorkCard, JourneyPage, ContactPage, ContactLinks. Les quatre pages SONT les features.",
+      "POURQUOI C EST ARRIVE, et ce qu il faut empecher : la decision 0009 a remplace un fichier de route par page par une route dynamique unique. Les ecrans ont du quitter src/routes, et l implementeur a choisi src/shared. La regle a pousse le code la ou elle ne voulait pas qu il aille. Verifie : file_policy.implementer ouvre src/**, donc src/pages/ est deja ecrivable — le blocage n est pas la politique mais la DECLARATION de l architecture, que l orchestrateur corrigera puisque pipeline.config.json est en revue humaine et hors de portee de tout agent. Dis dans le plan quelle declaration tu attends.",
+      "2. LE GABARIT SOLIDSTART EST ENCORE LA. src/shared/StarterNote.tsx est rendu par src/routes/[...404].tsx : un visiteur qui tombe sur une adresse inconnue lit le texte d une demonstration. src/components/Counter.tsx et Counter.css ne sont rendus par aucune route ; dead_code ne les voit pas parce que knip compte leurs tests unitaires comme points d entree, angle mort deja documente dans pitfalls.md. L operateur veut retirer les DEUX, et la page introuvable doit recevoir un vrai contenu bilingue.",
+      "PIEGE A NE PAS MANQUER : vitest.config.ts fixe le seuil de branches a 45 et sa raison est ecrite au-dessus, citant NOMMEMENT « `}` at Counter.tsx:16 et StarterNote.tsx:21 », artefacts de la transformation JSX que v8 compte comme branches non couvertes. Supprimer ces deux fichiers invalide cette justification : le seuil doit etre REMESURE, pas conserve par habitude ni baisse pour faire passer. vitest.config.ts est hors de portee de tout agent : dis dans le plan quelle mesure tu attends et l orchestrateur l appliquera."
+    ],
+    "read_from": "pipeline/handoffs/i-841g-product-package.json, contexte « ## Context for Product (SPEC UNCLEAR) », depose le 2026-09-07T07:29:28.653Z",
+    "invariants_stated_by_the_operator": [
+      "0 debordement horizontal sur les huit adresses aux largeurs 320, 360, 375, 480, 768, 900, 1100 et 1440.",
+      "Aucune cible tactile sous 24 px.",
+      "Le nom vient de src/shared/identity.ts.",
+      "Les huit adresses repondent et sont prerendues."
+    ]
+  },
+  "facts_measured_before_writing_this_scope": [
+    {
+      "fact": "La porte d architecture n est PAS vide : elle refuse deja shared vers le reste. Ce qu elle ne peut pas exprimer, c est une direction ENTRE deux repertoires de src autres que shared.",
+      "how": "Trois sondes plantees dans un arbre de travail detache sur 632ecf1, puis retire. (1) src/shared/probe-shared.ts important ~/routes/index : REFUSE, « shared may only reach: nothing ». specificity() classe src/shared/** (prefixe litteral 11) avant src/*/** (prefixe 4), donc les fichiers de src/shared appartiennent bien a shared. (2) src/features/works/probe-cross-feature.ts important ~/components/Counter : NON REFUSE, parce que les deux chemins tombent dans la meme couche features et que inspect() saute tout import dont la couche cible egale la couche source. (3) Sortie nominale sur l arbre intact : « feature-modules: 31 file(s), 11 cross-layer import(s), all declared ».",
+      "consequence": "La formulation de l operateur — « les deux couches se recouvrent entierement et la porte ne peut rien refuser » — est plus forte que le fait. Le fait suffit : src/*/** avale src/routes, src/components et tout src/features futur dans une seule couche, donc creer src/features SOUS LA DECLARATION ACTUELLE n acheterait aucune regle. Le deplacement sans la nouvelle declaration serait du rangement sans porte."
+    },
+    {
+      "fact": "La declaration proposee est verte sur l arbre ACTUEL comme sur l arbre deplace, et elle refuse les trois sondes.",
+      "how": "Meme arbre de travail detache. Sur l arbre intact avec la seule declaration changee : « 31 file(s), 11 cross-layer import(s), all declared », exit 0 — src/components/Counter.tsx tombe dans unplaced et n importe que solid-js, externe, plus sa propre feuille, meme couche. Sur l arbre ou les six ecrans sont deplaces sous src/features et le gabarit retire : « 30 file(s), 24 cross-layer import(s), all declared », exit 0. Avec les sondes : les TROIS sont refusees — une feature important une route, un module de shared important une feature, et un fichier place nulle part important shared.",
+      "consequence": "Deux choses. Le nombre d aretes examinees passe de 11 a 24 sur le meme code : c est la mesure de ce que la correction achete. Et la declaration peut etre posee AVANT le dispatch sans rien faire rougir, ce qui evite d avoir a la synchroniser avec un commit."
+    },
+    {
+      "fact": "Le visiteur qui TAPE une adresse inconnue ne lit PAS le texte de demonstration : l artefact statique ne publie aucun document introuvable.",
+      "how": "Construction reelle sur 632ecf1 puis sondes navigateur contre .output/public servi par scripts/serve-static.mjs. find .output/public : aucun 404.html, aucun repertoire 404. Requetes directes sur /fr/about, /fr/inconnu, /nimportequoi et /de/x : les quatre repondent 404 avec le corps « not found » en texte brut, celui du serveur, jamais l ecran SolidStart.",
+      "consequence": "La premisse de l operateur est a moitie vraie, et il faut le dire plutot que livrer un correctif sur une page que personne n atteint par cette voie. Le vrai defaut sous-jacent — le site ne publie aucune page introuvable qu un hebergeur statique puisse servir — est NOMME et PARQUE : il touche scripts/serve-static.mjs, hors de la politique de fichiers de l implementeur et dans human_review_paths, et il depend de la cible de deploiement que la decision 0003 laisse ouverte."
+    },
+    {
+      "fact": "Le texte de demonstration EST lu, mais apres une navigation interne, et il apparait au milieu du vrai site.",
+      "how": "Meme artefact. page.goto('/fr'), puis history.pushState vers /fr/inconnu et un evenement popstate : le document rend « Aller au contenu | DONATIEN KOFFI | ACCUEIL | REALISATIONS | PARCOURS | CONTACT | Page Not Found | Visit start.solidjs.com to learn how to build SolidStart apps. | DONATIEN KOFFI, 2026 | RENNES, FRANCE ». Barre et pied de page presents. Depuis /en, la meme navigation vers /en/whatever rend la barre en anglais et le meme texte anglais de demonstration.",
+      "consequence": "Le defaut est reel et il est prouvable, mais par une navigation interne et non par une adresse tapee. Le plan ecrit ses criteres de navigateur sur ce parcours exact et donne la recette a l implementeur, sans quoi il ecrira page.goto('/fr/inconnu'), obtiendra le texte brut du serveur et croira le site casse."
+    },
+    {
+      "fact": "La page introuvable est atteinte dans DEUX contextes qui n ont pas la meme langue disponible, et useI18n leve dans le second.",
+      "how": "Lecture de src/shared/i18n.ts:194 — useI18n jette « useI18n was called outside the locale provider » quand le contexte est absent. Confronte aux memes sondes : /fr/inconnu et /en/whatever passent par le repli de src/routes/[locale]/[slug].tsx, DANS la mise en page [locale], donc barre et pied presents et fournisseur present ; /de/x et /nimportequoi passent par la route de tete src/routes/[...404].tsx, HORS de cette mise en page — zero header, zero footer, aucun fournisseur.",
+      "consequence": "C est la contrainte de conception du lot, et c est pourquoi le critere 8 existe. Un ecran introuvable qui appelle useI18n leverait sur la moitie de ses points d entree, et cette moitie est celle que le prerendu ne visite jamais : personne ne le verrait avant un visiteur reel."
+    },
+    {
+      "fact": "Deplacer les ecrans sans corriger vitest.config.ts fait SORTIR coverage en 1, et la cause est un seul fichier.",
+      "how": "Mesure sur 632ecf1 avec les seuils neutralises et les chemins simules par les options de ligne de commande : liste d exclusion sans les quatre ecrans, Counter.tsx et StarterNote.tsx exclus et leurs tests retires — Statements 89,96 % (502/558), Branches 77,92 %, Functions 90,73 %, Lines 92,11 %. Le seuil d instructions est 90. Le detail par fichier isole la cause : HomePage.tsx est a 0 %, tandis que WorksPage.tsx, JourneyPage.tsx et ContactPage.tsx portent deja un test unitaire et sortent a 100, 95,52 et 100 %.",
+      "consequence": "C est un blocage de livraison exactement de la forme de celui de i-841g, et il est prevu au lieu d etre decouvert en cloture. La liste d exclusion nomme les ecrans par leur chemin sous src/shared ; elle doit suivre les ecrans. Et le pieds de la mesure : trois des quatre lignes d exclusion sont deja redondantes aujourd hui, ce que la derniere decouverte parquee de i-841g disait de LanguageSwitch.tsx et qui vaut ici pour trois lignes de plus."
+    },
+    {
+      "fact": "La justification du seuil de branches est perimee, et le chiffre remesure est 78,35 %.",
+      "how": "Le commentaire de vitest.config.ts fixe branches a 45 en citant « `}` at Counter.tsx:16 et StarterNote.tsx:21 ». Mesure aujourd hui, gabarit compris : Branches 77,53 % (107/138). Mesure avec Counter.tsx et StarterNote.tsx exclus et leurs tests retires, liste d exclusion par ailleurs inchangee : Statements 94,28 % (330/350), Branches 78,35 % (105/134), Functions 95,94 % (142/148), Lines 95,96 % (238/248). Verifie deux fois : le meme calcul fait a la main sur coverage/lcov.info donne 105/134 au centieme.",
+      "consequence": "Le seuil de 45 ne repose plus sur rien : les deux fichiers qui le justifiaient s en vont et le reste du depot est deja quinze points au-dessus. Le plan demande 70, mesure et non choisi, et demande a l operateur de REJOUER la mesure sur la tete livree plutot que de faire confiance a cette projection, parce que la page introuvable ajoute des branches que personne n a encore ecrites."
+    },
+    {
+      "fact": "Le point aveugle de dead_code est bien celui que l operateur decrit, et le fermer aurait un cout.",
+      "how": "pnpm run check:dead-code sort en 0, sans une ligne, alors que src/components/Counter.tsx n est rendu par aucune route. Rejoue avec une configuration knip hors depot desactivant le greffon vitest : deux fichiers signales, src/components/Counter.tsx ET src/shared/completeness.ts. Rejoue en retirant seulement les entrees de test de la configuration sans desactiver le greffon : rien n est signale, parce que le greffon les rajoute.",
+      "consequence": "L explication de l operateur est confirmee. Mais src/shared/completeness.ts n est prouve QUE par son test unitaire et l est deliberement — c est le module de la porte de completude livree par i-9dqd. Fermer le point aveugle le signalerait comme mort. Le retrait du compteur est donc un critere de cette issue et non un changement de knip.json, et c est dit ici plutot que laisse deviner."
+    },
+    {
+      "fact": "Les six modules a deplacer n ont que onze references dans tout le depot, et aucune n est dans une suite navigateur.",
+      "how": "Releve des imports de src, tests et scripts. Cinq dans src : src/routes/[locale]/index.tsx vers HomePage, src/routes/[locale]/[slug].tsx vers WorksPage, JourneyPage et ContactPage, plus WorksPage vers WorkCard et ContactPage vers ContactLinks. Cinq dans tests/unit : parcours, realisations, contact-links, work-card, contact. Une dans vitest.config.ts, la liste d exclusion. Les feuilles de style sont importees relativement depuis leur composant, donc un dossier deplace en bloc ne demande aucune retouche de chemin CSS. scripts/routes.mjs ne lit que src/shared/pages.ts, qui ne bouge pas.",
+      "consequence": "Le deplacement est mecanique et son perimetre est ferme. Les suites de navigateur ne nomment aucun module : elles regardent le site rendu, donc elles restent le filet qui dit que le deplacement n a rien casse, sans qu un seul de leurs fichiers soit reserve."
+    },
+    {
+      "fact": "sudocode export abandonne au demontage environ une fois sur trois sur cette machine.",
+      "how": "Six exports consecutifs lances depuis node : quatre en 0, deux abandons avec « Assertion failed: (env) != nullptr » dans Statement::~Statement de better-sqlite3. exportTrackerSnapshot ne retente que deux fois, donc une mutation echoue des que deux abandons se suivent : c est arrive quatre fois de suite pendant la creation de cette issue, qui a fini par passer.",
+      "consequence": "Ce n est pas un defaut de ce depot et agent-pipeline ne se modifie pas d ici. C est signale parce que l export est idempotent — une retentative plus large serait sans danger — et parce qu un role qui rencontre cela sans le savoir conclura que le tracker est casse."
+    }
+  ],
+  "functional_scope": {
+    "features": [
+      {
+        "name": "Les quatre pages du site rangees comme quatre choses distinctes",
+        "user_value": "Personne ne le voit sur le site, et c est le point : le lecteur retrouve exactement ce qu il avait. Ce que cela donne, c est a qui reprend le depot — la personne qui cherche la page des realisations la trouve dans un dossier qui porte son nom, au lieu de la trouver dans un fourre-tout qui contient aussi la langue, le theme et le CV.",
+        "rules": [
+          "Chaque page du site a son dossier, et ce dossier contient l ecran et ce qui n appartient qu a lui.",
+          "Ce qui reste commun est ce que plusieurs pages utilisent reellement, et rien d autre.",
+          "Une chose commune ne connait aucune page : la dependance va des pages vers le commun, jamais l inverse.",
+          "Rien de ce que le visiteur voit ne change : memes adresses, memes pages, memes mots, meme mise en page."
+        ]
+      },
+      {
+        "name": "Le depot debarrasse de la demonstration livree avec l outil",
+        "user_value": "Plus personne ne peut tomber sur un compteur de clics ni sur une invitation a lire la documentation d un framework dans un site qui presente une personne. Ce qui reste dans le depot est ce que le produit publie.",
+        "rules": [
+          "Le compteur de demonstration n est plus dans le depot, ni son style.",
+          "Le renvoi vers la documentation du framework n est plus dans le depot, et aucune source ne le cite.",
+          "Rien d autre n est retire au passage : ce qui n est pas rendu mais sert de preuve reste."
+        ]
+      },
+      {
+        "name": "Une page introuvable qui parle au visiteur, dans sa langue quand elle la connait",
+        "user_value": "Le visiteur qui atteint une adresse que le site ne publie pas comprend ce qui s est passe et repart vers une page qui existe, au lieu de lire une phrase en anglais sur un outil de developpement.",
+        "rules": [
+          "Sous un prefixe de langue publie, la page introuvable parle cette langue et ramene a l accueil de cette langue.",
+          "Hors de toute langue publiee, elle ne suppose pas laquelle le visiteur lit : elle propose les deux.",
+          "Elle dit ce qui s est passe : un titre, et une voie de retour. Elle ne fait pas semblant d etre une page du site.",
+          "Elle ne devient pas une adresse du site : elle n entre pas dans la table des pages, et la liste des adresses publiees ne change pas."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "TOUTE modification d apparence des quatre pages. Le deplacement porte les fichiers tels quels : meme contenu, memes selecteurs, memes valeurs. Un diff de feuille de style qui montre autre chose qu un changement de chemin est hors perimetre.",
+      "Le contenu editorial existant. Les seuls mots neufs sont ceux de la page introuvable, dans les deux langues, ajoutes a src/shared/i18n.ts. Rien d autre n est ecrit ni retraduit.",
+      "src/shared/tokens.css. Consequence assumee : la page introuvable se compose des pas et des couleurs qui existent. Un jeton neuf serait une remontee a l operateur, pas un elargissement que l implementeur puisse s accorder.",
+      "Les maquettes. Aucune n est modifiee, aucune n est reservee. Aucune ne dessine une page introuvable, et c est une limite nommee : cet ecran ne doit introduire aucune forme que mockups/portfolio-v1.html ne dessine deja pour les autres pages — un titre de page, un paragraphe, des liens.",
+      "La coquille du site. SiteBar, SiteFooter, LanguageSwitch et ThemeToggle restent dans src/shared. Les deplacer couterait deux reecritures de plus dans la liste d exclusion de couverture sans permettre a la porte d exprimer une regle de plus.",
+      "src/shared/pages.ts et scripts/routes.mjs. La page introuvable n est pas une page adressable : les huit adresses, la liste de prerendu et les slugs traduits sont exactement ceux d aujourd hui.",
+      "knip.json. Mesure ci-dessus : fermer le point aveugle signalerait src/shared/completeness.ts, qui est legitimement prouve par son seul test.",
+      "Publier un document introuvable que l hebergeur statique serve. Mesure : .output/public n en porte aucun, et une adresse tapee recoit le 404 du serveur. Le correctif touche scripts/serve-static.mjs, hors de la politique de fichiers de l implementeur et dans human_review_paths, et il depend de la cible de deploiement que la decision 0003 laisse ouverte. C est une suite, pas ce lot.",
+      "pipeline.config.json et vitest.config.ts. Les deux sont ATTENDUS de l operateur, decrits sous expected_operator_changes, et faits par personne d autre.",
+      "Le retrait de src/shared/LanguageSwitch.tsx de la liste d exclusion de couverture, que la derniere decouverte parquee de i-841g recommande. Toujours une tache d operateur, toujours hors de ce lot."
+    ]
+  },
+  "expected_operator_changes": [
+    {
+      "file": "pipeline.config.json",
+      "why": "La porte d architecture lit cette declaration et rien d autre. Sans elle, deplacer les ecrans ne change aucune regle : src/*/** avale src/features exactement comme il avale src/routes et src/components.",
+      "expected": {
+        "architecture.layers": {
+          "shared": ["src/shared/**"],
+          "features": ["src/features/**"],
+          "routes": ["src/routes/**"],
+          "unplaced": ["src/*/**"]
+        },
+        "architecture.allowed": {
+          "routes": ["features", "shared"],
+          "features": ["shared"],
+          "shared": [],
+          "unplaced": []
+        }
+      },
+      "note_a_reecrire": "La note actuelle explique le choix de deux couches contre feature-sliced. Elle doit dire desormais pourquoi il y en a quatre : shared ne connait personne, features ne connait que shared, routes assemble, et unplaced est un filet — tout fichier pose ailleurs que dans les trois repertoires nommes tombe dans une couche qui n a le droit de rien importer, donc son premier import est refuse. C est exactement le defaut de 2026-09-04 pris a l envers : la declaration ne pousse plus le code quelque part, elle refuse de le laisser nulle part.",
+      "when": "AVANT le dispatch, et c est mesure : la declaration est verte sur l arbre actuel comme sur l arbre deplace. Rien ne rougit entre les deux."
+    },
+    {
+      "file": "vitest.config.ts",
+      "why": "Deux raisons independantes. La liste d exclusion nomme les quatre ecrans par leur chemin sous src/shared, et elle doit suivre les ecrans sous peine de faire sortir coverage en 1. Et le seuil de branches est justifie par deux fichiers que ce lot supprime.",
+      "expected": {
+        "coverage.exclude": "Les quatre lignes src/shared/HomePage.tsx, src/shared/WorksPage.tsx, src/shared/JourneyPage.tsx et src/shared/ContactPage.tsx deviennent src/features/home/HomePage.tsx, src/features/works/WorksPage.tsx, src/features/journey/JourneyPage.tsx et src/features/contact/ContactPage.tsx. Les deux lignes de la coquille, src/shared/SiteBar.tsx et src/shared/LanguageSwitch.tsx, ne bougent pas. AUCUNE ligne n est ajoutee pour la page introuvable : le critere 8 la prouve au niveau composant, donc elle est comptee et couverte.",
+        "coverage.thresholds.branches": "45 devient 70.",
+        "commentaire": "Le commentaire au-dessus du seuil cite « `}` at Counter.tsx:16 et StarterNote.tsx:21 ». Les deux fichiers n existeront plus : la phrase doit etre remplacee par la mesure qui la justifie desormais, 78,35 % de branches sur le perimetre compte."
+      },
+      "measured": "Sans correction de la liste : Statements 89,96 % pour un seuil de 90, coverage sort en 1, cause isolee a HomePage.tsx seul a 0 %. Avec correction : Statements 94,28 %, Branches 78,35 %, Functions 95,94 %, Lines 95,96 %. Aujourd hui, gabarit compris : Branches 77,53 %.",
+      "when": "Les deux peuvent etre poses AVANT le dispatch. Un chemin d exclusion qui ne matche encore rien est sans effet, et 70 est deja sous les 77,53 % mesures aujourd hui. Si l operateur prefere une seule retouche apres coup, coverage sera rouge entre le commit de l implementeur et cette retouche, et QA ne pourra pas clore.",
+      "to_replay_after_delivery": "pnpm run test:coverage sur la tete livree. La page introuvable ajoute des branches que personne n a encore ecrites : le 70 est une projection, pas une mesure de l arbre final."
+    }
+  ],
+  "decisions_for_operator": [
+    {
+      "question": "Le dossier des fonctionnalites s appelle-t-il src/features ou src/pages ?",
+      "product_recommendation": "src/features. La couche declaree par l architecture feature-modules s appelle features, et une declaration dont le nom de couche et le nom de repertoire coincident se relit sans traduction. src/pages entrerait par ailleurs en collision de lecture avec src/shared/pages.ts, qui est la table des adresses et non un ecran.",
+      "alternatives": [
+        "src/pages/**, que la demande de l operateur cite en exemple : plus proche du vocabulaire du produit, mais deux « pages » differents dans le meme arbre.",
+        "src/screens/**, sans collision, mais un troisieme mot pour la meme chose."
+      ]
+    },
+    {
+      "question": "La coquille du site — SiteBar, SiteFooter, LanguageSwitch, ThemeToggle — reste-t-elle dans src/shared, alors que l operateur la classe a part ?",
+      "product_recommendation": "Elle reste. C est le seul groupe que TOUTES les pages utilisent, donc il est partage au sens strict. Lui donner une couche a lui couterait deux reecritures de plus dans la liste d exclusion de couverture et n ajouterait aucune regle que la porte puisse tenir : une couche shell autorisee a atteindre shared et pas features refuse exactement ce que shared refuse deja.",
+      "alternatives": [
+        "Une quatrieme couche shell: [\"src/shell/**\"], autorisee a atteindre shared seule. Le classement de l operateur devient visible dans l arbre, au prix de six fichiers deplaces de plus et de deux lignes d exclusion a reecrire.",
+        "La coquille dans src/features/_shell, ce qui la soumettrait a la meme regle que les pages et supprimerait la distinction."
+      ]
+    },
+    {
+      "question": "Garde-t-on la quatrieme couche unplaced, dont le seul role est de refuser tout import fait par un fichier pose ailleurs que dans les trois repertoires nommes ?",
+      "product_recommendation": "On la garde. Elle coute une ligne et elle est la reponse directe au defaut d origine : en 2026-09-04 la declaration a pousse les ecrans vers src/shared et rien ne l a dit. Avec trois couches seulement, un futur src/utils serait invisible a la porte ; avec unplaced, son premier import est refuse et l auteur decide ou le fichier va.",
+      "alternatives": [
+        "Trois couches seulement : plus court a lire, et un repertoire pose a cote redevient invisible.",
+        "Nommer la couche autrement — misplaced, unclassified — sans changer ce qu elle fait."
+      ]
+    },
+    {
+      "question": "La page introuvable recoit-elle un module d ecran a elle, src/features/not-found/, ou son contenu est-il ecrit directement dans la route src/routes/[...404].tsx ?",
+      "product_recommendation": "Un module a elle. src/routes/** est exclu de la couverture, donc un contenu ecrit dans la route ne serait prouvable qu au navigateur — or c est precisement le cas hors fournisseur de langue, /de/x et /nimportequoi, que le navigateur n atteint qu apres une navigation interne et que le prerendu ne visite jamais. Un module se rend en test de composant, sans fournisseur, ce qui est exactement ce que le critere 8 demande.",
+      "alternatives": [
+        "Le contenu dans la route : un fichier de moins, et le critere 8 devient un critere de navigateur sur un chemin que rien ne prerend.",
+        "Un module pose dans src/shared plutot que dans src/features, ce qui remettrait un ecran dans le repertoire que ce lot vide d ecrans."
+      ]
+    },
+    {
+      "question": "Le seuil de branches passe-t-il a 70 ?",
+      "product_recommendation": "70. Mesure de 78,35 % sur l arbre sans le gabarit, soit huit points de marge — le meme raisonnement que le fichier applique deja aux trois autres metriques, mesurees a 100 et bornees a 90. La mesure doit etre rejouee sur la tete livree avant d etre gravee.",
+      "alternatives": [
+        "75, trois points de marge : mord plus tot, et rougira sur la premiere branche non testee d une page introuvable qui en portera plusieurs.",
+        "Laisser 45 : le nombre reposerait alors sur une justification qui nomme deux fichiers supprimes, ce que la demande de l operateur refuse explicitement."
+      ]
+    },
+    {
+      "question": "Publie-t-on, dans ce lot, un document introuvable que l hebergeur statique serve ?",
+      "product_recommendation": "Non, on le parque. Mesure : .output/public n en porte aucun et une adresse tapee recoit le 404 en texte brut du serveur. Le correctif demande de toucher scripts/serve-static.mjs, hors de la politique de fichiers de l implementeur et dans human_review_paths, et il depend de la cible de deploiement reelle que la decision 0003 laisse ouverte. L inclure ici melerait un lot mecanique et une decision d infrastructure.",
+      "alternatives": [
+        "L inclure comme une seconde issue de ce plan, ce qui demande d ouvrir scripts/serve-static.mjs a l implementeur — une modification de la politique de fichiers, donc une decision de l operateur.",
+        "Le traiter comme une corvee d operateur sur une branche dediee, avec la cible de deploiement tranchee au passage."
+      ]
+    }
+  ],
+  "scope_final": false,
+  "scope_final_note": "false, et c est exact plutot que poli : six choix sont soumis ci-dessus et aucun n a ete confirme. Le plan avance sur les recommandations parce que la consigne est de ne pas faire de round de proposition. Chacun se renverse d un mot avant le dispatch ; apres, c est un scope_change de plus.",
+  "notes": [
+    "UNE SEULE ISSUE, et la mesure le recommande autant que le recouvrement que l operateur annonce. Les deux sujets partagent src/routes/[locale]/[slug].tsx, qui importe a la fois les trois ecrans deplaces et la route introuvable ; l ecran introuvable ne peut pas choisir son dossier avant que le premier sujet ait tranche ou vivent les ecrans ; et la decision 0011 interdit de dispatcher ensemble deux issues qui construisent, or tout critere [e2e] construit. Une coupe en deux ne rendrait donc aucune concurrence et couterait un cycle de revue de plus pour un travail qui se tient.",
+    "HUIT CRITERES POUR DEUX SUJETS. Le prompt du role donne 2 a 6 comme fourchette usuelle et rappelle que le compte est un symptome. Ici quatre criteres tiennent le rangement et quatre tiennent la page introuvable, dont un — le cas hors fournisseur de langue — existe uniquement parce que la mesure a montre que useI18n y leve. Quatre criteres ont ete ECARTES parce qu ils recopiaient une porte verte : les huit adresses repondent et sont prerendues, que check-build et smoke tiennent ; le debordement horizontal sur 64 combinaisons, que tests/e2e/barre.spec.ts tient ; la taille des cibles de la barre, que tests/e2e/mise-en-page.spec.ts tient depuis i-40nm ; et le nom venant de src/shared/identity.ts, que les tests de la barre et du pied tiennent.",
+    "LE FILET DU DEPLACEMENT N EST PAS UN CRITERE, ET C EST DELIBERE. Ce qui prouve que deplacer six modules n a rien casse, c est la suite navigateur existante — adressage, realisations, parcours, contact, theme, barre, pied, langue — qui ne nomme aucun module et regarde le site rendu. Elle est deja une porte de cloture. Ecrire un critere de plus pour dire « les pages rendent toujours » ajouterait une assertion et zero garantie.",
+    "LE PIEGE LE PLUS COUTEUX DU LOT N EST PAS DANS LES CRITERES, IL EST DANS LE CONTEXTE. Un implementeur qui ecrit page.goto('/fr/inconnu') obtiendra « not found » en texte brut, conclura que sa page ne marche pas, et cherchera au mauvais endroit pendant une heure. La recette exacte de navigation interne est donnee dans le contexte, mesuree plutot que supposee."
+  ]
+}

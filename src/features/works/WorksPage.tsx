@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { For } from "solid-js";
-import WorkCard from "~/shared/WorkCard";
+import WorkCard from "./WorkCard";
 import { contentFor } from "~/shared/content";
 import { useI18n } from "~/shared/i18n";
 import "./WorksPage.css";

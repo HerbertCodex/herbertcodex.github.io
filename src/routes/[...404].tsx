@@ -1,6 +1,5 @@
-import { Title } from "@solidjs/meta";
 import { HttpStatusCode } from "@solidjs/start";
-import StarterNote from "~/shared/StarterNote";
+import NotFoundPage from "~/features/not-found/NotFoundPage";
 
 /**
  * The catch-all route, answering 404 for an address that matches nothing.
@@ -9,11 +8,9 @@ import StarterNote from "~/shared/StarterNote";
  */
 export default function NotFound() {
   return (
-    <main>
-      <Title>Not Found</Title>
+    <>
       <HttpStatusCode code={404} />
-      <h1>Page Not Found</h1>
-      <StarterNote />
-    </main>
+      <NotFoundPage />
+    </>
   );
 }

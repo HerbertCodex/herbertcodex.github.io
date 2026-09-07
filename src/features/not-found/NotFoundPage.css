@@ -1,0 +1,13 @@
+/*
+ * Le titre d'une page ne se compose pas au corps fixe que `src/app.css` pose
+ * sur `h1` : mesure le 2026-09-07, « Page introuvable » debordait de 41 px a
+ * 320 px et de 1 px a 360 px, et le libelle hors langue en dit deux fois plus
+ * puisqu'il porte les deux langues. Les trois autres ecrans descendent le leur
+ * par un clamp pour exactement cette raison ; le plancher est ici plus bas que
+ * le leur parce que ce titre est le seul du site a pouvoir doubler de longueur
+ * selon la porte par laquelle le visiteur arrive.
+ */
+.not-found h1 {
+  font-size: clamp(var(--text-lg), 8vw, var(--text-2xl));
+  overflow-wrap: break-word;
+}

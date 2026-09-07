@@ -1,4 +1,4 @@
-import HomePage from "~/shared/HomePage";
+import HomePage from "~/features/home/HomePage";
 
 /**
  * The home route, which the common route never serves: the language prefix

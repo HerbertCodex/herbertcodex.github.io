@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { For } from "solid-js";
-import ContactLinks, { CONTACT_EMAIL } from "~/shared/ContactLinks";
+import ContactLinks, { CONTACT_EMAIL } from "./ContactLinks";
 import { useI18n } from "~/shared/i18n";
 import "./ContactPage.css";
 

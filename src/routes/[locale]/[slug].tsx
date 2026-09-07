@@ -2,9 +2,9 @@ import { useParams } from "@solidjs/router";
 import { Show, type Component } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import NotFound from "~/routes/[...404]";
-import ContactPage from "~/shared/ContactPage";
-import JourneyPage from "~/shared/JourneyPage";
-import WorksPage from "~/shared/WorksPage";
+import ContactPage from "~/features/contact/ContactPage";
+import JourneyPage from "~/features/journey/JourneyPage";
+import WorksPage from "~/features/works/WorksPage";
 import { isLocale } from "~/shared/i18n";
 import { pageForSlug, type NamedPageKey } from "~/shared/pages";
 

@@ -85,6 +85,12 @@ export const DICTIONARIES = {
       },
       links: { linkedin: "LinkedIn", github: "GitHub", cv: "CV en PDF" },
     },
+    notFound: {
+      title: "Page introuvable",
+      heading: "Page introuvable",
+      lede: "Cette adresse ne correspond à aucune page de ce site.",
+      home: "Retour à l'accueil",
+    },
   },
   en: {
     bar: { skip: "Skip to content", nav: "Main navigation", theme: "Dark" },
@@ -146,6 +152,12 @@ export const DICTIONARIES = {
         start: { label: "Availability", value: "Immediate" },
       },
       links: { linkedin: "LinkedIn", github: "GitHub", cv: "Résumé (PDF)" },
+    },
+    notFound: {
+      title: "Page not found",
+      heading: "Page not found",
+      lede: "This address matches no page on this site.",
+      home: "Back to home",
     },
   },
 } as const;

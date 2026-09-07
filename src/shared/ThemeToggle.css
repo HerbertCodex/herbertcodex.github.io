@@ -3,28 +3,41 @@
  * sélecteur de langue marque la langue en cours d'un aplat inversé. Deux
  * marques identiques pour deux sens différents se liraient comme un même
  * état, et la barre en porterait deux.
+ *
+ * Il tient dans un carré plutôt que dans la largeur d'un mot — 85 px en
+ * français, 62 px en anglais — et les deux minimums le gardent au-dessus de
+ * la cible tactile que WCAG 2.5.8 demande, ce qu'une icône seule ne ferait
+ * pas.
  */
 .theme {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--tap-min);
   min-height: var(--tap-min);
-  padding: 0 var(--space-2);
+  padding: var(--space-1);
   border: var(--border-hairline) solid var(--rule);
   background: none;
   color: var(--ink);
-  font-family: var(--font-grotesk);
-  font-size: var(--text-sm);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
   cursor: pointer;
 }
 
 /*
- * L'état activé se lit à la graisse autant qu'au filet : une bordure seule est
- * une différence de couleur, et une couleur seule ne dit rien à qui ne la
- * distingue pas.
+ * Le tracé de l'icône est fourni par la bibliothèque ; sa taille et son trait
+ * appartiennent à la page, sans quoi le bouton porterait une échelle de plus
+ * que rien ne déclare.
+ */
+.theme svg {
+  width: var(--space-3);
+  height: var(--space-3);
+  stroke-width: var(--flow-stroke);
+}
+
+/*
+ * L'état activé se lit au filet, et surtout au tracé : le croissant devient
+ * un soleil. Une bordure seule est une différence de couleur, et une couleur
+ * seule ne dit rien à qui ne la distingue pas.
  */
 .theme[aria-pressed="true"] {
   border-color: var(--ink);
-  font-weight: var(--weight-bold);
 }

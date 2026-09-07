@@ -1,15 +1,4 @@
 /*
- * `src/app.css` borne tout `main` a la mesure de lecture, qui vaut pour une
- * page de texte et pas pour un inventaire : a 64ch, la ligne de parcours perd
- * ses quatre colonnes et les etiquettes se rangent une par ligne. La feuille
- * de la maquette est large, et l elargissement est porte ici plutot que dans
- * la feuille commune pour ne rien decider a la place des autres ecrans.
- */
-main.journey {
-  max-width: var(--page-max);
-}
-
-/*
  * Le bandeau, le numero et le compte sont la primitive de `src/app.css` ; la
  * page ne fixe que ce qui lui appartient : la respiration entre deux blocs, et
  * l'echelle d'un titre de section, qui n'est pas celle d'un titre de page.

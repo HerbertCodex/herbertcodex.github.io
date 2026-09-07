@@ -1,140 +1,78 @@
-.panel {
-  background: var(--accent-plate);
-  color: var(--on-accent);
-  padding: var(--space-5);
-  margin-top: var(--space-6);
-}
-
-.panel a {
-  color: var(--on-accent);
-}
-
-.panel .links a {
-  border-bottom-color: var(--on-accent);
-}
-
 /*
- * Le titre et les conditions se partagent la plaque sur ecran large. Avant, ils
- * s'empilaient dans une colonne etroite et la moitie droite de l'aplat restait
- * vide, ce qui allongeait le bloc sans rien y mettre. En dessous du point de
- * rupture ils reprennent une seule colonne : deux colonnes de 320 px n'en
- * seraient plus.
+ * Le contact est une FICHE posee sur le papier : l'appel d'un cote, les
+ * conditions de l'autre. L'aplat vermillon plein qui portait toute la page a
+ * disparu — un aplat qui couvre les deux tiers d'un ecran n'est plus un
+ * signal, c'est un fond, et il repoussait les conditions hors de la premiere
+ * lecture.
  */
-.offer {
+.card {
   display: grid;
   /*
    * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
-   * pas sous la largeur de son contenu, et le bloc debordait de 36 px a 320.
-   * C'est le piege deja paye dans ce depot, retombe ici parce qu'une nouvelle
-   * grille a ete ecrite sans lui.
+   * pas sous la largeur de son contenu, et l'adresse de messagerie, qui ne se
+   * coupe qu'aux mots, faisait deborder le bloc de 122 px a 375. Piege deja
+   * paye trois fois dans ce depot.
    */
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  gap: var(--space-5);
+  margin-top: var(--space-6);
 }
 
+/* Une requete de media ne peut pas lire var() : 768 px est le jeton --bp-md. */
 @media (min-width: 768px) {
-  .offer {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: var(--space-6);
-    align-items: start;
-  }
-
-  /*
-   * Le titre descend d'un cran des qu'il partage la plaque. A 52 px,
-   * « immediatement » mesure plus que la colonne et se coupait au milieu du
-   * mot — « AVAILABL / E IMMEDIA / TELY ». Une coupure intra-mot n'est pas une
-   * mise en page serree, c'est un mot qu'on ne lit plus.
-   */
-  .offer .panel-title {
-    font-size: clamp(var(--text-lg), 4vw, var(--text-xl));
-  }
-
-  /*
-   * Dans la colonne de droite, le libelle passe AU-DESSUS de sa valeur. Cote a
-   * cote il ne restait que la moitie d'une demi-plaque au texte, et
-   * « Permanent role or freelance engagement » s'y etalait sur quatre lignes.
-   */
-  .offer .terms {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-3);
-  }
-
-  .offer .terms dt {
-    margin-bottom: var(--space-1);
+  .card {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   }
 }
 
-.panel-title {
-  font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
-  line-height: var(--leading-tight);
-  letter-spacing: var(--track-tight);
-  text-transform: uppercase;
-  font-weight: var(--weight-bold);
-  overflow-wrap: break-word;
-  margin: 0;
+/*
+ * L'appel porte le filet lourd et les conditions le filet fin : la hierarchie
+ * de la fiche tient au trait, donc elle tient aussi sans la couleur.
+ */
+.reach {
+  border-top: var(--border-heavy) solid var(--ink);
+  padding-top: var(--space-3);
 }
 
 .terms {
   display: grid;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-3);
   margin: 0;
-  max-width: var(--measure);
+  border-top: var(--border-hairline) solid var(--rule);
+  padding-top: var(--space-3);
 }
 
-@media (min-width: 768px) {
-  .terms {
-    grid-template-columns: auto 1fr;
-  }
-}
-
-.terms dt {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--track-wide);
-  align-self: baseline;
-}
-
-/*
- * Les valeurs restent en graisse normale, comme dans la maquette : le contrat
- * est deja annonce en grand juste au-dessus, et repeter du gras sur trois
- * lignes ferait de la mobilite une revendication alors que c'est une precision.
- */
 .terms dd {
-  margin: 0;
+  margin: var(--space-1) 0 0;
 }
 
 /*
- * La maquette dessine les quatre liens sur une seule rangee, parce que le
- * contact y est la cinquieme section d'une page unique. Sur une page qui ne
- * porte que lui, cette rangee ne dit plus lequel est l'appel principal. La
- * messagerie prend donc l'echelle et les deux filets, et les moyens
- * secondaires gardent la rangee. Aucune valeur nouvelle : ce sont les jetons
- * que la maquette emploie deja pour separer un titre d'une liste.
+ * La disponibilite est un SIGNAL, pas un fond : elle tient dans une pastille
+ * au bas de l'echelle typographique, dont `src/app.css` porte deja le corps,
+ * la casse et l'interlettrage. Ne reste ici que l'aplat et le texte clair
+ * qu'il exige — la decision 0012 tient les deux jetons distincts de l'accent
+ * pour que le rapport clair-sur-sature vaille dans les deux themes.
  */
-.call {
+.card .status {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  background: var(--accent-plate);
+  color: var(--on-accent);
+}
+
+.reach-what {
   display: block;
-  margin: 0 0 var(--space-4);
-  padding: var(--space-3) 0;
+  margin-bottom: var(--space-2);
+}
+
+.reach-address {
+  display: block;
+  margin-bottom: var(--space-4);
   min-height: var(--tap-min);
-  border-top: var(--border-heavy) solid var(--on-accent);
-  border-bottom: var(--border-heavy) solid var(--on-accent);
-  text-decoration: none;
-}
-
-.call-action {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--track-wide);
-}
-
-.call-address {
-  display: block;
-  font-size: var(--text-xl);
+  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
   line-height: var(--leading-tight);
-  letter-spacing: var(--track-tight);
+  font-weight: var(--weight-bold);
   overflow-wrap: break-word;
+  text-decoration: none;
 }

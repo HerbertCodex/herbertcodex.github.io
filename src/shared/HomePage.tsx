@@ -23,9 +23,10 @@ export default function HomePage() {
       </ul>
       <ul class="entries">
         <For each={NAMED_PAGES}>
-          {(page) => (
+          {(page, rank) => (
             <li>
               <a href={addressOf(page, locale())}>
+                <span class="entry-rank">{String(rank() + 1).padStart(2, "0")}</span>
                 <span class="entry-name">{t(`nav.${page.key}`)}</span>
                 <span class="entry-line">{t(`home.entries.${page.key}`)}</span>
               </a>

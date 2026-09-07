@@ -18,34 +18,78 @@
   padding-left: var(--space-2);
 }
 
+/*
+ * Les trois entrees deviennent trois cellules separees par un trait d'un
+ * pixel : la gouttiere vaut le filet et le fond de la grille en est la
+ * couleur, ce qui donne un trait unique la ou deux cellules se touchent
+ * plutot que deux bordures collees.
+ *
+ * AUCUNE hauteur ne leur est imposee, et c'est le point du dessin : la
+ * maquette en a d'abord porte une de 260 px, qui refabriquait exactement le
+ * vide que la grille corrige.
+ */
 .entries {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--border-hairline);
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: var(--border-heavy) solid var(--ink);
+  background: var(--rule);
+  border: var(--border-hairline) solid var(--rule);
+}
+
+/*
+ * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
+ * pas sous la largeur de son contenu, et c'est le piege deja paye trois fois
+ * dans ce depot. Une requete de media ne peut pas lire var() : 768 px y est
+ * ecrit en clair, mais c'est le jeton --bp-md.
+ */
+@media (min-width: 768px) {
+  .entries {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .entries li {
-  border-bottom: var(--border-hairline) solid var(--rule);
+  background: var(--paper);
 }
 
 .entries a {
   display: block;
-  padding: var(--space-3) 0;
-  min-height: var(--tap-min);
+  padding: var(--space-4);
   text-decoration: none;
 }
 
+.entry-rank {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--accent);
+}
+
+/*
+ * Le plancher du clamp est bas volontairement : « REALISATIONS » en capitales
+ * dans une colonne de tiers de page se coupe au milieu du mot des que
+ * l'echelle ne peut plus descendre, et une coupure intra-mot n'est pas une
+ * mise en page serree, c'est un mot qu'on ne lit plus.
+ */
 .entry-name {
   display: block;
-  font-size: var(--text-xl);
+  margin-bottom: var(--space-2);
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
   line-height: var(--leading-tight);
   letter-spacing: var(--track-tight);
+  font-weight: var(--weight-bold);
   text-transform: uppercase;
+  overflow-wrap: break-word;
 }
 
 .entry-line {
   display: block;
   color: var(--ink-muted);
   font-size: var(--text-sm);
+  max-width: var(--measure);
 }

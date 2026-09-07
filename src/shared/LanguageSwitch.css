@@ -4,9 +4,20 @@
   gap: var(--space-3);
 }
 
+/*
+ * La largeur minimale vaut la hauteur minimale. Le lien qui mene a l'autre
+ * langue mesurait 22 px de large en francais et 20 px en anglais, sous les
+ * 24 px que WCAG 2.5.8 demande, sur les huit adresses et aux trois largeurs
+ * mesurees. Seule la langue EN COURS y echappait, et par accident : son aplat
+ * inverse lui donne un remplissage que l'autre n'a pas. La porte
+ * `accessibility` ne pouvait pas le voir — 2.5.8 est une regle de WCAG 2.2, et
+ * l'audit porte les etiquettes wcag2a, wcag2aa, wcag21a et wcag21aa.
+ */
 .lang {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--tap-min);
   min-height: var(--tap-min);
   color: var(--ink);
   font-size: var(--text-sm);

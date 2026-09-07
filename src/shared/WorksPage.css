@@ -1,16 +1,4 @@
 /*
- * `src/app.css` borne `main` a la mesure de lecture, qui vaut pour une page de
- * texte et pas pour un inventaire : a 64ch, le schema et le recit d'une
- * realisation ne tiennent pas cote a cote et la deuxieme colonne disparait.
- * L'elargissement est porte ici plutot que dans la feuille commune, pour ne
- * rien decider a la place des autres ecrans. La contrainte de lecture
- * redescend alors sur les paragraphes eux-memes, ou elle appartient.
- */
-main.works {
-  max-width: var(--page-max);
-}
-
-/*
  * Le bandeau, sa regle et le compte sont la primitive de `src/app.css`. La
  * page ne fixe que ce qui lui appartient : la respiration sous le bandeau, et
  * l'echelle d'un titre de page, qui n'est pas celle d'un titre de section.

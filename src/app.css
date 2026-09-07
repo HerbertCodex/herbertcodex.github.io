@@ -9,8 +9,15 @@ body {
   line-height: var(--leading-body);
 }
 
+/*
+ * La PAGE prend la largeur de page, et la mesure de lecture redescend sur les
+ * blocs de texte long, ou elle appartient. Bornee a --measure, la page vivait
+ * dans 740 px avec 590 px de vide de chaque cote sur un ecran de 1920, et deux
+ * ecrans sur quatre s'en degageaient a la main dans leur propre feuille — donc
+ * deux sources pour une seule decision.
+ */
 main {
-  max-width: var(--measure);
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-6) var(--space-4);
 }
@@ -59,14 +66,22 @@ a:hover {
 }
 
 /*
- * Le petit texte mono en capitales grises. La rangee de faits de l'accueil et
- * le pied de page sont le meme objet typographique dans la maquette, et
- * `duplication` a refuse la deuxieme copie des cinq memes declarations. Il est
- * declare ICI pour la raison que `.links` juste au-dessus donne deja : une
- * primitive recopiee par composant est une primitive qui divergera.
+ * Le petit texte mono en capitales grises. La rangee de faits de l'accueil, le
+ * pied de page, le libelle et les conditions de la fiche de contact sont le
+ * meme objet typographique dans la maquette, et `duplication` a refuse la
+ * deuxieme copie des cinq memes declarations. Il est declare ICI pour la raison
+ * que `.links` juste au-dessus donne deja : une primitive recopiee par
+ * composant est une primitive qui divergera.
+ *
+ * La pastille de disponibilite en est le meme objet a une chose pres : elle se
+ * pose sur un aplat, donc elle reprend le corps, la casse et l'interlettrage
+ * ici et ne redeclare que la couleur, dans la feuille de sa page.
  */
 .facts,
-.foot {
+.foot,
+.reach-what,
+.status,
+.terms dt {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   text-transform: uppercase;
@@ -92,6 +107,19 @@ a:hover {
 
 .section-head > * {
   min-width: 0;
+}
+
+/*
+ * Le bandeau qui OUVRE une page perd son filet superieur : il annoncait une
+ * separation d'avec une section qui n'existe pas, et depuis que la barre est
+ * fixe il doublait le sien a cent pixels de lui — mesure a y=68 et y=172 sur
+ * /fr/realisations. Celui qui SUIT du contenu le garde, parce que la
+ * separation qu'il annonce, elle, existe : une regle ecrite pour tout bandeau
+ * casserait la seule chose qui separe deux blocs du parcours.
+ */
+main > .section-head:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
 
 .num,

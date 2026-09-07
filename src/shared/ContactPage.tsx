@@ -17,25 +17,25 @@ export default function ContactPage() {
     <main>
       <Title>{t("contact.title")}</Title>
       <h1>{t("contact.heading")}</h1>
-      <section class="panel">
-        <div class="offer">
-          <p class="panel-title">{t("contact.lede")}</p>
-          <dl class="terms">
-            <For each={TERMS}>
-              {(term) => (
-                <>
-                  <dt>{t(`contact.terms.${term}.label`)}</dt>
-                  <dd>{t(`contact.terms.${term}.value`)}</dd>
-                </>
-              )}
-            </For>
-          </dl>
+      <section class="card">
+        <div class="reach">
+          <span class="status">{t("contact.lede")}</span>
+          <span class="reach-what">{t("contact.write")}</span>
+          <a class="reach-address" href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
+          <ContactLinks />
         </div>
-        <a class="call" href={`mailto:${CONTACT_EMAIL}`}>
-          <span class="call-action">{t("contact.write")}</span>
-          <span class="call-address">{CONTACT_EMAIL}</span>
-        </a>
-        <ContactLinks />
+        <dl class="terms">
+          <For each={TERMS}>
+            {(term) => (
+              <>
+                <dt>{t(`contact.terms.${term}.label`)}</dt>
+                <dd>{t(`contact.terms.${term}.value`)}</dd>
+              </>
+            )}
+          </For>
+        </dl>
       </section>
     </main>
   );

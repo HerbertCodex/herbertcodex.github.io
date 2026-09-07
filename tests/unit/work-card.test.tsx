@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cleanup, render } from "@solidjs/testing-library";
 import { createI18n, I18nContext } from "~/shared/i18n";
 import { contentFor, type Work } from "~/shared/content";
-import WorkCard from "~/shared/WorkCard";
+import WorkCard from "~/features/works/WorkCard";
 
 function alone(work: Work) {
   return render(() => (

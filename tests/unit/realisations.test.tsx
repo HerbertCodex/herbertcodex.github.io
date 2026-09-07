@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MetaProvider } from "@solidjs/meta";
 import { cleanup, render } from "@solidjs/testing-library";
-import WorksPage from "~/shared/WorksPage";
+import WorksPage from "~/features/works/WorksPage";
 import { contentFor, type Work } from "~/shared/content";
 import { createI18n, I18nContext } from "~/shared/i18n";
 

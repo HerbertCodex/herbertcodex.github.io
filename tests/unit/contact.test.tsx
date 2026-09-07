@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { render, cleanup } from "@solidjs/testing-library";
 import { MetaProvider } from "@solidjs/meta";
-import ContactPage from "~/shared/ContactPage";
+import ContactPage from "~/features/contact/ContactPage";
 import { createI18n, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
 
 /*
@@ -19,7 +19,7 @@ const GITHUB = "https://github.com/HerbertCodex";
 
 const TERMS = ["contract", "place", "start"] as const;
 
-const SOURCES = ["src/shared/ContactPage.tsx", "src/shared/ContactLinks.tsx"];
+const SOURCES = ["src/features/contact/ContactPage.tsx", "src/features/contact/ContactLinks.tsx"];
 
 function contactPage(locale: Locale) {
   return render(() => (

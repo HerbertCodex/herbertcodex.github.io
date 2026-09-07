@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CONTACT_EMAIL, contactMeans, malformedContactLinks, type ContactMeans } from "~/shared/ContactLinks";
+import { CONTACT_EMAIL, contactMeans, malformedContactLinks, type ContactMeans } from "~/features/contact/ContactLinks";
 import { LOCALES } from "~/shared/i18n";
 import { resumeOf, type Resume } from "~/shared/resume";
 

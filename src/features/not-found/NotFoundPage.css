@@ -1,4 +1,17 @@
 /*
+ * Cet ecran vit HORS du cadre commun : hors de tout prefixe de langue, il
+ * n'a ni haut de page ni pied, donc rien qui pose le vide au-dessus de son
+ * titre. Le corps de page ne le pose plus — sa marge interieure verticale
+ * doublait la jointure sur les huit adresses publiees, et c'est le defaut que
+ * cette issue retire — alors cet ecran la reprend a son compte, a la valeur
+ * qu'il avait le 2026-09-08. Sous un prefixe, elle s'ajoute au cadre comme
+ * elle le faisait, et son rythme ne bouge pas non plus.
+ */
+.not-found {
+  padding-block: var(--space-6);
+}
+
+/*
  * Le titre d'une page ne se compose pas au corps fixe que `src/app.css` pose
  * sur `h1` : mesure le 2026-09-07, « Page introuvable » debordait de 41 px a
  * 320 px et de 1 px a 360 px, et le libelle hors langue en dit deux fois plus

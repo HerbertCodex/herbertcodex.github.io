@@ -15,11 +15,17 @@ body {
  * dans 740 px avec 590 px de vide de chaque cote sur un ecran de 1920, et deux
  * ecrans sur quatre s'en degageaient a la main dans leur propre feuille — donc
  * deux sources pour une seule decision.
+ *
+ * Elle n'a en revanche plus de marge interieure VERTICALE. Les deux jointures
+ * que celle-ci touchait sont deja decidees ailleurs — la marge basse de la
+ * barre au-dessus, la marge haute du pied en dessous — donc elle s'y
+ * ajoutait : 40 px voulus, 104 px mesures le 2026-09-08. Une jointure, une
+ * regle. La gouttiere laterale reste : elle, personne d'autre ne la pose.
  */
 main {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+  padding: 0 var(--space-4);
 }
 
 nav {
@@ -143,10 +149,18 @@ main > .section-head:first-child {
   outline-offset: var(--space-1);
 }
 
+/*
+ * Le titre appelle son chapo de PRES : les deux maquettes ecrivent ce pas-ci,
+ * et un titre suivi d'un blanc plus large que celui de ses propres lignes se
+ * lit comme un titre orphelin. La regle est partagee, donc la jointure vaut
+ * pour tout ecran dont le titre est suivi d'un texte ; les ecrans dont le
+ * titre est suivi d'un BLOC posent deja leur respiration au-dessus de lui, et
+ * c'est la leur, plus large, qui l'emporte.
+ */
 h1 {
   font-size: var(--text-2xl);
   line-height: var(--leading-tight);
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
 }
 
 h2 {

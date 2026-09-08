@@ -11,6 +11,41 @@
   justify-content: space-between;
   max-width: var(--page-max);
   margin: var(--space-5) auto 0;
-  padding: var(--space-3) var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4) var(--space-4);
   border-top: var(--border-heavy) solid var(--ink);
+}
+
+/*
+ * Le pied FERME la page : plus courte que la fenêtre, il en touche le bas ;
+ * plus longue, il ne bouge pas et le contenu ne bouge jamais avec lui. Les
+ * deux déclarations qui l'obtiennent — le mou dans lequel descendre, et la
+ * descente elle-même — sont écrites ENSEMBLE, ici : séparées, elles
+ * dériveraient l'une de l'autre sans que rien ne le dise, et aucune des deux
+ * ne décide quoi que ce soit sans l'autre.
+ *
+ * Écrite naïvement, la même intention refabrique le défaut réparé ici : une
+ * hauteur minimale posée sur le CORPS de page s'ajoute au haut de page, au
+ * pied et à leurs marges, et la page dépasse alors la fenêtre de 213 px à
+ * toutes les hauteurs — mesuré le 2026-09-08. La hauteur de la fenêtre est le
+ * TOTAL du cadre, jamais un terme de plus.
+ *
+ * Et un collage plutôt qu'une colonne flexible : un conteneur flexible
+ * supprime la fusion des marges, la marge basse de la dernière fiche cesse
+ * alors de se fondre dans la marge haute du pied, et la jointure de 40 px en
+ * vaut 80 sur les réalisations. Le collage laisse le flux intact, donc la
+ * fusion aussi.
+ *
+ * dvh et non vh : sur un téléphone dont la barre d'outils se rétracte, vh vaut
+ * la fenêtre la plus HAUTE, la page dépasse donc la fenêtre visible, et la
+ * barre de défilement qu'on venait de retirer revient. Un navigateur qui
+ * ignore dvh ignore les deux déclarations ensemble et retrouve le pied à la
+ * suite du contenu, qui est le comportement d'avant.
+ */
+#app {
+  min-height: 100dvh;
+}
+
+.foot {
+  position: sticky;
+  top: 100dvh;
 }

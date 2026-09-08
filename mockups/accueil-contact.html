@@ -214,6 +214,36 @@
         stroke-width: var(--flow-stroke);
       }
 
+      /*
+       * Le pied, transcrit de mockups/portfolio-v1.html : filet lourd,
+       * var(--space-5) au-dessus, var(--space-3) entre le filet et le texte,
+       * var(--space-4) sous la dernière ligne. Comme la barre, il est commun
+       * aux quatre pages du site : ne le montrer que sur l'accueil dirait que
+       * la page de contact n'en a pas.
+       *
+       * Sur une page plus courte que la fenêtre, le pied ferme la fenêtre : il
+       * en touche le bas au lieu de flotter sous le contenu, et le contenu ne
+       * descend jamais avec lui. Cette planche ne le dessine pas — elle montre
+       * des écrans encadrés et ne suppose aucune taille de fenêtre —, et ce
+       * comportement se prouve par la suite de navigateur, jamais par un
+       * dessin.
+       */
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        justify-content: space-between;
+        margin-top: var(--space-5);
+        padding-top: var(--space-3);
+        padding-bottom: var(--space-4);
+        border-top: var(--border-heavy) solid var(--ink);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
       h1 {
         font-size: clamp(var(--text-2xl), 8vw, var(--text-3xl));
         line-height: var(--leading-tight);
@@ -423,6 +453,10 @@
             >
           </li>
         </ul>
+        <footer>
+          <span>Donatien Koffi, 2026</span>
+          <span>Rennes, France</span>
+        </footer>
       </div>
 
       <p class="etiquette">Contact</p>
@@ -454,6 +488,10 @@
             </dl>
           </div>
         </section>
+        <footer>
+          <span>Donatien Koffi, 2026</span>
+          <span>Rennes, France</span>
+        </footer>
       </div>
     </div>
   </body>

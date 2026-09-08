@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "mode": "spec_proposal",
+  "agent": "product",
+  "produced_at": "2026-09-08T09:50:00Z",
+  "round": 2,
+  "title": "Le rythme vertical : vos quatre reponses tiennent ensemble, et le compte du round 1 etait faux de 24 px",
+  "scope": { "spec_id": null, "working_title": "rythme-vertical" },
+  "basis": {
+    "record_hash": "ff1f9da3ab0fe3e7599e5fadda9a2d6a912a39133fbb3bfe9e712eeca069df4e",
+    "note": "sha256 du champ `record` du paquet de tache pipeline/handoffs/rythme-vertical-product-round2-package.json, l'enregistrement lu pour ce round. Le record est de type operator_requirements : il ne porte ni state_version ni pipeline_version, les deux specs du depot etant fusionnees et aucune issue n'etant ouverte."
+  },
+  "outcome": "awaiting_operator",
+  "review_page": { "path": "pipeline/pages/proposal-rythme-vertical-round2.html" },
+  "scope_final": true,
+  "handoff_file": { "path": "pipeline/handoffs/rythme-vertical-proposal-round2.json" },
+  "operator_feedback": {
+    "summary": "Vos quatre reponses retiennent mes recommandations, et je ne demande donc plus rien : ce round est le perimetre final, pas une question de plus. Deux choses ont change en le verifiant. D'abord une correction que je vous dois : le round 1 annoncait un accueil ramene de 784 a 560 px, et ce chiffre etait faux. Il comptait l'espace sous la derniere ligne du pied comme entierement retire alors que sa propre regle le plafonne a 24 px. La meme erreur de 24 px portait sur chaque page. Les chiffres justes sont : accueil 784 -> 584 px, 806 -> 606 px sous 1280 de large ; contact 738 -> 570 px ; realisations et parcours raccourcissent de 168 px. Votre seuil de 640 px reste tenu partout, mais la marge est de 34 px au cas le plus serre et non de 58. Ensuite, la confrontation de vos reponses deux a deux en a fait ressortir trois qui ne tiennent pas ensemble telles quelles, et chacune a demande une regle : aucune maquette ne parle de fenetre, donc l'ancrage du pied ne peut pas se verifier contre une maquette ; aligner le site sur les maquettes tout en reecrivant les maquettes est circulaire tant que le sens n'est pas fixe ; et la planche de l'accueil et du contact n'a pas de fenetre, donc elle ne peut pas dessiner un pied qui se pose au bas de l'une.",
+    "decided": [
+      {
+        "id": "D-A",
+        "question_verbatim": "A quelle hauteur de fenetre l accueil et le contact doivent-ils tenir sans barre de defilement ?",
+        "operator_answer_verbatim": "640 px de hauteur utile — la recommandation de Product, retenue telle quelle.",
+        "what_changed": "Le seuil cesse d'etre une proposition et devient la regle mesurable de la premiere fonctionnalite : l'accueil et le contact tiennent sans defilement vertical dans une fenetre de 640 px de hauteur utile, a 1278 et a 1440 px de large, dans les deux langues et dans les deux themes. En le rendant mesurable j'ai refait l'arithmetique du round 1 et j'y ai trouve une erreur de 24 px par page, corrigee ici : les hauteurs annoncees passent de 560 / 582 / 546 px a 584 / 606 / 570 px. Le seuil reste tenu a chaque largeur mesuree, avec 34 px de marge au cas le plus serre. Je vous le dis parce que vous avez tranche 640 en lisant 560, et que la marge reelle est la moitie de celle que la page vous montrait."
+      },
+      {
+        "id": "D-B",
+        "question_verbatim": "Sur quoi le resserrement s aligne-t-il ?",
+        "operator_answer_verbatim": "Sur les maquettes deja validees — la recommandation de Product, retenue telle quelle.",
+        "what_changed": "Chaque valeur du resserrement porte desormais sa source nommee, fichier et ligne, dans le releve des jointures : plus une seule n'est choisie, toutes sont transcrites. La verification a corrige une lecture du round 1 : la jointure titre vers chapo n'est pas propre a l'accueil. Les deux maquettes ecrivent 16 px et le site la decide par une regle partagee, elle appartient donc au cadre commun et non a l'ecran d'accueil. Verification faite aussi de son effet reel : sur le contact, elle ne change rien, la marge de la fiche l'absorbe. Une jointure du site n'a aucune source de maquette et je la laisse donc intacte plutot que de lui choisir une valeur : celle qui separe le titre du contact de sa fiche, la maquette ne montrant pas de titre sur cet ecran."
+      },
+      {
+        "id": "D-C",
+        "question_verbatim": "Le pied doit-il se poser au bas de la fenetre quand la page est plus courte qu elle ?",
+        "operator_answer_verbatim": "Oui — la recommandation de Product, retenue telle quelle.",
+        "what_changed": "La fonctionnalite passe de proposee a engagee, et elle gagne la regle qui la rend sure. Ecrit naivement, un ancrage dit que la page fait au moins la hauteur de la fenetre, et cette hauteur s'AJOUTE aux marges qui existent deja : la page depasse alors la fenetre a toutes les hauteurs et fabrique la barre de defilement qu'on venait de retirer. C'est exactement le defaut repare ici, deux regles qui s'additionnent sans se connaitre, reintroduit par sa propre correction. La regle ajoutee dit que la hauteur de la fenetre est le TOTAL du cadre et jamais un terme de plus. J'ajoute aussi ce que votre reponse rend visible : l'espace sous la derniere ligne du pied n'est plus le bas d'une page qu'on a fait defiler, c'est desormais le bord de la fenetre sur chaque page courte. Il vaut 24 px."
+      },
+      {
+        "id": "D-D",
+        "question_verbatim": "Les maquettes validees sont-elles remises a jour avec le nouveau cadre ?",
+        "operator_answer_verbatim": "Les deux, leur cadre seulement — la recommandation de Product, retenue telle quelle. La maquette de l'accueil et du contact recoit donc un pied. La configuration du pipeline n'est PAS repointee : cette variante est ecartee.",
+        "what_changed": "Une quatrieme fonctionnalite apparait, qui n'existait qu'en decision au round 1 : les deux maquettes redisent le meme cadre. Elle porte deux regles que la confrontation avec D-B et D-C a rendues necessaires. Le sens est fixe : aucune valeur qu'une maquette declare deja n'est modifiee, la mise a jour n'AJOUTE que ce qu'elle ne dit pas — le pied de la planche accueil et contact, transcrit de celui de l'autre maquette. Et la planche ne recoit pas de fenetre simulee : elle n'en a pas, elle montre des ecrans encadres, et lui en dessiner une irait au-dela de « leur cadre seulement » tout en rendant vrai a une seule taille un document qui ne depend d'aucune. Votre refus de repointer la configuration est inscrit en exclusion explicite : mockups/portfolio-v1.html reste la maquette declaree du projet, et le fichier de configuration n'est pas touche — il m'est d'ailleurs interdit en ecriture et relu par un humain."
+      }
+    ],
+    "disagreements": []
+  },
+  "answers_composition_check": {
+    "method": "Les quatre reponses confrontees deux a deux, soit les six paires, chacune lue en cherchant ce que la seconde rend faux ou inverifiable dans la premiere. Trois ne tiennent pas telles quelles et ont produit une regle chacune.",
+    "pairs_checked": [
+      {
+        "pair": ["D-A", "D-B"],
+        "composes": true,
+        "note": "Le seuil de 640 px et l'alignement sur les maquettes tiennent ensemble : les valeurs des maquettes, appliquees en entier, donnent 584 px a 1440-1920, 606 px a 1278 et 570 px sur le contact, toutes sous le seuil. Mais la marge est de 34 px au cas le plus serre et non de 58 comme la page du round 1 l'affichait, et rien d'autre ne peut etre resserre sans sortir de D-B. Les deux composent ; ils composent plus juste qu'ils n'en avaient l'air."
+      },
+      {
+        "pair": ["D-A", "D-C"],
+        "composes": true,
+        "note": "Ils composent, mais a une condition qui a du etre ecrite pour que ce soit vrai. Un ancrage exprime comme « la page fait au moins la hauteur de la fenetre » s'ajoute aux marges deja posees : le total depasse la fenetre a toutes les hauteurs et recree une barre de defilement, ce qui nie D-A par le moyen meme choisi pour l'assurer. C'est le defaut central de cette demande — des regles qui additionnent leur espace sans se connaitre — reintroduit par sa correction. La regle R3 de la troisieme fonctionnalite fixe que la hauteur de la fenetre est le total du cadre, jamais un terme de plus."
+      },
+      {
+        "pair": ["D-A", "D-D"],
+        "composes": true,
+        "note": "Une maquette est un dessin : la mettre a jour ne deplace aucune hauteur mesuree et ne peut ni tenir ni compromettre le seuil de 640 px. Rien a concilier, et c'est la seule paire dont on peut le dire sans reserve."
+      },
+      {
+        "pair": ["D-B", "D-C"],
+        "composes": false,
+        "note": "AUCUNE des deux maquettes ne dit quoi que ce soit d'une fenetre : ni hauteur, ni pied qui s'y pose. D-B fait de la maquette la reference de toute valeur, D-C demande un comportement qu'aucune maquette ne declare — verifier l'ancrage contre une maquette est donc impossible, et exiger les deux mene soit a un comportement inverifiable, soit a inventer dans la maquette une valeur que personne n'a validee, ce qui est la derive reparee ici. Resolu en separant les deux autorites : D-B regit les VALEURS des jointures verticales, prouvees contre les maquettes ; D-C regit le COMPORTEMENT du cadre, qui n'introduit aucune longueur d'espacement nouvelle et se prouve par la suite de navigateur. Verifie au passage plutot que suppose : la porte des jetons ne refuse que les longueurs en px, rem, em et pt (scripts/check-tokens.mjs, la regle de lecture des longueurs), donc dire la hauteur d'une fenetre ne demande aucun jeton nouveau et ne touche pas au fichier des jetons, qui est en revue humaine."
+      },
+      {
+        "pair": ["D-B", "D-D"],
+        "composes": false,
+        "note": "Aligner le site sur les maquettes et reecrire les maquettes, dans la meme specification, est circulaire tant que le sens n'est pas fixe : une maquette ajustee au code validerait exactement la derive qu'on repare, et la reference deviendrait le reflet de ce qu'elle est censee juger. Resolu par deux regles. Le sens : aucune valeur deja declaree par une maquette n'est modifiee, la mise a jour n'ajoute que ce qu'aucune des deux ne dit — le pied de la planche accueil et contact, transcrit de mockups/portfolio-v1.html lignes 904 a 917. L'ordre : le site est confronte aux maquettes MISES A JOUR, donc la maquette porte la cible avant l'ecran."
+      },
+      {
+        "pair": ["D-C", "D-D"],
+        "composes": false,
+        "note": "La planche de l'accueil et du contact n'est pas une page : c'est une planche d'ecrans encadres, sans fenetre. Elle ne peut donc pas montrer un pied qui se pose au bas d'une fenetre, et « la maquette recoit un pied » ne suffit pas a dire ce que le pied fait. Resolu ainsi : la planche recoit le pied et ses deux jointures, dit en toutes lettres que le pied ferme la fenetre sur une page courte, et le comportement lui-meme est prouve par la suite de navigateur, jamais par le dessin. Ecarte : donner a la planche une fenetre simulee de 640 px — cela depasserait « leur cadre seulement » et rendrait vrai a une seule taille un document qui n'en suppose aucune."
+      }
+    ],
+    "conflicts_found": [
+      {
+        "pair": ["D-B", "D-C"],
+        "conflict": "Un comportement de fenetre n'est verifiable contre aucune maquette, alors que D-B fait de la maquette la reference de tout.",
+        "resolution": "Autorites separees : les valeurs se prouvent contre les maquettes, le comportement du cadre se prouve par la suite de navigateur. Ecrit en regle dans la troisieme et la quatrieme fonctionnalites."
+      },
+      {
+        "pair": ["D-B", "D-D"],
+        "conflict": "Circularite : le site est verifie contre des maquettes que la meme specification reecrit.",
+        "resolution": "Sens et ordre fixes en regles : rien de ce qu'une maquette declare n'est modifie, la mise a jour n'ajoute que ce qui manque, et le site est confronte aux maquettes mises a jour."
+      },
+      {
+        "pair": ["D-C", "D-D"],
+        "conflict": "La planche n'a pas de fenetre et ne peut pas dessiner l'ancrage que D-C demande.",
+        "resolution": "La planche porte le pied, ses jointures et la phrase qui dit ce qu'il fait ; l'ancrage est prouve par la suite. La fenetre simulee est ecartee et inscrite en exclusion."
+      }
+    ]
+  },
+  "functional_scope": {
+    "intent": "Retirer le vide que personne n'a decide, en rendant au site les valeurs de vos deux maquettes et en faisant fermer la page par son pied. Quatre reponses tranchees, six paires confrontees, une erreur de 24 px du round 1 corrigee, et plus rien a decider.",
+    "features": [
+      {
+        "name": "Une page courte tient dans la fenetre",
+        "user_value": "Le lecteur qui ouvre le site sur un portable voit l'accueil en entier, sans molette. Aujourd'hui l'accueil finit a 784 px de haut, dont 386 px portent de l'encre et 400 px n'en portent pas : la barre de defilement qui apparait des que la fenetre descend sous cette hauteur ne fait defiler que de l'espacement. Vous avez fixe le seuil a 640 px de hauteur utile, ce que laisse un portable de 1366 x 768 une fois la barre d'outils du navigateur retiree. Le resserrement propose amene l'accueil a 584 px et le contact a 570 px : le seuil est tenu, avec 34 px de marge au cas le plus serre.",
+        "rules": [
+          "L'accueil et la page de contact tiennent sans defilement vertical dans une fenetre de 640 px de hauteur utile, a 1278 comme a 1440 px de large, dans les deux langues et dans les deux themes.",
+          "Les hauteurs attendues sont : accueil 784 -> 584 px de 1440 a 1920 px de large, 806 -> 606 px a 1278 ; contact 738 -> 570 px a toutes les largeurs mesurees. Ces chiffres corrigent ceux du round 1, qui comptait comme retire un espace de 24 px que sa propre regle conservait.",
+          "Les deux pages longues continuent de defiler, et c'est normal : ce qu'elles font defiler est du contenu. Elles recoivent le meme resserrement du cadre et raccourcissent de 168 px chacune — realisations de 2 746 / 2 672 / 2 659 / 2 659 px a 2 578 / 2 504 / 2 491 / 2 491, parcours de 2 016 / 1 928 / 1 928 / 1 928 a 1 848 / 1 760 / 1 760 / 1 760.",
+          "Aucune page du site ne devient plus haute qu'aujourd'hui, a aucune des quatre largeurs mesurees, dans aucune des deux langues.",
+          "La regle vaut pour les quatre pages et non pour la seule qui a ete signalee : le haut de page, le corps de page et le pied leur sont communs, et 168 des 200 px retires viennent de la."
+        ]
+      },
+      {
+        "name": "L'air du site redevient celui des maquettes que vous avez validees",
+        "user_value": "Le vide n'a pas ete choisi, il a ete empile : plusieurs regles ajoutent chacune leur espace vertical et aucune ne connait les autres. Confrontees a vos deux maquettes, cinq jointures se sont ecartees, toutes dans le meme sens : le site est plus lache que ce que vous avez approuve, de 200 px sur l'accueil. Vous avez tranche que le resserrement s'aligne sur les maquettes ; il ne choisit donc aucune valeur nouvelle, il transcrit des valeurs que vous avez deja lues et approuvees, et chacune porte ici sa source nommee.",
+        "rules": [
+          "Entre le filet du haut de page et le premier contenu, l'espace vaut 40 px, comme la maquette l'ecrit (mockups/accueil-contact.html ligne 158). Le site en met 104, parce que le haut de page en ajoute 40 et le corps de page 64, et que personne ne les a additionnes.",
+          "Entre le titre et le chapo, l'espace vaut 16 px : les DEUX maquettes l'ecrivent (mockups/accueil-contact.html ligne 224 et mockups/portfolio-v1.html ligne 288), et le site en met 24. Cette jointure appartient au cadre commun et non a l'accueil seul, contrairement a ce que disait le round 1 ; sur le contact elle ne change rien, la marge de la fiche l'absorbe.",
+          "Entre la rangee de faits et les trois cellules de l'accueil, l'espace vaut 40 px comme la maquette l'ecrit (mockups/accueil-contact.html ligne 243). Le site en met 64.",
+          "Entre le dernier contenu et le filet du pied, l'espace vaut 40 px, comme la maquette l'ecrit (mockups/portfolio-v1.html ligne 909). Le site en met 104, pour la meme raison qu'en haut : 64 du corps de page, 40 du pied.",
+          "Entre le filet du pied et le texte du pied, l'espace vaut 16 px et ne change pas : le site et la maquette disent deja la meme chose.",
+          "Sous la derniere ligne du pied, l'espace vaut 24 px. Le site en met 64, et aucune des deux maquettes ne declare cette jointure : c'est la seule valeur de ce perimetre qui n'ait jamais ete validee par personne, et c'est pourquoi elle est la seule a etre choisie plutot que transcrite.",
+          "Chaque jointure verticale est decidee par une seule regle. Deux regles qui additionnent leur espace sans se connaitre sont la cause mecanique mesuree ici, et un resserrement qui laisserait la double declaration en place se redegraderait a la premiere modification.",
+          "Le resserrement ne descend jamais sous ce que la maquette montre. L'espace qui separe deux blocs de lecture est conserve tel quel : ce qui est retire est le vide qui ne separe rien. Resserrer n'est pas tasser, et le genre du site tient a son air."
+        ]
+      },
+      {
+        "name": "Le pied ferme la page",
+        "user_value": "Une fois l'accueil resserre a 584 px dans une fenetre de 900, une bande de papier vide reste sous le filet du pied : c'est le meme defaut sous un autre nom, de l'espace que personne n'a decide. Vous avez tranche que le pied se pose au bas de la fenetre, ce qui est le metier d'un pied, et la garantie d'absence de barre de defilement cesse alors de dependre d'une soustraction qu'une future ligne de contenu peut invalider : elle devient structurelle.",
+        "rules": [
+          "Sur une page plus courte que la fenetre, le bas du pied touche le bas de la fenetre.",
+          "Sur une page plus longue que la fenetre, rien ne change : le pied suit le dernier contenu et la page defile.",
+          "La hauteur de la fenetre est le TOTAL du cadre, jamais un espace ajoute par-dessus les marges existantes. Cette regle existe parce que l'erreur inverse — une hauteur minimale qui s'ajoute aux marges deja posees — fait deborder la page a TOUTES les hauteurs de fenetre et recree la barre de defilement qu'on retire : ce serait le defaut repare ici, reintroduit par sa propre correction.",
+          "L'ancrage ne cree jamais de defilement : une page qui tient dans la fenetre n'a pas de barre, quelle que soit la hauteur de la fenetre.",
+          "Le contenu ne bouge pas avec le pied : il reste en haut de la page. Centrer le contenu dans la fenetre recreerait exactement le vide qu'on retire, en haut cette fois.",
+          "L'ancrage exprime la hauteur d'une fenetre, qui n'est pas un pas de l'echelle d'espacement et qu'aucune echelle ne peut exprimer. C'est la seule longueur de ce perimetre qui ne soit pas un jeton ; verification faite, la porte des jetons ne refuse que px, rem, em et pt, donc aucun jeton nouveau n'est declare et le fichier des jetons n'est pas touche.",
+          "Le haut de page qui reste visible pendant le defilement continue de se comporter comme aujourd'hui, y compris les deux conditions de fenetre qui le declenchent."
+        ]
+      },
+      {
+        "name": "Les deux maquettes redisent le meme cadre",
+        "user_value": "Vous avez tranche que les deux maquettes sont remises a jour, leur cadre seulement. Sans cela, la reference declaree du projet continuerait de dire une chose la ou le site en dit une autre, et le prochain ecran code d'apres elle reintroduirait l'ecart : ce serait la derive reparee ici, refaite en un tour. La planche de l'accueil et du contact ne porte aujourd'hui aucun pied, et c'est precisement pourquoi les 64 px sous la derniere ligne n'ont jamais ete confrontes a rien.",
+        "rules": [
+          "Aucune valeur qu'une maquette declare deja n'est modifiee. La mise a jour n'AJOUTE que ce qu'aucune des deux ne dit. Cette regle existe parce que sans elle, aligner le site sur les maquettes tout en reecrivant les maquettes est circulaire : une maquette ajustee au code validerait la derive qu'on repare.",
+          "La planche de l'accueil et du contact recoit un pied, transcrit de celui de l'autre maquette (mockups/portfolio-v1.html lignes 904 a 917) : filet lourd, 40 px au-dessus, 16 px entre le filet et le texte, et 24 px sous la derniere ligne.",
+          "Seul le cadre est touche dans les deux maquettes : le haut de page, la jointure haute, la jointure basse et le pied. Le contenu des ecrans qu'elles montrent, leurs couleurs et leur typographie ne bougent pas.",
+          "Les maquettes portent la cible AVANT l'ecran : le site est confronte aux maquettes mises a jour, jamais aux anciennes.",
+          "Les deux maquettes disent la meme chose du cadre apres la mise a jour. Deux references qui se contredisent sur une jointure sont une derive qui attend son tour.",
+          "La planche dit en toutes lettres que le pied ferme la fenetre sur une page courte, sans le dessiner : une planche d'ecrans encadres n'a pas de fenetre, et le comportement se prouve par la suite de navigateur, jamais par un dessin.",
+          "Toute valeur ecrite dans une maquette reste un pas de l'echelle deja declaree, reference par son nom : aucune longueur en clair."
+        ]
+      },
+      {
+        "name": "Ce qui etait acquis le reste",
+        "user_value": "Trois proprietes ont ete mesurees et gagnees par les specifications precedentes. Un resserrement vertical peut les casser sans que personne le voie sur une capture, parce qu'une cible qui perd deux pixels et une page qui deborde de trois se lisent comme du bruit.",
+        "rules": [
+          "Aucune page ne deborde horizontalement, de 320 a 1500 px de large, dans les deux langues. La mise en page horizontale n'est pas touchee, et c'est ce qui protege cet acquis.",
+          "Aucune cible cliquable ne descend sous 24 px : reduire un espacement ne reduit jamais une cible.",
+          "Le theme clair et le theme sombre se comportent a l'identique : l'espacement ne depend pas du theme et aucune valeur nouvelle n'est declaree par theme.",
+          "Les deux langues se comportent a l'identique : une seule regle sert les deux.",
+          "Toute valeur d'espacement reste un pas de l'echelle deja declaree, reference par son nom. La hauteur de fenetre de l'ancrage est la seule exception, et elle est nommee comme telle.",
+          "Les portes de cloture du projet restent celles-ci et aucune n'est desactivee ni assouplie : coverage, test_e2e, dead_code, audit, content."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "La configuration du pipeline n'est pas repointee, comme vous l'avez tranche : mockups/portfolio-v1.html reste la maquette declaree du projet et pipeline.config.json n'est pas touche. Il m'est d'ailleurs interdit en ecriture et il est en revue humaine obligatoire.",
+      "La planche de l'accueil et du contact ne recoit pas de fenetre simulee. Elle montre des ecrans encadres et n'en suppose aucune taille ; lui en dessiner une depasserait « leur cadre seulement » et rendrait le document vrai a une seule taille.",
+      "La jointure entre le titre du contact et sa fiche, qui vaut 64 px, reste intacte. Aucune maquette ne la declare — l'ecran de contact des maquettes ne porte pas de titre — et lui choisir une valeur serait exactement le procede que D-B ecarte. Le contact tient a 570 px sans elle.",
+      "Le rythme interne des deux pages longues : l'espace de 64 px qui separe deux sections numerotees separe quelque chose de reel, et le resserrer serait tasser. Elles gagnent le resserrement du cadre, rien de plus.",
+      "La page « adresse introuvable » : mesure faite, elle ne porte ni le haut de page ni le pied du site — elle vit hors de la mise en page commune. Le cadre partage ne l'atteint pas et son apparence ne change pas. Le dire evite qu'on la croie corrigee.",
+      "L'echelle d'espacement elle-meme : aucun pas n'est ajoute, retire, ni change de valeur. Les huit pas restent 4, 8, 16, 24, 40, 64, 96 et 144 px, et src/shared/tokens.css n'est pas modifie.",
+      "La largeur de page et les gouttieres laterales : la mise en page horizontale n'est pas touchee, et c'est ce qui protege l'absence de debordement deja acquise.",
+      "Le contenu, la couleur et la typographie : rien de ce que les pages disent ne change, aucun corps de texte ne bouge, aucune couleur n'est retouchee.",
+      "Le mouvement et les animations : aucune duree, aucune courbe, aucun schema anime n'est touche.",
+      "Toute correction d'outillage, de configuration ou de mise en forme du code : rien ici n'en demande, et cela ne passerait pas par le cycle de toute facon.",
+      "Aucun paquet n'est ajoute, retire ni mis a jour. Ce changement est entierement une affaire de feuilles de style et de maquettes qui existent deja, et aucune decision de dependance n'est prise ni tue.",
+      "Aucune modification du coeur du pipeline dans agent-pipeline/, et aucune porte modifiee ni assouplie."
+    ]
+  },
+  "decisions_for_operator": [],
+  "scope_final_because": "Vos quatre reponses retiennent mes quatre recommandations sans exception, et les six paires confrontees n'ont ouvert aucun choix que vous pourriez faire autrement : les trois paires qui ne composaient pas ont chacune une resolution forcee, non un arbitrage. Fixer le sens de l'alignement entre le site et les maquettes est la seule maniere de ne pas etre circulaire ; separer les valeurs du comportement est la seule maniere de rendre l'ancrage verifiable ; et ne pas dessiner de fenetre dans la planche decoule de la limite que vous avez vous-meme posee en repondant « leur cadre seulement ». Fabriquer une cinquieme question pour remplir le champ vous couterait un round pour rien. La correction des 24 px est portee ici parce que vous avez tranche 640 en lisant 560 : si la marge reelle de 34 px vous parait trop mince, c'est le moment de le dire, et c'est un refus de ce round, pas une question que je vous pose.",
+  "domain_reading": {
+    "retained": [
+      "Le defaut est une DERIVE, pas un choix. Les jointures trop larges se lisent contre deux maquettes que vous avez validees, et l'ecart est de 200 px sur l'accueil. C'est ce qui rend le resserrement verifiable : il a une reference, et cette reference n'est pas mon gout.",
+      "La plus grande part du vide est dans le CADRE, pas dans les ecrans : 168 des 200 px viennent du haut de page, du corps de page et du pied, communs aux quatre pages. Corriger le cadre corrige les quatre pages a la fois.",
+      "Les 64 px sous la derniere ligne du pied ne figurent dans AUCUNE des deux maquettes. Ils n'ont jamais ete valides par personne, et avec l'ancrage retenu en D-C ils cessent d'etre le bas d'une page qu'on fait defiler pour devenir le bord de la fenetre sur chaque page courte.",
+      "Le compte du round 1 etait faux de 24 px par page, et l'erreur etait dans un seul endroit : l'effet annonce comptait l'espace sous le pied comme entierement retire alors que la regle du meme round le plafonnait a 24 px. Le seuil de 640 px reste tenu, avec 34 px de marge au lieu de 58 au cas le plus serre.",
+      "La jointure titre vers chapo n'est pas propre a l'accueil : les deux maquettes l'ecrivent et le site la decide par une regle partagee. Elle appartient donc au cadre commun. Sa correction n'a aucun effet sur le contact, ou la marge de la fiche l'absorbe — verifie plutot que suppose.",
+      "Deux pages sur quatre sont deja longues. La promesse « la page tient sans defilement » ne peut donc porter que sur l'accueil et le contact ; pour les deux autres la promesse tenable est « ce qui defile est du contenu », mesuree comme une reduction du cadre et non comme une hauteur de page.",
+      "L'ancrage du pied est un comportement, pas une valeur. C'est ce qui le rend compatible avec l'alignement sur les maquettes, qu'aucune maquette ne pourrait pourtant valider : il n'introduit aucune longueur d'espacement."
+    ],
+    "discarded": [
+      "« Reduire le pas de 64 px dans l'echelle » : ecarte parce que ce pas sert aussi l'espacement horizontal et le rythme des sections des pages longues, ou il separe quelque chose de reel. Le defaut est dans la maniere dont des regles s'additionnent, pas dans la valeur de l'une d'elles. Soumis au round 1 en D-B, ou vous avez tranche pour les maquettes.",
+      "« Declarer un jeton pour la hauteur de la fenetre » : ecarte apres verification. La porte des jetons ne refuse que les longueurs en px, rem, em et pt, donc rien ne l'exige ; et un jeton nouveau toucherait le fichier des jetons, en revue humaine obligatoire, pour deplacer une valeur sans rien prouver de plus.",
+      "« Donner a la planche une fenetre simulee de 640 px pour montrer que la page tient » : ecarte. Cela depasse « leur cadre seulement », et un document qui ne suppose aucune taille deviendrait vrai a une seule. La suite de navigateur prouve la tenue ; un dessin ne prouve rien.",
+      "« Rendre l'espacement vertical proportionnel a la hauteur de la fenetre » : ecarte parce qu'un espacement qui varie en continu ne se mesure plus par une valeur mais par une courbe, qu'aucune maquette ne montre et qu'aucun critere binaire ne peut refuser.",
+      "« Faire tenir l'accueil en supprimant du contenu » : ecarte, et nomme pour qu'on ne le repropose pas. Les 386 px d'encre de l'accueil sont la totalite de ce que la page dit. Le probleme n'a jamais ete la quantite d'encre.",
+      "« Cacher la barre de defilement » : ecarte, et cite parce qu'un agent presse y arrive vite. Cela retire l'indication sans retirer le defilement, et retire au passage un reperage dont un lecteur a besoin."
+    ]
+  },
+  "contract_sketch": {
+    "nature": "Aucun contrat d'interface, aucune route, aucune donnee. Le contrat de cette specification est une liste de jointures verticales, la valeur de chacune et sa source, plus un comportement de cadre.",
+    "junctions": [
+      "filet du haut de page -> premier contenu : 40 px, decide par une seule regle. Aujourd'hui 104, decides par deux. Source : accueil-contact.html:158.",
+      "titre -> chapo, sur les quatre pages : 16 px. Aujourd'hui 24. Source : accueil-contact.html:224 et portfolio-v1.html:288. Sans effet sur le contact, ou la marge de la fiche l'absorbe.",
+      "chapo -> rangee de faits, sur l'accueil : 24 px, inchange. Source : accueil-contact.html:231.",
+      "rangee de faits -> trois cellules, sur l'accueil : 40 px. Aujourd'hui 64. Source : accueil-contact.html:243.",
+      "dernier contenu -> filet du pied : 40 px, decide par une seule regle. Aujourd'hui 104, decides par deux. Source : portfolio-v1.html:909.",
+      "filet du pied -> texte du pied : 16 px, inchange. Source : portfolio-v1.html:910.",
+      "sous le texte du pied : 24 px. Aujourd'hui 64, declare par aucune maquette. Seule valeur choisie et non transcrite.",
+      "comportement : sur une page plus courte que la fenetre, le bas du pied touche le bas de la fenetre, la hauteur de la fenetre etant le total du cadre et non un terme ajoute."
+    ],
+    "measured_effect": "accueil 784 -> 584 px de 1440 a 1920, 806 -> 606 px a 1278 ; contact 738 -> 570 px ; realisations -168 px ; parcours -168 px. Ces chiffres sont calcules a partir du decoupage vertical mesure et remplacent ceux du round 1, qui retiraient 24 px de trop par page."
+  },
+  "decomposition_titles": {
+    "titles": [
+      "Le cadre partage — haut de page, corps de page, pied — ne compte plus l'espace deux fois, le pied ferme la page, et la maquette du projet redit le meme cadre",
+      "L'accueil et le contact reprennent le rythme vertical de leur maquette, et la planche recoit son pied"
+    ],
+    "parallelism_intent": "Deux issues aux reservations disjointes, depechables ensemble. La premiere tient les feuilles partagees et mockups/portfolio-v1.html ; la seconde tient les feuilles d'ecran et mockups/accueil-contact.html. Le round 1 placait la jointure titre vers chapo dans la seconde ; la verification l'a rendue au cadre commun, donc a la premiere, et les reservations restent disjointes. Les deux issues se touchent sur une seule chose, les valeurs des deux jointures du cadre, et ce risque se ferme sans les serialiser : chacune nomme les memes pas dans ses propres criteres, donc elles ne peuvent pas diverger sans que l'une echoue. Une troisieme issue qui n'aurait porte que les maquettes a ete ecartee volontairement — elle aurait paye un cycle complet pour un livrable qu'aucune suite ne sait prouver, et elle aurait mis les deux autres en file derriere elle."
+  },
+  "design_commitments_carried_into_issues": [
+    "Chaque valeur d'espacement modifiee est un pas de l'echelle deja declaree, reference par son nom : aucune longueur ecrite en clair, dans aucune feuille et dans aucune maquette. La hauteur de fenetre de l'ancrage est la seule exception et elle est nommee : elle exprime la fenetre, pas un espacement, aucune echelle ne peut la dire, et la porte des jetons ne la refuse pas.",
+    "Le sens de l'alignement est fixe et ne se renegocie pas dans une issue : la maquette dit, le site suit. Aucune valeur declaree par une maquette n'est modifiee ; la mise a jour des maquettes n'ajoute que ce qu'aucune des deux ne dit, et seulement sur le cadre.",
+    "L'ancrage du pied n'ajoute jamais de hauteur par-dessus les marges existantes. Un critere le prouve par l'absence de barre de defilement a plusieurs hauteurs de fenetre, et non par la lecture d'une regle de style : c'est la seule maniere de refuser l'erreur qui recreerait le defaut.",
+    "Une mesure automatique entre dans la suite de navigateur et couvre les deux promesses : la tenue de l'accueil et du contact dans 640 px de hauteur utile, et la valeur de chaque jointure du cadre. Sans elle le resserrement se redegraderait comme le premier l'a fait, entre la validation de la maquette et aujourd'hui, sans qu'aucune porte ne le voie — ce qui est le fait central de cette demande.",
+    "Les deux maquettes nommees sont celles de la specification, et aucune issue n'en dessine une autre : une maquette par ecran, pas une par composant.",
+    "Les acquis mesures des specifications precedentes sont reprouves et non supposes : zero debordement horizontal de 320 a 1500 px, aucune cible sous 24 px, comportement identique dans les deux themes et les deux langues.",
+    "Les portes de cloture restent coverage, test_e2e, dead_code, audit et content ; aucune n'est desactivee ni assouplie, et aucune modification n'est apportee au coeur du pipeline."
+  ],
+  "pr_commitments": [
+    "La PR nomme la modification de la mise en page partagee comme la surface qui demande un oeil humain : elle touche les quatre pages a la fois, dans les deux themes et les deux langues, et une lecture par capture est le seul controle qui voie vraiment ce qu'un chiffre ne dit pas.",
+    "Elle nomme l'ancrage du pied separement : c'est un changement de structure du cadre, visible immediatement sur un grand ecran, et son erreur classique — une hauteur qui s'ajoute au lieu de totaliser — produit exactement le defaut repare ici.",
+    "Elle nomme la mise a jour des deux maquettes validees : une reference que vous avez approuvee ne se modifie pas sans que le relecteur le sache, et il doit pouvoir verifier que rien de deja declare n'a bouge.",
+    "Aucune surface d'authentification, aucune donnee personnelle, aucun identifiant enumerable, aucune porte modifiee, aucun paquet touche. Le dire evite qu'un relecteur les cherche."
+  ],
+  "evidence": {
+    "commands": [
+      {
+        "key": "audit",
+        "cmd": "pnpm audit --audit-level high",
+        "exit": 0,
+        "observation": "No known vulnerabilities found. Execute sur main au commit 2c84697, avant toute creation de branche, pour ce round."
+      },
+      {
+        "key": "git",
+        "cmd": "git status --porcelain && git log --oneline -1",
+        "exit": 0,
+        "observation": "Arbre propre, main au commit 2c84697. Aucune branche creee : une proposition n'en cree pas, et la branche de specification sera creee au plan, apres votre accord."
+      },
+      {
+        "key": "relecture-source",
+        "cmd": "lecture de src/app.css, src/shared/SiteBar.css, src/shared/SiteFooter.css, src/features/home/HomePage.css, src/features/contact/ContactPage.css et ContactPage.tsx",
+        "exit": 0,
+        "observation": "Cause mecanique confirmee ligne a ligne : app.css:22 main padding var(--space-6) var(--space-4) ; SiteBar.css:40 margin 0 auto var(--space-5) ; SiteFooter.css:13-14 margin var(--space-5) auto 0 et padding var(--space-3) var(--space-4) var(--space-6) ; app.css:149 h1 margin 0 0 var(--space-4) ; HomePage.css:11 .facts margin 0 0 var(--space-6) ; ContactPage.css:18 .card margin-top var(--space-6), adjacente au h1 donc les marges se replient a 64 — la correction du h1 n'a aucun effet sur le contact."
+      },
+      {
+        "key": "relecture-maquettes",
+        "cmd": "lecture de mockups/accueil-contact.html et mockups/portfolio-v1.html",
+        "exit": 0,
+        "observation": "accueil-contact.html:158 .bar margin-bottom var(--space-5) ; :224 h1 margin 0 0 var(--space-3) ; :231 .lede margin 0 0 var(--space-4) ; :243 .facts margin 0 0 var(--space-5) ; aucun element footer dans le fichier. portfolio-v1.html:288 h1 margin 0 0 var(--space-3) ; :904-917 footer margin-top var(--space-5), padding-top var(--space-3), aucun padding bas. L'ecran de contact de la planche ne porte pas de titre : la jointure titre vers fiche du site n'a donc aucune source de maquette."
+      },
+      {
+        "key": "verification-porte-jetons",
+        "cmd": "lecture de scripts/check-tokens.mjs",
+        "exit": 0,
+        "observation": "La regle de lecture des longueurs ne reconnait que les unites px, rem, em et pt. Une hauteur exprimee en unite de fenetre n'est donc pas refusee et ne demande aucun jeton nouveau : src/shared/tokens.css, qui est en revue humaine obligatoire, n'a pas a etre touche."
+      },
+      {
+        "key": "arithmetique",
+        "cmd": "recalcul des hauteurs a partir du decoupage vertical mesure au round 1",
+        "exit": 0,
+        "observation": "Retraits par page : 64 en haut du cadre, 64 en bas du cadre, 40 sous le pied = 168 px partout ; plus 8 px au titre et 24 px a la rangee de faits sur l'accueil = 200 px. Accueil 784 -> 584 et 806 -> 606 ; contact 738 -> 570 ; pages longues -168. Le round 1 annoncait 560 / 582 / 546 : il comptait 24 px de trop par page, en retirant entierement l'espace sous le pied que sa propre regle plafonnait a 24 px."
+      }
+    ],
+    "files": [],
+    "commit_sha": null,
+    "notes": [
+      "Les mesures de hauteur de page et le decoupage vertical sont ceux du round 1, mesures sous Playwright sur le build servi, et confirmes par l'enregistrement de l'operateur. Ce round n'a pas remesure le site : il n'a rien change au site. Ce qu'il a refait, c'est l'arithmetique de l'effet, et elle etait fausse de 24 px par page.",
+      "Les hauteurs annoncees apres resserrement sont des PREDICTIONS calculees a partir du decoupage mesure, pas des mesures. Elles seront mesurees a l'implementation, et la premiere fonctionnalite les porte comme des criteres a verifier plutot que comme des faits acquis.",
+      "Les deux specifications du depot, s-5bjp et s-1942, sont fusionnees et aucune issue n'est ouverte : une nouvelle specification est bien a creer, et elle le sera au plan.",
+      "Aucun paquet n'est en jeu dans cette demande : rien a installer, rien a refuser. Le dire explicitement plutot que de laisser le silence passer pour un examen.",
+      "Aucune branche creee, rien materialise dans le tracker, aucune issue portee : ce round est encore la phase 1, conformement a la consigne.",
+      "validate-handoff : handoff valid (product, spec_proposal, outcome awaiting_operator). La page de revue pipeline/pages/proposal-rythme-vertical-round2.html porte le digest 90ba8fec4c388afad16537c477e69760ae487e09fd3d6c842b8b3184902abe6c et il correspond au contenu soumis."
+    ]
+  },
+  "blockers": []
+}

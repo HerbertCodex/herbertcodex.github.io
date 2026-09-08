@@ -175,6 +175,20 @@
        * feuille de cette planche, et une maquette de reference ne doit pas
        * transmettre un defaut qu'un implementeur recopierait.
        */
+      /*
+       * La page en cours dans le menu, montree par la graisse et le
+       * soulignement autant qu'annoncee par `aria-current` : une marque
+       * portee par la seule couleur laisserait dehors qui distingue mal deux
+       * teintes. Le soulignement ne prend aucune place dans la hauteur.
+       */
+      .bar nav [aria-current="page"] {
+        font-weight: var(--weight-bold);
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+        text-decoration-thickness: var(--border-heavy);
+        text-underline-offset: var(--space-1);
+      }
+
       .bar nav a,
       .outils a {
         display: inline-flex;
@@ -413,7 +427,10 @@
       <div class="cadre">
         <header class="bar">
           <span class="mark">Donatien Koffi</span>
-          <nav><a href="#">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a><a href="#">Contact</a></nav>
+          <nav>
+            <a href="#" aria-current="page">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a
+            ><a href="#">Contact</a>
+          </nav>
           <div class="outils">
             <a href="#" aria-current="true">FR</a><a href="#">EN</a>
             <span class="icone" title="Passer en sombre"
@@ -463,7 +480,10 @@
       <div class="cadre">
         <header class="bar">
           <span class="mark">Donatien Koffi</span>
-          <nav><a href="#">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a><a href="#">Contact</a></nav>
+          <nav>
+            <a href="#">Accueil</a><a href="#">Réalisations</a><a href="#">Parcours</a
+            ><a href="#" aria-current="page">Contact</a>
+          </nav>
           <div class="outils">
             <a href="#" aria-current="true">FR</a><a href="#">EN</a>
             <span class="icone" title="Passer en sombre"

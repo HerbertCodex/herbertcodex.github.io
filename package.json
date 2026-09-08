@@ -5,7 +5,7 @@
     "dev": "vite dev",
     "build": "node scripts/clean-output.mjs && vite build && node scripts/check-build.mjs",
     "start": "node .output/server/index.mjs",
-    "preview": "vite preview",
+    "preview": "pnpm run build && node .output/server/index.mjs",
     "check": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

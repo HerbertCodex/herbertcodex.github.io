@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "mode": "spec_proposal",
+  "agent": "product",
+  "produced_at": "2026-09-07T14:20:00Z",
+  "round": 11,
+  "title": "Le site cesse de publier l'adresse : LinkedIn prend la place, et ce que le retrait ne protege pas est ecrit",
+  "scope": {
+    "spec_id": "s-5bjp"
+  },
+  "basis": {
+    "record_hash": "e915a03fff84c5c9b37fb8f5b3cae72a7c89831382cc18a4945bfa674dc46460",
+    "state_version": 19,
+    "pipeline_version": 19,
+    "note": "record_hash et state_version du paquet de tache i-841g-product-package.json, l enregistrement lu pour ce round. i-841g sert d ancrage : la spec s-5bjp est fusionnee, ses treize issues sont closes, et cette demande rouvre le contrat par un scope_change."
+  },
+  "outcome": "awaiting_operator",
+  "review_page": {
+    "path": "pipeline/pages/proposal-portfolio-v1-round11-adresse-retiree.html"
+  },
+  "scope_final": false,
+  "operator_feedback": {
+    "verbatim": "« je veux que tu caches ca kraherbertdonatienkoffi@gmail.com au lieu de le mettre en claire comme ca, derriere gmail par exemple » — puis, apres avoir vu les trois options et leurs couts : retirer l'adresse, et garder LinkedIn comme canal.",
+    "summary": "Vous avez demande de masquer l'adresse derriere un libelle, la mesure a montre qu'un libelle ne retire qu'une occurrence sur deux — le href reste, et c'est lui que les robots lisent — et vous avez tranche pour le retrait complet avec LinkedIn comme canal. Ce round ecrit ce retrait, ce qu'il achete, et les quatre endroits ou il n'atteint pas ce que vous croiriez qu'il atteint.",
+    "decided": [
+      "Retirer l'adresse plutot que la libeller. Le libelle « Gmail » a ete ecarte sur la mesure : l'adresse figure deux fois dans le HTML servi de la page de contact, dans le texte du lien ET dans son href, et remplacer le texte n'en retire qu'une.",
+      "Garder LinkedIn comme canal de contact."
+    ],
+    "changed": [
+      "Deux regles du perimetre approuve au round 6 sont contredites par cette decision et sont reecrites ici plutot que contournees : « La messagerie est l'appel a l'action principal, oriente recrutement » devient « LinkedIn est l'appel a l'action principal, oriente recrutement, et le site ne publie aucune adresse de messagerie » ; « L'adresse publiee est celle du CV, kraherbertdonatienkoffi@gmail.com, ecrite exactement : une adresse de contact fausse echoue en silence » devient « Le site ne publie aucune adresse de messagerie, et le controle qui refusait une adresse fausse devient le controle qui refuse toute adresse publiee ».",
+      "Le critere de retrait ne porte plus sur le seul HTML des huit adresses comme la demande le formulait, mais sur TOUT ce que le site sert. Mesure : l'adresse figure aussi une fois dans .output/public/_build/assets/_slug_-D5ab9Gwj.js, le script de la route commune, servi publiquement et qu'aucune lecture de page n'aurait montre.",
+      "Le CV disparait du raisonnement de repli : la mesure dit qu'aucun CV n'est publie aujourd'hui — public/ ne contient que favicon.ico et theme.js, et resume.ts n'annonce aucun fichier. Le CV redevient une question d'avenir, posee en D-C plutot que traitee comme un fait present.",
+      "Une question que la demande ne posait pas est ajoutee, D-E : le depot lui-meme porte l'adresse dans huit fichiers suivis par git. Si le depot est public, le critere de retrait sera vert pendant que github.com continuera de servir l'adresse."
+    ]
+  },
+  "answers_composition_check": {
+    "pairs_checked": [
+      {
+        "pair": [
+          "Retirer l'adresse de tout ce que le site sert",
+          "Garder LinkedIn comme canal"
+        ],
+        "composes": false,
+        "note": "Chacune se defend seule ; ensemble elles laissent un trou qu'aucune des deux ne cree. Le site n'a plus aucune route directe vers une boite de reception : un visiteur sans compte LinkedIn — et un recruteur dont l'outil interdit les messages sortants vers un compte non connecte — n'a plus rien. GitHub ne comble pas le trou, un profil de code ne portant pas de messagerie. Et la conversation vit desormais chez un tiers dont ni la duree de conservation ni l'export ne sont maitrises. La paire est rendue tenable de deux facons, et seulement de ces deux facons : D-B tranche s'il faut un repli, et le perimetre ecrit le cout accepte au lieu de le taire. Sans l'un ou l'autre, la page de contact reste une page de contact par son titre seul."
+      },
+      {
+        "pair": [
+          "Retirer l'adresse de tout ce que le site sert",
+          "Regle du perimetre approuve : aucun message n'est stocke ni transmis a un tiers, les liens ouvrent l'outil du visiteur"
+        ],
+        "composes": true,
+        "note": "Une lecture rapide les oppose — LinkedIn EST un tiers — et la lecture rapide se trompe. La regle porte sur ce que le SITE fait : il ne collecte rien, ne stocke rien, n'achemine rien, et n'a aucun serveur pour le faire, le deploiement etant statique. Un lien qui ouvre l'outil du visiteur laisse le visiteur transmettre ce qu'il veut a qui il veut ; c'est deja ce que faisait le lien mailto, qui ouvrait sa messagerie. La regle est donc inchangee, et je la reecris a l'identique dans le perimetre pour que personne n'ait a refaire ce raisonnement."
+      },
+      {
+        "pair": [
+          "Retirer l'adresse de tout ce que le site sert",
+          "Regle du perimetre approuve : le CV est rappele au second rang, sous sa condition d'existence"
+        ],
+        "composes": false,
+        "note": "Le CV porte l'adresse en clair. Le jour ou le PDF est depose dans public/cv, le site sert de nouveau l'adresse — dans un document telechargeable et indexable, cette fois — pendant que ses pages n'en portent plus. Le retrait serait alors vrai a la lettre et faux en pratique. Aujourd'hui la contradiction dort : mesure faite, aucun CV n'est publie. C'est exactement pourquoi elle doit etre tranchee maintenant, en D-C, et non le jour du depot ou personne ne relira ce document."
+      },
+      {
+        "pair": [
+          "Retirer l'adresse de tout ce que le site sert",
+          "Le depot est la source publiee du site, et il porte l'adresse"
+        ],
+        "composes": false,
+        "note": "`git grep -c` compte l'adresse dans huit fichiers suivis : src/features/contact/ContactLinks.tsx, tests/e2e/contact.spec.ts, tests/unit/contact.test.tsx, mockups/accueil-contact.html, mockups/portfolio-v1.html, docs/decisions/s-5bjp-perimetre-approuve-round6.json (sept fois), pipeline/store/issues.jsonl, .sudocode/issues.jsonl — quinze occurrences. L'issue en retire quatre a cinq ; le reste est de l'archive, et l'historique git garde tout, y compris ce que l'issue retire. Si le depot est public, le critere de retrait sortira vert pendant que github.com servira l'adresse. Je n'ai pas pu mesurer la visibilite du depot : la commande demandait une approbation que cette session ne peut pas donner. C'est D-E, et c'est la question la plus consequente de ce round."
+      }
+    ],
+    "conflicts_found": [
+      "Le retrait plus le canal unique laissent le site sans aucune route directe vers une boite de reception, et sans repli pour qui n'a pas LinkedIn. Tranche par D-B, et le cout est ecrit au perimetre quelle que soit la reponse.",
+      "La regle du CV au second rang republiera l'adresse le jour d'un depot de PDF, dans un document servi et indexable. Tranche par D-C.",
+      "Le depot publie l'adresse dans huit fichiers suivis et dans tout l'historique ; le critere de retrait, qui porte sur l'artefact deploye, ne l'atteint pas et ne le peut pas. Tranche par D-E."
+    ]
+  },
+  "facts_measured_before_writing_this_scope": [
+    {
+      "fact": "L'adresse figure cinq fois dans l'artefact deploye, reparties sur trois fichiers, et non deux fois sur une page.",
+      "measure": "`grep -ro \"kraherbertdonatienkoffi@gmail.com\" .output/public | sort | uniq -c` rend : 2 dans .output/public/fr/contact/index.html, 2 dans .output/public/en/contact/index.html, 1 dans .output/public/_build/assets/_slug_-D5ab9Gwj.js.",
+      "consequence": "Le libelle « Gmail » aurait laisse trois occurrences sur cinq. Le critere de retrait porte sur .output/public entier, ce qui est deploye selon la decision 0003, et non sur le seul HTML des huit adresses."
+    },
+    {
+      "fact": "Aucun CV n'est publie aujourd'hui.",
+      "measure": "`ls public/cv` echoue — le dossier n'existe pas ; public/ ne contient que favicon.ico et theme.js. src/shared/resume.ts declare `RESUMES` vide, delibere et commente.",
+      "consequence": "Retirer l'adresse du site la retire aujourd'hui de tout ce que le site sert, sans exception. L'objection « le CV la republie » est vraie demain, pas aujourd'hui, et c'est ce que D-C fixe."
+    },
+    {
+      "fact": "L'adresse est dans huit fichiers suivis par git, quinze occurrences.",
+      "measure": "`git grep -c \"kraherbertdonatienkoffi@gmail.com\" -- .` : .sudocode/issues.jsonl 1, docs/decisions/s-5bjp-perimetre-approuve-round6.json 7, mockups/accueil-contact.html 1, mockups/portfolio-v1.html 1, pipeline/store/issues.jsonl 2, src/features/contact/ContactLinks.tsx 1, tests/e2e/contact.spec.ts 1, tests/unit/contact.test.tsx 1.",
+      "consequence": "Le retrait du site ne touche ni l'archive ni l'historique. Visibilite du depot non mesuree — la commande demandait une approbation indisponible dans cette session. D-E."
+    },
+    {
+      "fact": "La porte `secrets_scan` ne voit pas cette adresse et ne la verra jamais.",
+      "measure": "`pnpm run scan:secrets` sur l'arbre qui la porte quinze fois : « secrets scan: 222 file(s), nothing found. », sortie 0.",
+      "consequence": "Une adresse de contact n'est pas un identifiant : aucune porte existante ne surveille sa publication. Ce qui protege ici sera ce que cette issue ecrit, et rien d'autre. C'est ce que D-D place."
+    },
+    {
+      "fact": "La maquette de reference porte l'adresse en texte, pas en lien de messagerie.",
+      "measure": "mockups/accueil-contact.html ligne 453 : `<a class=\"adresse\" href=\"#\">kraherbertdonatienkoffi@gmail.com</a>`, precedee ligne 452 de `<span class=\"quoi\">Ecrire un message</span>`. Aucune occurrence de `mailto` dans le fichier.",
+      "consequence": "La maquette doit suivre, sur ces deux lignes. Une maquette qui garde l'adresse redevient la source de verite de la prochaine issue qui touchera cette fiche."
+    },
+    {
+      "fact": "spec/portfolio-v1 et main portent exactement le meme arbre.",
+      "measure": "`git diff main HEAD --name-only` ne rend aucune ligne. La branche est en avance de deux commits qui ne changent aucun fichier.",
+      "consequence": "Repartir de main ne coute rien. C'est D-F."
+    },
+    {
+      "fact": "L'etat de depart est sain.",
+      "measure": "`pnpm audit --audit-level high` : « No known vulnerabilities found », sortie 0.",
+      "consequence": "Aucune dependance n'est proposee ni retiree par ce perimetre."
+    },
+    {
+      "fact": "L'arbre de travail n'est pas propre, sur un seul fichier qui n'est pas le mien.",
+      "measure": "`git status --short` : ` M pipeline/store/issues.jsonl`, le magasin de controle du pipeline.",
+      "consequence": "Ce round n'ecrit aucun code et ne cree aucune branche, donc rien n'est bloque. La branche sera coupee au moment du plan, sur un arbre dont l'Orchestrateur aura dispose de son propre fichier — je ne nettoie pas le travail d'un autre role."
+    }
+  ],
+  "functional_scope": {
+    "intent": "Le site cesse de publier l'adresse de messagerie personnelle. LinkedIn prend la place qu'elle occupait. Et ce que ce retrait ne protege pas est ecrit au perimetre plutot que decouvert plus tard.",
+    "summary": "Trois choses, dont la troisieme n'est pas du code. Le site ne sert plus l'adresse nulle part — pages, scripts, maquette de reference —, ce qui se prouve par une execution et non par une relecture. LinkedIn devient l'appel a l'action principal de la fiche de contact, a la place exacte et avec le poids exact que l'adresse avait, GitHub restant au second rang. Et le perimetre dit ce que l'operation achete — les robots qui lisent les pages n'y trouvent plus rien — et ce qu'elle n'achete pas : l'adresse reste valide, reste dans le CV, reste dans le depot et dans son historique, et reste chez quiconque l'a deja collectee.",
+    "features": [
+      {
+        "name": "Le site ne publie plus d'adresse de messagerie",
+        "user_value": "Un robot collecteur qui lit ce que le site sert n'y trouve plus l'adresse personnelle de son auteur — ni dans le texte affiche, ni dans l'attribut d'un lien, ni dans un script.",
+        "rules": [
+          "Aucune occurrence de la chaine kraherbertdonatienkoffi@gmail.com ne subsiste dans ce que le site sert. Le texte affiche et l'attribut du lien comptent tous les deux : le href est ce que le robot lit, et c'est l'occurrence qu'un libelle ne retire pas.",
+          "La regle porte sur l'artefact deploye entier, pages et scripts compris, et non sur le seul HTML des huit adresses. Mesure : l'adresse figure aujourd'hui cinq fois, dont une dans le script de la route commune que la lecture d'aucune page ne montre.",
+          "Le site ne publie aucun lien de messagerie : aucune des huit adresses ne porte un href commencant par mailto:.",
+          "Aucune obfuscation ne tient lieu de retrait : ni assemblage par script, ni encodage en entites, ni image. Ce qui est retire est retire, ce qui reste est publie ; il n'y a pas de troisieme etat.",
+          "La regle est prouvee par une execution automatique qui echoue si l'adresse reparait, jamais par une relecture. Un controle qui depend de la memoire de quelqu'un est un controle que la premiere semaine chargee supprime.",
+          "La maquette de reference de la fiche de contact cesse elle aussi de porter l'adresse : une maquette qui la garde redevient la source de verite de la prochaine issue qui touchera cette fiche.",
+          "Le retrait ne touche ni les adresses des huit pages, ni la barre, ni le pied, ni le theme, ni le contenu editorial des trois autres pages."
+        ]
+      },
+      {
+        "name": "LinkedIn devient l'appel a l'action principal",
+        "user_value": "Un recruteur qui veut transmettre une offre trouve un chemin unique et evident, a la place exacte ou l'adresse se trouvait, sans avoir a chercher ce qui a remplace quoi.",
+        "rules": [
+          "LinkedIn est l'appel a l'action principal de la fiche de contact, oriente recrutement : c'est le canal par lequel une offre se transmet. Cette regle remplace celle du round 6 qui donnait ce role a la messagerie.",
+          "Le site ne publie aucune adresse de messagerie. Cette regle remplace celle du round 6 qui fixait l'adresse publiee a la chaine exacte du CV. Le controle qui refusait une adresse fausse — parce qu'une adresse fausse echoue en silence — devient le controle qui refuse toute adresse publiee.",
+          "GitHub reste au second rang, et le CV le rejoint sous sa condition d'existence, inchangee : aucun lien n'est publie pour un fichier que le depot ne porte pas.",
+          "L'ordre de lecture et l'ordre du clavier restent le meme ordre : l'appel principal est le premier lien du contenu atteint au clavier, GitHub le suivant, le CV apres lui quand il existe.",
+          "Les conditions ecrites ne changent pas : forme de contrat, lieu et mobilite, disponibilite restent dites plutot que sous-entendues.",
+          "Aucun message n'est stocke ni transmis par le site : la page ne porte aucun formulaire et aucun envoi, et le lien ouvre l'outil du visiteur. La regle est inchangee et le reste : le deploiement est statique, le site n'a aucun serveur pour acheminer quoi que ce soit.",
+          "Un lien de contact vide ou mal forme fait echouer la construction, comme aujourd'hui. La verification perd son bras « adresse » et garde les autres : ce qui protegeait contre un lien mort protege toujours contre un lien mort.",
+          "Les deux langues bougent ensemble : un libelle ecrit dans une langue et absent de l'autre fait echouer la porte de completude."
+        ]
+      },
+      {
+        "name": "Ce que le retrait ne protege pas, ecrit plutot que sous-entendu",
+        "user_value": "L'operateur sait ce qu'il achete avant de le decouvrir ailleurs, et la prochaine personne qui lira ce perimetre saura pourquoi la page de contact n'a plus d'adresse.",
+        "rules": [
+          "Le retrait protege la PAGE, pas l'adresse. Elle reste valide, elle reste celle du CV, et elle reste chez quiconque l'a deja collectee ou l'a recue dans un envoi. Aucune rotation d'adresse n'est faite ici et aucune n'est proposee.",
+          "La conversation vit desormais chez un tiers : ni la duree de conservation ni l'export des messages LinkedIn ne sont maitrises par ce site. C'est le cout accepte du choix, et il est ecrit ici pour ne pas etre redecouvert.",
+          "Un visiteur sans compte LinkedIn n'a plus de route vers une boite de reception. GitHub est une identite, pas une messagerie.",
+          "Aucune porte existante ne surveille la publication d'une adresse : `secrets_scan` sort vert sur l'arbre qui la porte quinze fois, parce qu'une adresse de contact n'est pas un identifiant. Ce qui protege sera ce que cette issue ecrit, et rien d'autre.",
+          "Le depot porte l'adresse dans huit fichiers suivis, et son historique la gardera meme apres le retrait. Un retrait de publication ne retracte pas ce qui a ete publie.",
+          "Le jour ou un CV sera depose, il republiera l'adresse dans un document servi et indexable, a moins que la regle ne le couvre des maintenant."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "Aucun formulaire de contact, et aucun envoi de message par le site : la regle du perimetre approuve ne bouge pas, et le deploiement statique n'a de toute facon rien pour l'acheminer.",
+      "Aucune obfuscation de l'adresse : ni assemblage par script, ni entites HTML, ni image. Mesure a l'appui, l'assemblage par script republierait l'adresse exactement la ou elle se trouve aujourd'hui sans que personne la voie, dans le script de la route commune.",
+      "Aucune adresse de remplacement, alias ou boite dediee, publiee a la place — sauf reponse contraire en D-B. Publier une autre adresse est publier une adresse.",
+      "Aucune rotation, aucun changement et aucune suppression de l'adresse elle-meme : elle cesse d'etre publiee ici, elle ne cesse pas d'exister.",
+      "Aucun nettoyage de l'historique git, aucune reecriture de commits deja pousses, et aucune modification des documents d'archive — perimetres approuves, magasin du pipeline, maquette generale du round 6 — qui portent l'adresse comme trace de ce qui a ete decide.",
+      "Aucun depot de CV et aucune modification de la publication des CV : aucun n'est publie aujourd'hui, et D-C ne fait qu'ecrire la regle qui s'appliquera le jour venu.",
+      "Aucun changement de l'accueil, des realisations, du parcours, de la barre, du pied de page, du theme ni des huit adresses.",
+      "Aucune redirection, aucune page supplementaire, aucune dependance ajoutee ou retiree."
+    ]
+  },
+  "domain_reading": {
+    "retained": [
+      "La page de contact reste une fiche : un appel principal, des moyens secondaires, des conditions ecrites. C'est la forme que la maquette dessine, que les huit largeurs ont deja validee, et que le retrait ne remet pas en cause — il change ce qui occupe la place principale, pas la place.",
+      "Le publie et le prive sont deux ensembles distincts : ce que le site sert, et ce que le depot garde. Le critere de retrait porte sur le premier et ne peut rien sur le second. Les confondre est la seule facon de croire le probleme regle.",
+      "Un moyen de contact est valide ou n'est pas publie. La verification a la construction, ecrite au round 6 parce qu'un lien mort echoue en silence, garde tout son sens : elle change de bras, pas de raison d'etre."
+    ],
+    "discarded": [
+      "« Masquer derriere un libelle » : lu comme une demande de discretion visuelle, ce serait faisable et inutile. La mesure a tranche — le href reste, et c'est le HTML que les robots lisent, pas le texte affiche. Un libelle ne protege de rien.",
+      "« Le site doit garder une messagerie directe » : lecture defendable d'un portfolio oriente recrutement, ecartee parce qu'aucune facon de la garder ne survit au critere de retrait. Toutes republient une adresse, ou stockent un message.",
+      "« Le CV rend l'operation vaine » : ecartee sur la mesure, aucun CV n'etant publie. Un PDF envoye a quelqu'un n'est pas indexe ; c'est un PDF servi par le site qui l'est, et c'est ce cas-la, futur, que D-C traite."
+    ]
+  },
+  "contract_sketch": [
+    "La fiche de contact perd son grand lien d'adresse et gagne un grand lien LinkedIn a la meme place, avec le meme poids typographique et la meme hauteur minimale de cible tactile. Les moyens secondaires perdent leur entree LinkedIn, qui monte, et gardent GitHub puis le CV.",
+    "Le libelle qui annonce l'appel change dans les deux dictionnaires : « Ecrire un message » n'est plus ce que le visiteur va faire. Les deux langues changent ensemble, sous peine de porte de completude rouge.",
+    "La constante qui portait l'adresse disparait, ainsi que le bras « adresse » de la verification des liens et le test unitaire qui l'exercait. La verification garde ses bras LinkedIn, GitHub et CV, et garde son refus a la construction.",
+    "Le test de bout en bout qui s'appelle aujourd'hui « publie l'adresse en clair, sans obfuscation » est inverse : il devient l'exigence qu'aucun fichier de l'artefact deploye ne porte la chaine, ce qu'un test peut faire en parcourant le dossier servi plutot qu'en lisant une page. C'est le seul niveau ou le script de la route commune est visible.",
+    "La maquette de reference suit sur ses deux lignes de fiche.",
+    "Rien d'autre ne bouge : ni les adresses, ni la barre, ni le pied, ni le theme, ni le contenu editorial."
+  ],
+  "decomposition_titles": {
+    "titles": [
+      "Le contact sans adresse de messagerie : LinkedIn en appel principal, l'adresse retiree de tout ce que le site sert, la maquette suivie"
+    ],
+    "parallelism_intent": "Une seule issue, comme demande, et c'est aussi la bonne taille : un seul motif de changement — le site cesse de publier l'adresse — et huit fichiers qui bougent tous pour ce motif-la. Il n'y a donc aucun parallelisme a concevoir, et rien a serialiser : aucune autre issue n'est ouverte. Decouper en deux — le retrait, puis la promotion de LinkedIn — produirait un etat intermediaire ou la fiche de contact n'offre plus rien, c'est-a-dire un commit ou le site est casse pour de bon; les deux moities ne sont pas separables. La tache d'operateur eventuelle de D-D vit hors du cycle, sur sa propre branche, parce que scripts/ est en revue humaine."
+  },
+  "decisions_for_operator": [
+    {
+      "id": "D-A",
+      "question": "Qu'est-ce qui prend la place que l'adresse occupait sur la fiche de contact ?",
+      "product_recommendation": "LinkedIn monte a la place principale et en prend l'allure : le grand lien de la fiche, au-dessus des conditions, avec un libelle qui dit ou il conduit — « Me joindre sur LinkedIn » et son equivalent anglais. GitHub reste au second rang. La fiche garde exactement sa forme, celle que la maquette dessine et que les huit largeurs ont deja validee ; le libelle est plus court que l'adresse, donc il ne peut pas deborder la ou elle ne debordait pas.",
+      "alternatives": [
+        "Laisser la place principale vide et ne garder que la liste des moyens : la fiche perd sa hierarchie et le recruteur n'a plus de chemin evident, ce qui est exactement ce que « oriente recrutement » voulait dire.",
+        "Mettre une phrase non cliquable a la place principale et laisser le lien au second rang : le regard va au grand texte, le clic est ailleurs. Un appel a l'action qui ne s'active pas.",
+        "Promouvoir GitHub plutot que LinkedIn : un profil de code ne porte pas de messagerie, donc aucune offre ne s'y transmet.",
+        "Promouvoir le CV : il n'existe pas aujourd'hui, et il porte l'adresse."
+      ]
+    },
+    {
+      "id": "D-B",
+      "question": "Faut-il un repli a LinkedIn, et si oui lequel ?",
+      "product_recommendation": "Aucun repli, et le cout ecrit au perimetre. LinkedIn devient le canal unique, GitHub reste une identite et non une boite de reception. Je le recommande sans enthousiasme : la paire « retirer l'adresse » et « canal unique » laisse sans route un visiteur qui n'a pas LinkedIn, et je l'ai signale en composition plutot que de l'enterrer. Je le recommande quand meme parce que les quatre replis possibles echouent tous — deux republient une adresse, un la rend illisible, le dernier est exclu par le perimetre — et qu'un repli qui ne tient pas coute plus qu'une absence assumee.",
+      "alternatives": [
+        "Une adresse dediee au site, differente de celle du CV : publier une autre adresse est publier une adresse. Elle sera collectee comme l'autre, et vous aurez deux boites a surveiller au lieu d'une.",
+        "L'adresse assemblee par script au moment du clic : mesure morte. L'adresse figure deja dans .output/public/_build/assets/_slug_-D5ab9Gwj.js, servi publiquement ; un assemblage par script l'y remettrait exactement, et le critere de retrait echouerait sur ce fichier — ce qui est la preuve que l'obfuscation n'en est pas une.",
+        "L'adresse en image : plus lisible par un lecteur d'ecran, plus copiable, et elle rompt l'accessibilite que les huit adresses tiennent aujourd'hui sans exception.",
+        "Un formulaire : exclu par le perimetre approuve — aucun message stocke ni transmis a un tiers — et il faudrait un service tiers pour l'acheminer, le deploiement etant statique.",
+        "Le CV comme repli : il porte l'adresse en clair, donc il deplace le probleme au lieu de le regler. Voir D-C."
+      ]
+    },
+    {
+      "id": "D-C",
+      "question": "Le jour ou un CV sera publie, il republiera l'adresse dans un document servi. La regle le couvre-t-elle des maintenant ?",
+      "product_recommendation": "Oui, ecrite maintenant : aucun document servi par le site ne publie l'adresse, le CV compris. Aujourd'hui la question est theorique — aucun CV n'est publie, mesure — et c'est exactement pour cela qu'il faut l'ecrire aujourd'hui : le jour ou vous deposerez le PDF, personne ne relira ce perimetre. J'ajoute la limite plutot que de la cacher : un controle qui parcourt les octets de l'artefact attrape le HTML, le JavaScript et le JSON, mais un texte de PDF dont le flux est compresse peut lui echapper. Le controle ne remplace donc pas la verification du PDF avant depot, et le perimetre doit le dire au lieu de laisser croire le contraire.",
+      "alternatives": [
+        "Ne rien ecrire et traiter le CV le jour venu : la regle qui manque est toujours celle que personne n'a ecrite au moment ou elle etait gratuite.",
+        "Publier sur le site un CV expurge de l'adresse et garder la version complete pour les envois directs : deux fichiers a maintenir, dont celui qui compte est celui que personne ne relit.",
+        "Interdire le depot d'un CV tant que la question n'est pas tranchee : le perimetre approuve prevoit deja le CV au second rang sous condition d'existence, et l'interdire reviendrait a defaire une decision qui tient."
+      ]
+    },
+    {
+      "id": "D-D",
+      "question": "Ou vit la preuve que l'adresse n'est plus publiee : un test dans le cycle, un controle permanent, ou les deux ?",
+      "product_recommendation": "Les deux, dans cet ordre. D'abord, dans l'issue : un test de la suite navigateur parcourt le dossier servi, fichier par fichier, et exige zero occurrence de la chaine. Il vit dans tests/, donc dans la politique de fichiers de l'implementeur, et il tourne a chaque poussee. Ensuite, en tache d'operateur sur une branche dediee : le meme controle comme porte declaree, parce qu'une porte ne depend de la memoire de personne alors qu'un test peut etre retire par celui qu'il gene. scripts/ est en revue humaine — c'est deja par ce chemin que la porte `content` a ete elargie au round 6 — donc le pipeline ne peut pas la poser lui-meme, et le second point vous coute une branche et une PR.",
+      "alternatives": [
+        "Le test seul : suffisant pour clore l'issue, et c'est ce qui part si vous ne voulez pas payer la seconde branche. Il vit dans le meme depot que ce qu'il surveille, et il partira avec la premiere personne qui le trouvera genant.",
+        "La porte seule, en tache d'operateur, sans test dans l'issue : l'issue se fermerait sans preuve a elle, ce que le cycle refuse.",
+        "Une relecture humaine a chaque changement de la fiche de contact : c'est ce qui a laisse l'adresse entrer dans le script de la route commune, que personne n'a jamais eu l'occasion de lire."
+      ]
+    },
+    {
+      "id": "D-E",
+      "question": "Le depot lui-meme publie l'adresse dans huit fichiers suivis. Est-ce dans le perimetre, et le depot est-il public ?",
+      "product_recommendation": "Repondez d'abord a la question de fait, parce que je n'ai pas pu la mesurer : la commande qui lit la visibilite de HerbertCodex/new-portfolio demandait une approbation que cette session ne peut pas donner. Si le depot est prive, il n'y a rien a faire et le critere de retrait suffit. S'il est public, ma recommandation est de retirer dans cette issue les occurrences vivantes que le code et les tests portent — elles disparaissent de toute facon avec le changement — de laisser intactes les archives qui tracent une decision, et de ne PAS reecrire l'historique : une reecriture sur une branche deja poussee est interdite par le flux de travail, et elle n'effacerait pas les copies que GitHub garde des commits d'une PR fusionnee. Il faut alors savoir que le retrait du site est partiel tant que le depot est public, et le dire dans la PR au lieu de laisser croire l'inverse.",
+      "alternatives": [
+        "Passer le depot en prive : c'est le seul geste qui ferme reellement cette voie, et il coute la vitrine — un portfolio d'ingenieur dont le code n'est pas lisible perd une partie de ce qu'il demontre.",
+        "Reecrire l'historique pour effacer l'adresse : interdit par le flux de travail sur une branche partagee, et inefficace — les commits d'une PR fusionnee restent accessibles chez l'hebergeur.",
+        "Ne rien faire et considerer le depot hors sujet : defendable si le depot est prive, indefendable s'il est public, et c'est precisement pour cela que la question de fait vient d'abord."
+      ]
+    },
+    {
+      "id": "D-F",
+      "question": "Sur quelle branche et dans quelle PR ce perimetre voyage-t-il, la spec etant fusionnee ?",
+      "product_recommendation": "Une nouvelle branche coupee de main, et une seconde PR. Mesure : `git diff main HEAD --name-only` ne rend rien — spec/portfolio-v1 et main portent le meme arbre, la PR 1 est fusionnee, et les deux commits qui separent la branche de main ne changent aucun fichier. Repartir de main ne coute donc rien et laisse l'historique lisible : une PR par perimetre approuve.",
+      "alternatives": [
+        "Reprendre spec/portfolio-v1 : sa PR est fusionnee ; y ajouter une quatorzieme issue melangerait treize issues deja revues et une nouvelle dans une meme lecture.",
+        "Commiter directement sur main en tache d'operateur : c'est un changement de comportement observable sur une page publique, pas un reglage d'outil, et la decision 0014 dit que tout passe par le cycle."
+      ]
+    }
+  ],
+  "design_commitments_carried_into_issues": [
+    "Zero debordement horizontal aux huit largeurs sur les huit adresses : le libelle qui remplace l'adresse est plus court qu'elle, mais la mesure sera refaite plutot que deduite.",
+    "Aucune cible tactile sous 24 px : le lien promu garde la hauteur minimale que l'adresse portait.",
+    "Le lien de contact reste atteignable depuis n'importe quelle page, au clavier seul : la barre n'est pas touchee, et c'est verifie plutot que suppose.",
+    "Les liens pointent vers des cibles renseignees et exactes : le refus a la construction d'un lien vide ou mal forme est conserve pour LinkedIn, GitHub et le CV.",
+    "Aucune violation d'accessibilite detectable sur les huit adresses, dans les deux langues, avec les memes etiquettes qu'aujourd'hui.",
+    "Les deux langues changent ensemble : un libelle present dans une seule fait echouer la porte de completude.",
+    "La porte de contenu reste verte : aucune formulation d'attente n'entre par la reecriture des libelles.",
+    "La fiche garde sa forme : un appel principal, des moyens secondaires, des conditions ecrites. Ce qui change est ce qui occupe la place, pas la place."
+  ],
+  "pr_commitments": [
+    "La PR nomme la surface qui demande une revue humaine : ce qu'une page atteignable sans authentification publie, et le fait qu'un retrait de publication ne retracte rien de ce qui a deja ete collecte.",
+    "Elle dit ce que le retrait ne protege pas — le CV a venir, le depot et son historique, l'adresse elle-meme — plutot que d'annoncer un probleme regle.",
+    "Elle cite l'execution d'integration continue du SHA exact de la tete de branche.",
+    "Elle nomme la porte que la tache d'operateur de D-D ajoute, le cas echeant, parce qu'ajouter une porte est un changement de porte."
+  ],
+  "context": {
+    "heading": "## Context for Operator",
+    "body": "Round 11, ouvert : six choix vous attendent, et le round n'en tranche aucun a votre place.\n\nCE QUE LA MESURE A CHANGE DANS VOTRE DEMANDE. Vous aviez demande deux fois moins que ce qu'il fallait, et une fois plus que vous ne croyiez. Deux fois moins : l'adresse ne figure pas deux fois dans ce que le site sert, elle y figure CINQ fois — deux dans chacune des deux pages de contact, et une cinquieme dans le script de la route commune, .output/public/_build/assets/_slug_-D5ab9Gwj.js, que la lecture d'aucune page ne montre. Un critere ecrit sur « le HTML servi des huit adresses » aurait ete vert avec l'adresse toujours servie. Le critere porte donc sur l'artefact deploye entier. Une fois plus : le CV, que vous citiez comme republiant l'adresse de toute facon, n'est pas publie — public/ ne contient que favicon.ico et theme.js, et resume.ts n'annonce aucun fichier. Retirer l'adresse du site la retire aujourd'hui de TOUT ce que le site sert, sans exception. C'est plus que ce que vous pensiez acheter.\n\nCE QUE J'AI TROUVE ET QUE VOUS N'AVIEZ PAS DEMANDE. `git grep` compte l'adresse dans huit fichiers suivis par git, quinze occurrences : le code, deux tests, les deux maquettes, un perimetre approuve, le magasin du pipeline, le magasin du suivi. L'issue en retire quatre ou cinq ; le reste est de l'archive, et l'historique garde tout, y compris ce que l'issue retire. Si HerbertCodex/new-portfolio est public, le critere de retrait sortira vert pendant que github.com continuera de servir l'adresse — et le geste aurait alors protege une porte en en laissant une autre ouverte a cote. Je n'ai pas pu mesurer la visibilite du depot : la commande demandait une approbation que cette session ne peut pas donner. C'est D-E, et c'est la question la plus consequente de ce round ; les cinq autres sont des questions de forme a cote de celle-la.\n\nLES DEUX REGLES CONTREDITES. Elles sont reecrites dans le perimetre, pas contournees. « La messagerie est l'appel a l'action principal, oriente recrutement » devient « LinkedIn est l'appel a l'action principal, oriente recrutement, et le site ne publie aucune adresse de messagerie ». « L'adresse publiee est celle du CV, ecrite exactement, une adresse fausse echouant en silence » devient « le site ne publie aucune adresse de messagerie », et le controle qui refusait une adresse fausse devient le controle qui refuse toute adresse publiee — meme mecanisme, sens inverse. Il garde ses bras LinkedIn, GitHub et CV : ce qui protegeait d'un lien mort protege toujours d'un lien mort.\n\nCE QUE JE VOUS DOIS DE DESAGREABLE. La paire « retirer l'adresse » et « LinkedIn comme canal unique » ne compose pas d'elle-meme : chacune se defend seule, ensemble elles laissent le site sans aucune route directe vers une boite de reception, et sans rien du tout pour un visiteur qui n'a pas LinkedIn. La conversation vit chez un tiers dont ni la conservation ni l'export ne sont maitrises. Je recommande quand meme de ne pas ajouter de repli, parce que les quatre replis possibles echouent tous — dont l'obfuscation par script, morte a la mesure : elle republierait l'adresse exactement dans le fichier ou personne ne la voit deja. Mais c'est D-B, et c'est vous qui payez ce cout, pas moi.\n\nLA SUITE. Rien n'est ecrit tant que vous n'avez pas repondu : ce round ne cree aucune branche, ne touche aucun fichier du site, et le plan ne partira qu'une fois le round approuve. La decomposition envisagee tient en une issue, comme vous l'avez demande, et c'est aussi sa bonne taille : un seul motif de changement, huit fichiers qui bougent pour lui. La page a lire est pipeline/pages/proposal-portfolio-v1-round11-adresse-retiree.html."
+  },
+  "evidence": {
+    "commands": [
+      {
+        "cmd": "grep -ro \"kraherbertdonatienkoffi@gmail.com\" .output/public | sort | uniq -c",
+        "exit": 0,
+        "note": "Cinq occurrences sur trois fichiers : 2 dans .output/public/fr/contact/index.html, 2 dans .output/public/en/contact/index.html, 1 dans .output/public/_build/assets/_slug_-D5ab9Gwj.js. C'est la mesure qui elargit le critere du HTML des huit adresses a l'artefact deploye entier. .output/public est ce qui est deploye, selon la decision 0003 ; .output/server est construit et non deploye, et porte l'adresse une fois de plus sans que cela compte."
+      },
+      {
+        "cmd": "git grep -c \"kraherbertdonatienkoffi@gmail.com\" -- .",
+        "exit": 0,
+        "note": "Huit fichiers suivis, quinze occurrences : .sudocode/issues.jsonl 1, docs/decisions/s-5bjp-perimetre-approuve-round6.json 7, mockups/accueil-contact.html 1, mockups/portfolio-v1.html 1, pipeline/store/issues.jsonl 2, src/features/contact/ContactLinks.tsx 1, tests/e2e/contact.spec.ts 1, tests/unit/contact.test.tsx 1. Base de D-E."
+      },
+      {
+        "cmd": "pnpm run scan:secrets",
+        "exit": 0,
+        "note": "« secrets scan: 222 file(s), nothing found. » sur l'arbre qui porte l'adresse quinze fois. La porte ne surveille pas les adresses de contact, et ne le fera jamais : ce n'est pas un identifiant. Base de D-D — ce qui protegera est ce que l'issue ecrit."
+      },
+      {
+        "cmd": "pnpm audit --audit-level high",
+        "exit": 0,
+        "note": "« No known vulnerabilities found ». Etat de depart sain ; aucune dependance n'est proposee ni retiree par ce perimetre."
+      },
+      {
+        "cmd": "git diff main HEAD --name-only",
+        "exit": 0,
+        "note": "Aucune ligne : spec/portfolio-v1 et main portent le meme arbre, les deux commits d'avance ne changeant aucun fichier. Base de D-F."
+      },
+      {
+        "cmd": "git status --short",
+        "exit": 0,
+        "note": "` M pipeline/store/issues.jsonl` seul. L'arbre n'est pas propre, sur le magasin de controle du pipeline, qui n'est pas le mien a nettoyer. Sans consequence ici : ce round n'ecrit aucun code et ne cree aucune branche."
+      }
+    ],
+    "files": [
+      "pipeline/handoffs/portfolio-v1-proposal-round11-adresse-retiree.json",
+      "pipeline/pages/proposal-portfolio-v1-round11-adresse-retiree.html"
+    ],
+    "commit_sha": null,
+    "notes": [
+      "Lus avant d'ecrire : docs/project-map.md en entier, les quinze decisions de docs/decisions, les cinq perimetres approuves de s-5bjp, src/features/contact/ContactPage.tsx, src/features/contact/ContactLinks.tsx, src/features/contact/ContactPage.css, src/shared/resume.ts, src/shared/identity.ts, les entrees `contact` des deux dictionnaires de src/shared/i18n.ts, tests/e2e/contact.spec.ts, la fiche de mockups/accueil-contact.html, et les criteres de l'issue close i-hxac que ce perimetre reecrit.",
+      "Le test de bout en bout d'aujourd'hui s'intitule « publie l'adresse en clair, sans obfuscation » et exige la presence de mailto: dans le HTML servi : le contrat existant dit litteralement l'inverse de ce qui est demande. C'est le meilleur indice que deux regles du perimetre approuve devaient etre reecrites plutot que contournees.",
+      "Aucune dependance evaluee, aucune proposee, aucune rejetee : ce perimetre n'en appelle aucune.",
+      "Limite connue et ecrite plutot que passee sous silence : un controle qui parcourt les octets de l'artefact attrape le HTML, le JavaScript et le JSON, mais un texte de PDF dont le flux est compresse peut lui echapper. C'est un fait general sur le format, non une mesure faite ici — aucun PDF n'existe dans ce depot pour le mesurer. D-C en tient compte."
+    ]
+  },
+  "blockers": []
+}

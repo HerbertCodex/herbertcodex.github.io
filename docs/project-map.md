@@ -32,8 +32,8 @@ required of every addition is judged against this document.
 
 ### src/features/contact/ContactLinks.tsx
 
-- `CONTACT_EMAIL` — constant — The address the site publishes, which is the one the résumé carries.
-- `ContactMeans` — type — A way of reaching the person other than the message itself, and its target.
+- `ContactMeans` — type — A way of reaching the person, and its target.
+- `CONTACT_CALL` — constant — The primary call of the contact card, and the profile it leads to.
 - `contactMeans` — function — The means of contact at the second rank, in the order the design fixes.
 - `malformedContactLinks` — function — The contact targets stated empty or malformed, which are never published.
 - `ContactLinks` (default) — function — The second rank of the contact block: the profiles, then the résumé.

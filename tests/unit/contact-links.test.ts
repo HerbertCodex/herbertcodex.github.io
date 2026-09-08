@@ -1,15 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { CONTACT_EMAIL, contactMeans, malformedContactLinks, type ContactMeans } from "~/features/contact/ContactLinks";
+import { CONTACT_CALL, contactMeans, malformedContactLinks, type ContactMeans } from "~/features/contact/ContactLinks";
 import { LOCALES } from "~/shared/i18n";
 import { resumeOf, type Resume } from "~/shared/resume";
 
 const PUBLISHED: Resume = { href: "/cv/donatien-koffi-fr.pdf", file: "public/cv/donatien-koffi-fr.pdf" };
 
+const KEYS: readonly ContactMeans["key"][] = ["linkedin", "github", "cv"];
+
+/* Vide, blanche, relative, en http, tronquee — les cinq formes d'une cible fautive, moyen par moyen. */
+const FAULTY: Record<ContactMeans["key"], readonly string[]> = {
+  linkedin: [
+    "",
+    "   ",
+    "linkedin.com/in/donatien-koffi",
+    "http://linkedin.com/in/donatien-koffi",
+    "https://linkedin.com",
+  ],
+  github: ["", "   ", "github.com/HerbertCodex", "http://github.com/HerbertCodex", "https://github.com"],
+  cv: ["", "   ", "cv/donatien-koffi-fr.pdf", "http://exemple.fr/cv/donatien-koffi-fr.pdf", "/cv/"],
+};
+
 describe("les moyens de contact du second rang", () => {
-  it("range le CV derrière LinkedIn et GitHub, et seulement pour une langue qui en publie un", () => {
-    expect(contactMeans("fr", undefined).map((mean) => mean.key)).toEqual(["linkedin", "github"]);
-    expect(contactMeans("fr", PUBLISHED).map((mean) => mean.key)).toEqual(["linkedin", "github", "cv"]);
-    expect(contactMeans("fr", PUBLISHED)[2].href).toBe(PUBLISHED.href);
+  it("range le CV derrière GitHub, et seulement pour une langue qui en publie un", () => {
+    expect(contactMeans("fr", undefined).map((mean) => mean.key)).toEqual(["github"]);
+    expect(contactMeans("fr", PUBLISHED).map((mean) => mean.key)).toEqual(["github", "cv"]);
+    expect(contactMeans("fr", PUBLISHED)[1].href).toBe(PUBLISHED.href);
   });
 
   /*
@@ -30,26 +45,25 @@ describe("les moyens de contact du second rang", () => {
 
 describe("la garde des liens de contact", () => {
   it("accepte les cibles réellement renseignées du dépôt", () => {
-    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("fr", PUBLISHED))).toEqual([]);
-    expect(malformedContactLinks(CONTACT_EMAIL, contactMeans("en", undefined))).toEqual([]);
+    expect(malformedContactLinks([CONTACT_CALL, ...contactMeans("fr", PUBLISHED)])).toEqual([]);
+    expect(malformedContactLinks([CONTACT_CALL, ...contactMeans("en", undefined)])).toEqual([]);
   });
 
-  it("nomme une adresse vide ou mal formée plutôt que de la publier", () => {
-    expect(malformedContactLinks("", contactMeans("fr"))).toEqual(["email"]);
-    expect(malformedContactLinks("   ", contactMeans("fr"))).toEqual(["email"]);
-    expect(malformedContactLinks("kraherbertdonatienkoffi", contactMeans("fr"))).toEqual(["email"]);
-    expect(malformedContactLinks("kraherbertdonatienkoffi@gmail", contactMeans("fr"))).toEqual(["email"]);
+  it("nomme la clé fautive d'une cible vide, relative, en http ou tronquée, pour chacun des trois moyens", () => {
+    for (const key of KEYS) {
+      for (const href of FAULTY[key]) {
+        expect(malformedContactLinks([{ key, href }]), `${key} « ${href} »`).toEqual([key]);
+      }
+    }
   });
 
-  it("nomme un lien vide ou mal formé plutôt que de le publier", () => {
-    const empty: readonly ContactMeans[] = [{ key: "linkedin", href: "" }];
-    const relative: readonly ContactMeans[] = [{ key: "github", href: "github.com/HerbertCodex" }];
-    const insecure: readonly ContactMeans[] = [{ key: "linkedin", href: "http://linkedin.com/in/donatien-koffi" }];
-    const truncated: readonly ContactMeans[] = [{ key: "cv", href: "/cv/" }];
-
-    expect(malformedContactLinks(CONTACT_EMAIL, empty)).toEqual(["linkedin"]);
-    expect(malformedContactLinks(CONTACT_EMAIL, relative)).toEqual(["github"]);
-    expect(malformedContactLinks(CONTACT_EMAIL, insecure)).toEqual(["linkedin"]);
-    expect(malformedContactLinks(CONTACT_EMAIL, truncated)).toEqual(["cv"]);
+  /*
+   * Le bras adresse est parti avec l'adresse. Ce que ce test tient est qu'il
+   * n'a rien laisse derriere lui : la garde ne fabrique plus de faute pour un
+   * moyen qu'on ne lui donne pas, alors qu'elle en nommait une — « email » —
+   * des que la chaine attendue manquait.
+   */
+  it("ne connaît plus de bras adresse : sans moyen, elle ne nomme aucune faute", () => {
+    expect(malformedContactLinks([])).toEqual([]);
   });
 });

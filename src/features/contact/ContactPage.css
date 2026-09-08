@@ -9,9 +9,9 @@
   display: grid;
   /*
    * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
-   * pas sous la largeur de son contenu, et l'adresse de messagerie, qui ne se
-   * coupe qu'aux mots, faisait deborder le bloc de 122 px a 375. Piege deja
-   * paye trois fois dans ce depot.
+   * pas sous la largeur de son contenu, et l'appel, compose au corps le plus
+   * gros de la fiche, faisait deborder le bloc de 122 px a 375 du temps ou il
+   * portait une adresse. Piege deja paye trois fois dans ce depot.
    */
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
@@ -61,12 +61,7 @@
   color: var(--on-accent);
 }
 
-.reach-what {
-  display: block;
-  margin-bottom: var(--space-2);
-}
-
-.reach-address {
+.reach-call {
   display: block;
   margin-bottom: var(--space-4);
   min-height: var(--tap-min);

@@ -305,7 +305,7 @@
         max-width: var(--measure);
       }
 
-      /* ---- D. Le contact en fiche : l'adresse d'abord, sobre ---- */
+      /* ---- D. Le contact en fiche : l'appel d'abord, sobre ---- */
       .fiche {
         display: grid;
         /*
@@ -325,16 +325,7 @@
         border-top: var(--border-heavy) solid var(--ink);
         padding-top: var(--space-3);
       }
-      .fiche .quoi {
-        font-family: var(--font-mono);
-        font-size: var(--text-xs);
-        text-transform: uppercase;
-        letter-spacing: var(--track-wide);
-        color: var(--ink-muted);
-        display: block;
-        margin-bottom: var(--space-2);
-      }
-      .fiche .adresse {
+      .fiche .joindre {
         font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
         font-weight: var(--weight-bold);
         overflow-wrap: break-word;
@@ -449,9 +440,8 @@
         <section class="fiche">
           <div class="appel">
             <span class="dispo">Disponible immédiatement</span>
-            <span class="quoi">Écrire un message</span>
-            <a class="adresse" href="#">kraherbertdonatienkoffi@gmail.com</a>
-            <div class="liens"><a href="#">LinkedIn</a><a href="#">GitHub</a></div>
+            <a class="joindre" href="#">Me joindre sur LinkedIn</a>
+            <div class="liens"><a href="#">GitHub</a></div>
           </div>
           <div class="conditions">
             <dl>

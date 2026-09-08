@@ -77,7 +77,7 @@ export const DICTIONARIES = {
       title: "Contact",
       heading: "Contact",
       lede: "Disponible immédiatement",
-      write: "Écrire un message",
+      call: "Me joindre sur LinkedIn",
       terms: {
         contract: { label: "Contrat", value: "CDI ou mission freelance" },
         place: { label: "Lieu", value: "Rennes, mobile partout en France, ou à distance" },
@@ -145,7 +145,7 @@ export const DICTIONARIES = {
       title: "Contact",
       heading: "Contact",
       lede: "Available immediately",
-      write: "Write a message",
+      call: "Reach me on LinkedIn",
       terms: {
         contract: { label: "Contract", value: "Permanent role or freelance engagement" },
         place: { label: "Location", value: "Rennes, mobile across France, or remote" },

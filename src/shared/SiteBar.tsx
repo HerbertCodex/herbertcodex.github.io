@@ -39,7 +39,13 @@ export default function SiteBar(props: SiteBarProps) {
       <header class="bar">
         <span class="mark">{PERSON}</span>
         <nav aria-label={t("bar.nav")}>
-          <For each={PAGES}>{(page) => <a href={addressOf(page, locale())}>{t(`nav.${page.key}`)}</a>}</For>
+          <For each={PAGES}>
+            {(page) => (
+              <a href={addressOf(page, locale())} aria-current={page.key === current()?.key ? "page" : undefined}>
+                {t(`nav.${page.key}`)}
+              </a>
+            )}
+          </For>
         </nav>
         <Show when={current()}>{(page) => <LanguageSwitch page={page()} />}</Show>
         <ThemeToggle />

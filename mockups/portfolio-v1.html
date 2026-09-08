@@ -242,6 +242,20 @@
         min-height: var(--tap-min);
       }
 
+      /*
+       * La page en cours dans le menu. La graisse et le soulignement la
+       * montrent, `aria-current` l'annonce : la couleur seule laisserait
+       * dehors qui distingue mal deux teintes. Un soulignement plutot qu'un
+       * filet, parce qu'il ne prend aucune place dans la hauteur de la barre.
+       */
+      .bar nav [aria-current="page"] {
+        font-weight: var(--weight-bold);
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+        text-decoration-thickness: var(--border-heavy);
+        text-underline-offset: var(--space-1);
+      }
+
       .langs [aria-current="true"] {
         color: var(--ink-inverse);
         background: var(--ink);
@@ -925,7 +939,7 @@
       <header class="bar">
         <span class="mark">Donatien Koffi</span>
         <nav aria-label="Navigation principale">
-          <a href="/fr/realisations">Réalisations</a>
+          <a href="/fr/realisations" aria-current="page">Réalisations</a>
           <a href="/fr/parcours">Parcours</a>
           <a href="/fr/contact">Contact</a>
         </nav>

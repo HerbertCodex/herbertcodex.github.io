@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { For } from "solid-js";
-import ContactLinks, { CONTACT_EMAIL } from "./ContactLinks";
+import ContactLinks, { CONTACT_CALL } from "./ContactLinks";
 import { useI18n } from "~/shared/i18n";
 import "./ContactPage.css";
 
@@ -20,9 +20,8 @@ export default function ContactPage() {
       <section class="card">
         <div class="reach">
           <span class="status">{t("contact.lede")}</span>
-          <span class="reach-what">{t("contact.write")}</span>
-          <a class="reach-address" href={`mailto:${CONTACT_EMAIL}`}>
-            {CONTACT_EMAIL}
+          <a class="reach-call" href={CONTACT_CALL.href}>
+            {t("contact.call")}
           </a>
           <ContactLinks />
         </div>

@@ -3,26 +3,22 @@ import { LOCALES, useI18n, type Locale } from "~/shared/i18n";
 import { resumeOf, type Resume } from "~/shared/resume";
 
 /**
- * The address the site publishes, which is the one the résumé carries.
- */
-export const CONTACT_EMAIL = "kraherbertdonatienkoffi@gmail.com";
-
-/**
- * A way of reaching the person other than the message itself, and its target.
+ * A way of reaching the person, and its target.
  */
 export type ContactMeans = {
   readonly key: "linkedin" | "github" | "cv";
   readonly href: string;
 };
 
-const PROFILES: readonly ContactMeans[] = [
-  { key: "linkedin", href: "https://linkedin.com/in/donatien-koffi" },
-  { key: "github", href: "https://github.com/HerbertCodex" },
-];
+/**
+ * The primary call of the contact card, and the profile it leads to.
+ */
+export const CONTACT_CALL: ContactMeans = { key: "linkedin", href: "https://linkedin.com/in/donatien-koffi" };
+
+const PROFILES: readonly ContactMeans[] = [{ key: "github", href: "https://github.com/HerbertCodex" }];
 
 const ABSOLUTE = /^https:\/\/[^\s/]+\.[^\s/]+\/\S+$/;
 const DOCUMENT = /^\/[^\s?#]+\.pdf$/;
-const ADDRESS = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
 
 /*
  * Le CV vient de `resume.ts`, qui le porte deja pour la page du parcours. Une
@@ -36,7 +32,7 @@ const ADDRESS = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
  *
  * @param locale - the language in force, which decides which résumé applies
  * @param resume - the résumé that language publishes, absent when none does
- * @returns LinkedIn, then GitHub, then the résumé when that language has one
+ * @returns GitHub, then the résumé when that language has one
  */
 export function contactMeans(locale: Locale, resume: Resume | undefined = resumeOf(locale)): readonly ContactMeans[] {
   if (resume === undefined) return PROFILES;
@@ -46,12 +42,11 @@ export function contactMeans(locale: Locale, resume: Resume | undefined = resume
 /**
  * The contact targets stated empty or malformed, which are never published.
  *
- * @param email - the address the primary call is built on
- * @param means - the secondary means to inspect
+ * @param means - the means to inspect, the primary call included
  * @returns one key per faulty target, an empty list when every target holds
  */
-export function malformedContactLinks(email: string, means: readonly ContactMeans[]): string[] {
-  const faults = ADDRESS.test(email.trim()) ? [] : ["email"];
+export function malformedContactLinks(means: readonly ContactMeans[]): string[] {
+  const faults: string[] = [];
   for (const mean of means) {
     const shape = mean.key === "cv" ? DOCUMENT : ABSOLUTE;
     if (!shape.test(mean.href.trim())) faults.push(mean.key);
@@ -66,7 +61,9 @@ export function malformedContactLinks(email: string, means: readonly ContactMean
  * `pnpm run build` sort non nul — mesure le 2026-09-06 en remplacant l'adresse
  * de LinkedIn par une chaine vide, puis rejoue apres restauration.
  */
-const FAULTS = [...new Set(LOCALES.flatMap((locale) => malformedContactLinks(CONTACT_EMAIL, contactMeans(locale))))];
+const FAULTS = [
+  ...new Set(LOCALES.flatMap((locale) => malformedContactLinks([CONTACT_CALL, ...contactMeans(locale)]))),
+];
 if (FAULTS.length > 0) {
   throw new Error(`un lien de contact est vide ou mal formé : ${FAULTS.join(", ")}`);
 }

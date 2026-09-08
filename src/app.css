@@ -67,11 +67,11 @@ a:hover {
 
 /*
  * Le petit texte mono en capitales grises. La rangee de faits de l'accueil, le
- * pied de page, le libelle et les conditions de la fiche de contact sont le
- * meme objet typographique dans la maquette, et `duplication` a refuse la
- * deuxieme copie des cinq memes declarations. Il est declare ICI pour la raison
- * que `.links` juste au-dessus donne deja : une primitive recopiee par
- * composant est une primitive qui divergera.
+ * pied de page et les conditions de la fiche de contact sont le meme objet
+ * typographique dans la maquette, et `duplication` a refuse la deuxieme copie
+ * des cinq memes declarations. Il est declare ICI pour la raison que `.links`
+ * juste au-dessus donne deja : une primitive recopiee par composant est une
+ * primitive qui divergera.
  *
  * La pastille de disponibilite en est le meme objet a une chose pres : elle se
  * pose sur un aplat, donc elle reprend le corps, la casse et l'interlettrage
@@ -79,7 +79,6 @@ a:hover {
  */
 .facts,
 .foot,
-.reach-what,
 .status,
 .terms dt {
   font-family: var(--font-mono);

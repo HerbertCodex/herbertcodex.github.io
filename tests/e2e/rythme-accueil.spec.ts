@@ -27,13 +27,24 @@ const MEASURING = 400;
  * le 2026-09-08 sur l'artefact construit, écrites en clair : les recalculer
  * ici par la soustraction que la feuille applique ferait un test qui répète le
  * code au lieu de le contredire.
+ *
+ * 1278 annonçait 606 px jusqu'au 2026-09-08 et la CI l'a contredit à 584. Le
+ * chiffre venait d'une station qui ne possède AUCUNE des quatre faces de
+ * `--font-grotesk` et sert le site en DejaVu Sans, plus large qu'Arial : la
+ * description de la cellule 02 y passe sur une seconde ligne, et `.entries`
+ * fait 169 px au lieu de 147. L'écart de 22 px est exactement 606 - 584. Un
+ * visiteur a Helvetica ou Arial, donc 584 est la hauteur vraie aux quatre
+ * largeurs, et la station de mesure était le seul endroit où 606 existait.
  */
 const ANNOUNCED: readonly (readonly [number, number])[] = [
-  [1278, 606],
+  [1278, 584],
   [1440, 584],
   [1704, 584],
   [1920, 584],
 ];
+
+/* Un nom qu'aucune machine ne peut résoudre, témoin de ce que vaut une face absente. */
+const NO_SUCH_FACE = "Zzz No Such Face Zzz";
 
 /* La largeur à laquelle la planche de l'accueil a été départagée. */
 const DRAWN_AT = 1440;
@@ -60,6 +71,28 @@ async function documentBottom(page: Page): Promise<number | null> {
     const foot = document.querySelector("footer");
     return foot === null ? null : Math.round(foot.getBoundingClientRect().bottom + window.scrollY);
   });
+}
+
+/*
+ * Si la machine résout vraiment `--font-grotesk`. Une hauteur au pixel près
+ * n'a de sens que là où le texte est tracé dans la police que le site demande :
+ * mesurée sur une station qui n'en possède aucune, elle décrit cette station
+ * et personne d'autre. Le témoin est un nom inventé — si la pile complète
+ * mesure comme lui, ses quatre faces se comportent comme des noms absents.
+ */
+async function stackResolves(page: Page): Promise<boolean> {
+  return page.evaluate((absent) => {
+    const stack = getComputedStyle(document.documentElement).getPropertyValue("--font-grotesk");
+    const rule = document.createElement("canvas").getContext("2d");
+    if (rule === null) return false;
+    const width = (font: string): number => {
+      rule.font = `100px ${font}`;
+      return rule.measureText("Où j'ai travaillé, ce que j'ai étudié").width;
+    };
+    const witness = width(absent);
+    /* Un écart relatif, non absolu : deux mesures de la MÊME police diffèrent ici de 1 px sur 1682. */
+    return Math.abs(width(stack) - witness) / witness > 0.01;
+  }, NO_SUCH_FACE);
 }
 
 /*
@@ -116,6 +149,13 @@ test.describe("les hauteurs annoncées à l'opérateur sont mesurées", () => {
   test("le pied de l'accueil finit là où il est annoncé, aux quatre largeurs et dans les deux langues", async ({
     page,
   }) => {
+    await page.setViewportSize({ width: DRAWN_AT, height: MEASURING });
+    await page.goto(HOMES[0]);
+    test.skip(
+      !(await stackResolves(page)),
+      "Cette machine ne résout aucune face de --font-grotesk : une hauteur au pixel près y décrirait sa police de secours, pas le site.",
+    );
+
     const off: string[] = [];
 
     for (const [width, announced] of ANNOUNCED) {

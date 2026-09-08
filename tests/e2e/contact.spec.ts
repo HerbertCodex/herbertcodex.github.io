@@ -1,8 +1,27 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { test, expect } from "@playwright/test";
+import { PAGES, addressesToPrerender } from "../../src/shared/pages";
 
+/*
+ * L'adresse est ecrite ICI en toutes lettres, jamais importee du module qui la
+ * portait : une constante partagee entre la source et son test disparait des
+ * deux cotes en un seul remplacement, et le test suivrait le retrait au lieu
+ * de le prouver. La partie locale est cherchee a part parce qu'une adresse
+ * recollee par script — le nom d'un cote, le domaine de l'autre — laisse la
+ * chaine entiere absente du fichier et l'adresse quand meme publiee.
+ */
 const ADDRESS = "kraherbertdonatienkoffi@gmail.com";
+const LOCAL_PART = "kraherbertdonatienkoffi";
 
-const ADDRESSES = ["/fr/contact", "/en/contact"];
+const OUTPUT = ".output/public";
+
+const ADDRESSES = addressesToPrerender(PAGES);
+
+const CONTACT = ["/fr/contact", "/en/contact"];
+
+const LINKEDIN = "https://linkedin.com/in/donatien-koffi";
+const GITHUB = "https://github.com/HerbertCodex";
 
 /*
  * La barre porte huit arrets — l'evitement, quatre pages, deux langues, le
@@ -11,16 +30,51 @@ const ADDRESSES = ["/fr/contact", "/en/contact"];
  */
 const TAB_BUDGET = 16;
 
-for (const address of ADDRESSES) {
-  test(`${address} publie l'adresse en clair, sans obfuscation`, async ({ page }) => {
-    const served = await page.request.get(address);
+function servedFiles(): string[] {
+  return readdirSync(OUTPUT, { withFileTypes: true, recursive: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => join(entry.parentPath, entry.name));
+}
 
-    expect(served.status()).toBe(200);
-    expect(await served.text()).toContain(`mailto:${ADDRESS}`);
+test("aucun fichier de l'artefact déployé ne porte l'adresse, scripts de _build compris", () => {
+  const files = servedFiles();
+  /* latin1 plutot que utf8 : un octet d'image ne se decode pas, et un decodage qui echoue effacerait la recherche. */
+  const carrying = files.filter((path) => {
+    const body = readFileSync(path, "latin1");
+    return body.includes(ADDRESS) || body.includes(LOCAL_PART);
+  });
 
+  expect(files.length).toBeGreaterThan(ADDRESSES.length);
+  expect(carrying).toEqual([]);
+});
+
+test("aucune des huit adresses ne porte de lien de messagerie", async ({ page }) => {
+  const carrying: string[] = [];
+  for (const address of ADDRESSES) {
     await page.goto(address);
-    await expect(page.locator(`a[href="mailto:${ADDRESS}"]`)).toHaveCount(1);
-    await expect(page.getByText(ADDRESS, { exact: false })).toBeVisible();
+    const links = await page.locator('a[href^="mailto:"]').count();
+    if (links > 0) carrying.push(`${address} : ${links}`);
+  }
+
+  expect(ADDRESSES).toHaveLength(8);
+  expect(carrying).toEqual([]);
+});
+
+for (const address of CONTACT) {
+  test(`${address} atteint LinkedIn au clavier, puis GitHub, et rien d'autre`, async ({ page }) => {
+    await page.goto(address);
+    const reached: string[] = [];
+    for (let step = 0; step < TAB_BUDGET; step += 1) {
+      await page.keyboard.press("Tab");
+      const href = await page.evaluate(() => {
+        const active = document.activeElement;
+        const inMain = active instanceof HTMLAnchorElement && active.closest("main") != null;
+        return inMain ? active.getAttribute("href") : null;
+      });
+      if (href != null && !reached.includes(href)) reached.push(href);
+    }
+
+    expect(reached).toEqual([LINKEDIN, GITHUB]);
   });
 
   test(`${address} ne porte aucun formulaire et n'envoie rien`, async ({ page }) => {
@@ -39,26 +93,6 @@ for (const address of ADDRESSES) {
       .locator("main a[href]")
       .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href") ?? ""));
     expect(targets.length).toBeGreaterThan(0);
-    for (const href of targets) expect(href, href).toMatch(/^(?:mailto:|https:\/\/|\/)/);
-  });
-
-  test(`${address} atteint la messagerie au clavier avant les moyens secondaires`, async ({ page }) => {
-    await page.goto(address);
-    const reached: string[] = [];
-    for (let step = 0; step < TAB_BUDGET; step += 1) {
-      await page.keyboard.press("Tab");
-      const href = await page.evaluate(() => {
-        const active = document.activeElement;
-        const inMain = active instanceof HTMLAnchorElement && active.closest("main") != null;
-        return inMain ? active.getAttribute("href") : null;
-      });
-      if (href != null && !reached.includes(href)) reached.push(href);
-    }
-
-    expect(reached).toEqual([
-      `mailto:${ADDRESS}`,
-      "https://linkedin.com/in/donatien-koffi",
-      "https://github.com/HerbertCodex",
-    ]);
+    for (const href of targets) expect(href, href).toMatch(/^(?:https:\/\/|\/)/);
   });
 }

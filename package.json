@@ -17,6 +17,7 @@
     "test:smoke": "node scripts/smoke.mjs",
     "check:architecture": "node scripts/check-architecture.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
+    "check:css-ownership": "node scripts/check-css-ownership.mjs",
     "check:dead-code": "knip",
     "check:duplication": "node agent-pipeline/scripts/duplication.mjs",
     "check:design-limits": "eslint --config eslint.design-limits.config.js .",

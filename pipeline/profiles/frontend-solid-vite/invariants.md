@@ -1,6 +1,7 @@
 - TypeScript strict mode covers production and test code; no explicit or implicit `any` escapes the compiler. (`check`)
 - Imports follow the direction the architecture declares: a feature may reach `src/shared`, and `src/shared` may reach nothing. (`architecture`)
 - Colours, typography, spacing and radii originate in `src/shared/tokens.css`; no stylesheet states a literal of its own. (`design_tokens`)
+- A class name claimed by two stylesheets is refused unless `src/app.css` declares it as a shared primitive; the sheets are global and loaded per route, so the last one to arrive wins on every page already displayed. (`css_ownership`)
 - Interactive elements expose names, focus and keyboard operation to the accessibility tree, on every prerendered page. (`accessibility`)
 - Function complexity, length, parameter count and nesting stay below the calibrated limits. (`design_limits`)
 - A derived class does not override a method to throw unconditionally, and behaviour is not decided by a chain of `instanceof`. (`design_limits`)

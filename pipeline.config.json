@@ -14,6 +14,7 @@
     "accessibility": "pnpm run test:a11y",
     "architecture": "pnpm run check:architecture",
     "design_tokens": "pnpm run check:tokens",
+    "css_ownership": "pnpm run check:css-ownership",
     "dead_code": "pnpm run check:dead-code",
     "duplication": "pnpm run check:duplication",
     "design_limits": "pnpm run check:design-limits",
@@ -46,6 +47,7 @@
   "design_system": {
     "tokens": "src/shared/tokens.css",
     "primitives": "own",
+    "primitives_sheet": "src/app.css",
     "decided_at": "2026-09-05",
     "mockup": "mockups/portfolio-v1.html",
     "direction": {

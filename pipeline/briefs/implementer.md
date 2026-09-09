@@ -18,6 +18,7 @@ Profile: frontend-solid-vite. When a rule or a prompt names a command by its key
 - accessibility : `pnpm run test:a11y`
 - architecture : `pnpm run check:architecture`
 - design_tokens : `pnpm run check:tokens`
+- css_ownership : `pnpm run check:css-ownership`
 - dead_code : `pnpm run check:dead-code`
 - duplication : `pnpm run check:duplication`
 - design_limits : `pnpm run check:design-limits`

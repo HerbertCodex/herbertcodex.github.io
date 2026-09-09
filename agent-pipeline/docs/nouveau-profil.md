@@ -6,6 +6,22 @@ It is not an introduction to the pipeline. For what it does and why, read `AGENT
 
 Throughout this document, **a gate** means a command that either passes or fails. If it fails, the work does not move on. Gates are named by key — `check`, `lint`, `test_unit` — in `pipeline.config.json`; the key stays the same across projects, the command behind it changes with the stack. That is what lets these documents point at a gate without knowing your tools.
 
+## Prefer the executable adapter when one supports the project
+
+For an existing standard Nest project, run `node agent-pipeline/scripts/setup.mjs --runtime claude-code` from the host root. Use `--dry-run` first to inspect the files and checks without changing anything. See [the Nest setup contract](../profile-bundles/nest/README.md) for prerequisites, supported layouts and failure recovery. This command is included starting with release v0.2.0.
+
+This path supplies centrally tested tooling and fixed policy bounds. It runs the host's actual checks before marking the preset validated and rendering the pipeline. It replaces manual tool authoring and manual negative probes for that supported preset; it does not fabricate calibration evidence or relax bounds until the host passes. Maintain the supplied negative proofs when changing its tools. Exported profiles and unsupported stacks still follow the manual calibration procedure below.
+
+Setup preserves an existing bootstrap decision if one exists. Without one it records only the installation and retention of the current code layout; product scope remains a later Product decision. Existing custom policies are conflicts, not permission to overwrite them. Runtime selection generates the appropriate entry point and prompts; automatic CLI dispatch remains separately configurable.
+
+Executable adapters carry a versioned compatibility manifest. Setup checks the installed tool versions before writing; preview may report missing tools as unverified, but execution refuses them. The reference CI matrix is generated from the manifest, and a weekly latest-version probe tests emerging combinations in isolation without promoting support. Keep the generated setup baseline and policy hashes in Git. Use `setup.mjs --update` for a read-only migration diff, then `--update --apply` to merge independent local changes and rerun the gates. Conflicts and legacy installations without a baseline require manual review.
+
+## 0. Record what cannot be inferred
+
+Run `node agent-pipeline/scripts/init.mjs` before asking an agent to configure the stack. The interactive command records the product, constraints, imposed-stack answer and approved architecture in `pipeline.bootstrap.json`, `docs/decisions/0000-bootstrap.md` and a deliberately incomplete `pipeline.config.json`. For automation, pass `--answers <json>`.
+
+The incomplete configuration is intentional: it makes the human decisions durable while `apply-profile` still refuses to run until manifests and sources justify real commands and a calibrated profile. The installation prompt is now an adapter around this executable bootstrap, not the source of those decisions.
+
 ## Starting from a profile that already exists
 
 If a project of the same stack already runs this pipeline, do not rewrite its gates. Export them there:
@@ -22,11 +38,56 @@ Then, in the new repository:
 node agent-pipeline/scripts/import-profile.mjs <bundle-dir> [host-dir]
 ```
 
-It seeds the profile directory and writes `pipeline.config.json` **only when there is none**. If the project already has one, it refuses and prints the block to merge — that file belongs to the operator and is never rewritten by a script. Tool files that already exist are kept, and named in the output.
+It seeds the profile directory and writes `pipeline.config.json` when there is none, or completes the untouched bootstrap stub written by `init.mjs`. That stub must contain only `architecture` and `bootstrap`, and its architecture must match the recorded bootstrap decision. The import preserves those decisions, keeps the bundle's stack settings and adds the framework defaults. Any other existing configuration is kept, with the block to merge printed for the operator. Tool files that already exist are kept, and named in the output.
 
 **The imported profile does not run yet.** `apply-profile` refuses while `calibration_required` is `true` in the profile's `profile.json`. That flag is not ceremony: the thresholds in those tool files were measured on another codebase. Too loose and the gate stops refusing anything; too tight and the first run gets it loosened, and a gate loosened once loosens again. Measure them here, adjust the files, then set the flag to `false` — which is a claim that you did.
 
 You still write the invariants and the pitfalls document yourself. `apply-profile` refuses a profile without `pitfalls.md`, empty or not: it is what `store-verify` requires an escaped defect to leave behind, and a file that does not exist cannot receive anything. A profile carries what a stack does; it does not know what this repository has already learned.
+
+### Materializing a TypeScript frontend profile
+
+The generic frontend contract can inspect a real TypeScript frontend and emit a
+technology-specific, project-owned bundle without adding a permanent core adapter:
+
+```sh
+node agent-pipeline/profile-bundles/frontend-typescript/materialize.mjs \
+  pipeline/profile-candidates/frontend
+```
+
+Run it from the host root after the application scaffold exists. It derives the
+profile name, package manager, source roots, framework and available gates from
+observed files. It maps only effective package scripts and records mandatory gaps
+in `DISCOVERY.md`; it does not install a checker or invent a successful command.
+For example, React and Vite produce `frontend-react-vite`, while missing browser
+tests remain missing.
+
+Review the candidate, implement and negatively prove its missing required gates,
+then import it with the existing mechanism:
+
+```sh
+node agent-pipeline/scripts/import-profile.mjs \
+  pipeline/profile-candidates/frontend
+```
+
+The materialized bundle stays at `calibration_required: true`. Detection proves
+what the repository carries, not that its thresholds or checks are effective.
+
+### Installation cost and live demonstrations
+
+A first installation on a stack without an executable adapter includes building its quality tooling and proving its checks. The shipped frontend TypeScript bundle defines the expected commands; it does not implement a ready-to-run toolchain. Importing it saves configuration work but does not remove stack setup or calibration. The Nest setup adapter supplies that tooling and executes the local checks directly.
+
+For repeated installations, reuse a profile exported from a working project of the same stack. Inspect and adapt its existing tools before creating new ones. Run `init.mjs`, then `import-profile.mjs`; completing the initial configuration requires no manual merge. Keep product planning and the first feature outside the installation checkpoint: an empty tracker with no runnable step is the expected successful result.
+
+`preflight.mjs` runs every declared command sequentially. Its default timeout is ten minutes **per command**, so it is not a quick binary-presence check. It now prints the command being checked and each duration. To diagnose slow setup, choose a per-command limit:
+
+```sh
+node agent-pipeline/scripts/preflight.mjs --timeout-seconds 60
+node agent-pipeline/scripts/preflight.mjs --timeout-seconds 60 --json > preflight-timings.json
+```
+
+Choose one output form: each invocation reruns the commands. JSON includes `duration_ms` for each result and the whole run, plus `timed_out`. A timeout makes preflight fail; it never counts as a successful calibration. The timeout targets the command's shell, not an isolated process tree; tools spawning background processes need their own process supervision. Commands stay sequential because they may share generated files or test resources.
+
+For a live Nest demonstration, prepare the host repository, dependencies and tracker CLI before the session, then run setup live. For unsupported stacks, prepare and verify the profile beforehand and present first-time stack calibration separately. See the adapter's validation notes for measured setup time; no universal duration is promised across machines, projects or registry conditions.
 
 ## What you configure, and what you do not touch
 
@@ -101,7 +162,17 @@ Running the page with no analysis at all asks the eight questions in full. That 
 
 `project_map` needs three values, not one: `out` (where the map lives), `regenerate` (the command that WRITES it) and `commands.project_map` (the one that verifies it). Declaring only the verification is the state every project started in, and it leaves the map with no writer but the agents themselves — which is what serialised whole waves. `apply-profile` refuses a `project_map.out` with no `regenerate` beside it, and refuses a `file_policy.orchestrator` forbidding the path the Orchestrator is the only role allowed to write.
 
-`closure_gates` names the gates QA replays once at spec closure rather than on every issue. It does **not** defer CI: a machine reruns the declared checks on every push so that a failure is reported early. Only the map gates are deferred in CI, whether or not they appear in `closure_gates`, because the map is stale on the branch by construction and that is not the operator's call to make.
+`closure_gates` names the gates QA replays once at spec closure rather than on every issue. It does **not** defer CI by itself: ordinary commands still run on every push so a failure is reported early. Map gates are pull-request-only because the map is stale on the branch by construction. A costly external control may additionally declare `ci.gate_events`; that separate, validated policy limits it to pull requests, schedules or manual dispatch without confusing agent replay cost with CI cost.
+
+Without an explicit `ci.gate_events` entry, only the map gates are deferred in CI.
+
+For web applications and APIs, configure the optional dynamic-test contract only
+after the real start, reset, health, authentication and API surfaces are known. Read
+[dynamic security and load testing](security-testing.md), prepare a reviewed JSON
+input, then run `configure-security.mjs`. The command adds a cheap boundary check,
+defers ZAP and load execution to closure, and gives those expensive CI gates
+pull-request, scheduled or manual event filters. Credential values stay outside the
+configuration.
 
 `language` decides which language the rendered pages are written in. `en` and `fr` ship; anything else is refused at configuration time rather than at the first page, hours later, where a typo looks like a broken script. Omit the key and the pages are English.
 
@@ -130,65 +201,34 @@ Also adapt:
 
 ### Relational data, only when the project owns it
 
-Do not add a database block because a template has one. When the project owns relational data, add `data_model` only after recording the persistence decision and creating the first model, schema and migrations directory. It makes the source of truth inspectable without imposing an ORM:
-
-```json
-"data_model": {
-  "decision": "docs/decisions/0001-persistence.md",
-  "model": "docs/data-model.md",
-  "schema": "db/schema.sql",
-  "migrations": "db/migrations",
-  "migration_gate": "migrations",
-  "integration_suite": "integration",
-  "normalization": { "target": "3NF", "exceptions": "docs/decisions/0001-persistence.md" },
-  "timestamps": {
-    "authority": "database",
-    "timezone": "UTC",
-    "created_at": "created_at",
-    "updated_at": "updated_at",
-    "exceptions": "docs/decisions/0001-persistence.md"
-  }
-}
-```
-
-`migrations` is a declared command that exercises the real upgrade, not a placeholder; `integration` is a `test_suites` entry replayed per issue. A change to the schema or migrations forces both proofs even if the normal risk lane is otherwise smaller. The migration proof starts on an empty database; integration evidence covers foreign keys, unique/check/not-null constraints, expected indexes and the timestamp journey: insert sets both timestamps, update preserves `created_at` and advances `updated_at` in UTC. Review every migration for accidental repeated facts and dependencies, targeting 3NF. Deliberate denormalization, immutable event tables, pure joins and static reference data are documented exceptions, not invisible deviations.
-
-For a human-readable UML view, keep a small projection beside the model rather than trying to make the pipeline parse every SQL dialect. It names entities, fields and relations, for example `docs/data-model.diagram.json`; render it with:
+Do not add a database block merely because a template has one. When the project
+owns relational data, record its persistence decision, physical schema, migrations
+and real proof commands first. Then prepare the reviewed input from
+`templates/data-model-governance.template.json` and run:
 
 ```sh
-node agent-pipeline/scripts/render-data-model.mjs docs/data-model.diagram.json data-model.html
+node agent-pipeline/scripts/configure-data-model.mjs reviewed-data-model.json
+node agent-pipeline/scripts/apply-profile.mjs
+node agent-pipeline/scripts/data-model-check.mjs
 ```
 
-The generated HTML is self-contained. It draws foreign-key arrows from the referencing table to the referenced one and lists cardinalities; it is a review surface, while the physical schema remains authoritative.
+The v2 contract remains ORM-neutral. It declares keys, domain dependencies,
+normalization, UTC timestamps, audit, ownership, access patterns, indexes, query
+budgets, migration policy, database security and the project gates that prove real
+behavior. A schema or contract change forces its per-issue proofs even when its
+risk lane would otherwise use a smaller battery. Expensive performance and restore
+proofs can remain closure gates.
 
-```json
-{
-  "title": "Library data model",
-  "entities": [
-    {
-      "name": "books",
-      "fields": [
-        { "name": "id", "type": "uuid", "primary_key": true, "nullable": false },
-        { "name": "title", "type": "text", "nullable": false }
-      ]
-    },
-    {
-      "name": "loans",
-      "fields": [
-        { "name": "id", "type": "uuid", "primary_key": true, "nullable": false },
-        { "name": "book_id", "type": "uuid", "nullable": false }
-      ]
-    }
-  ],
-  "relations": [
-    {
-      "from": { "entity": "loans", "field": "book_id" },
-      "to": { "entity": "books", "field": "id" },
-      "cardinality": "many-to-one"
-    }
-  ]
-}
+Render the same reviewed contract as a self-contained review page:
+
+```sh
+node agent-pipeline/scripts/render-data-model.mjs docs/data-model.contract.json data-model.html
 ```
+
+Read [Relational database governance](database-governance.md) for the complete
+contract, limits, adoption path and copyable prompt for an existing installation.
+Legacy `data_model` blocks remain accepted so a framework update does not convert
+historical debt into an immediate blocker.
 
 ### 3. Write the project tools
 
@@ -303,9 +343,9 @@ The `project_map` line is of another nature, and the distinction matters to you.
 
 Check they are **installed**, not merely written: a `.git/hooks/` containing only `.sample` files means no hook runs.
 
-### 7. Initialize Sudocode and seed the control store
+### 7. Configure the tracker and seed the control store
 
-Sudocode is the issue/spec source. Initialize it at `issue_tracker.root` through its CLI; do not fabricate its files:
+Choose the tracker adapter explicitly. Sudocode provides the full issue/spec and relationship workflow. Initialize it at `issue_tracker.root` through its CLI; do not fabricate its files:
 
 ```
 sudocode init
@@ -321,6 +361,33 @@ node agent-pipeline/scripts/next-step.mjs
 
 The tracker check and store invariants must pass; `next-step` must report that there is no step to run. The pipeline is ready.
 
+For a minimal GitHub Issues integration, authenticate `gh` before the checkpoint and use an explicit adapter block:
+
+```json
+{
+  "issue_tracker": {
+    "provider": "github",
+    "repository": "owner/name",
+    "command": "gh",
+    "args": [],
+    "managed_tag": "agent-pipeline",
+    "spec_tag": "agent-pipeline:spec",
+    "status_label_prefix": "pipeline:",
+    "status_map": {
+      "planned": "open",
+      "in_progress": "in_progress",
+      "ready_for_qa": "needs_review",
+      "qa_in_progress": "needs_review",
+      "closed": "closed",
+      "blocked_*": "blocked",
+      "operator_escalation": "blocked"
+    }
+  }
+}
+```
+
+Only issues carrying `managed_tag` and specs carrying `spec_tag` enter the pipeline view. The adapter reads those entities and projects statuses; it refuses creation and relationships because GitHub Issues has no equivalent portable relationship contract in this core. More than one `pipeline:` status label on an issue is a conflict and blocks synchronization instead of depending on label order.
+
 ## The final checkpoint
 
 Before handing back, answer these questions with a command, never with a reading:
@@ -330,7 +397,7 @@ Before handing back, answer these questions with a command, never with a reading
 3. Has every gate in `commands` failed at least once, on a deliberate break?
 4. Does `preflight` confirm that **every declared gate is executable**? An unrunnable gate fails instead of protecting.
 5. Are the hooks installed and do they fire?
-6. Are `tracker-sync` and `store-verify` green against the real Sudocode files?
+6. Are `tracker-sync` and `store-verify` green against the real configured provider—not a fabricated fixture—and is its storage separate from the pipeline store where applicable?
 7. Does every profile invariant have a gate that makes it fail?
 
 **An "I think so" to any of these seven questions is a no.**

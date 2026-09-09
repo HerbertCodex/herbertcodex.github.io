@@ -55,6 +55,26 @@ Apply every workflow section of your brief addressed to the implementer. Their i
 
 A `## Context for Implementer (REGRESSION)` block means QA found a defect no test caught. Pin it before you fix it: write the smallest test that fails on the current code for the reason named in `regression.criterion`, confirm it red, record a fresh `red_proof`, commit it alone, then fix. Prefer the narrowest formulation that still catches the defect — a test written in anger over-specifies and breaks on the next harmless refactor. Do not widen the test beyond what the issue claims.
 
+<!-- gate:data_model -->
+## RELATIONAL DATA CHANGES
+
+When the issue changes a governed entity, schema, migration, filter, ownership rule
+or query shape, read the v2 contract before writing. Update the physical schema,
+migration and contract together. Preserve non-null UTC `created_at` and `updated_at`
+unless the contract carries a reviewed exception. Sensitive mutations emit the
+declared append-only audit event without secrets.
+
+Declare new domain dependencies instead of assuming that a `3NF` label proves
+normalization. Every exposed filter belongs to an access pattern with a supporting
+index or measured exception. User and tenant queries include their ownership field;
+client input never chooses the authoritative scope. Use parameterized queries.
+
+Run `data_model` plus the contract's per-issue anomaly, authorization and database
+security proof gates against real infrastructure. A performance change carries a
+representative query plan and measured budget. A denormalization additionally
+carries before/after evidence, consistency handling and a review trigger.
+<!-- /gate -->
+
 ## VALIDATION BEFORE HANDOFF
 
 1. Run the relevant tests until green.
@@ -100,3 +120,7 @@ Return `outcome: ready_for_qa` and request `in_progress -> ready_for_qa` with `#
 List them, one entry per claim, each with `claim` and `how_to_replay` — the exact command or gesture, not a description. Three to six is the usual count. Do not pad it with things that are not measurements; do not omit one because you are confident. Confidence is precisely what makes an unreplayed claim dangerous: a QA that believes a competent implementer is indistinguishable from a QA that believes an incompetent one, and neither has verified anything.
 
 End with exactly one `AGENT_HANDOFF` block. Do not persist or transition the issue yourself.
+
+Return the handoff inline between its markers; the driver archives it. The task package supplies a unique `handoff_path` for file-based handoffs only when your file policy permits writing it. Use `run-gates.mjs <task-package>` after committing for measured gate evidence. Source-dependent replay claims name the commit SHA and use `replay-proof.mjs` so later work cannot change what the claim measures.
+
+Copy `attempt_id` from the task package into the handoff. Every source-dependent claim in a dispatched implementation handoff carries `source_sha` and a recipe `node agent-pipeline/scripts/replay-proof.mjs <source_sha> <executable> [arguments]`. Never substitute a moving branch name.

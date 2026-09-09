@@ -2,10 +2,15 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { isDeepStrictEqual } from "node:util";
 import { loadConfig, loadRules, pathAllowed, deferredGates, fail } from "./lib.mjs";
 import { ARCHITECTURES, PROJECT_TYPES } from "./architectures.mjs";
 import { stripUndeclaredGates, orphanGates, perIssueGates, gatesForIssue, closureGates } from "./gates.mjs";
 import { adaptPrompt, promptAdapter, rendersClaudeEntry } from "./runtime-adapters.mjs";
+import { validateSecurityTesting } from "./security-testing.mjs";
+import { validateSecurityFiles } from "./security-scan.mjs";
+import { validateLoadTesting } from "./load-testing.mjs";
+import { readDataModelContract } from "./data-model-contract.mjs";
 
 const CI_TEMPLATE = "agent-pipeline/templates/ci.template.yml";
 const AGENTS_TEMPLATE = "agent-pipeline/templates/AGENTS.template.md";
@@ -69,6 +74,12 @@ function renderAgents(config) {
     doc_lint: "Documentation contracts",
     comment_policy: "Forbidden narration",
     design_limits: "Measured design limits",
+    security_scope: "Security target and assurance contract",
+    dast_baseline: "Passive dynamic security scan",
+    dast_active: "Active dynamic security scan",
+    dast_api: "API dynamic security scan",
+    load: "Load and latency thresholds",
+    data_model: "Relational normalization, audit, access and security contract",
   };
   const qualityGates = Object.entries(qualityDescriptions)
     .filter(([key]) => typeof config.commands?.[key] === "string")
@@ -204,7 +215,8 @@ function renderPrompts(config, adapter) {
       console.error(`${PROMPTS_SRC}/${file}: ${orphans.length} rule(s) name a gate nothing answers for here:`);
       for (const gate of orphans) console.error(`  \`${gate}\``);
       fail(
-        "Declare the command, or wrap the passage in <!-- gate:NAME --> ... <!-- /gate --> in the prompt. " +
+        `${PROMPTS_SRC}/${file}: unanswered gates: ${orphans.join(", ")}\n` +
+          "Declare the command, or wrap the passage in <!-- gate:NAME --> ... <!-- /gate --> in the prompt. " +
           "A role cannot tell a rule that binds it from one that binds nobody.",
       );
     }
@@ -585,6 +597,86 @@ function checkGeneratedTargets(config) {
   }
 }
 
+/** Refuses partial wiring of the optional dynamic security contract. */
+function checkSecurityTesting(config) {
+  if (config.security_testing == null) {
+    for (const key of ["security_scope", "dast_baseline", "dast_active", "dast_api"]) {
+      if (typeof config.commands?.[key] === "string") fail(`commands.${key} requires security_testing`);
+    }
+  } else {
+    let security;
+    try {
+      security = validateSecurityTesting(config.security_testing, "baseline", {}, { requireSecrets: false });
+      validateSecurityFiles(process.cwd(), security, new Date(), config.commands);
+    } catch (error) { fail(error.message); }
+    for (const key of ["security_scope", "dast_baseline"]) {
+      if (typeof config.commands?.[key] !== "string") fail(`security_testing requires commands.${key}`);
+    }
+    const active = security.allow_active === true;
+    if (active !== (typeof config.commands?.dast_active === "string")) fail("commands.dast_active must match security_testing.allow_active");
+    if ((active && security.api != null) !== (typeof config.commands?.dast_api === "string")) fail("commands.dast_api must match the active API contract");
+    for (const key of ["dast_baseline", ...(active ? ["dast_active"] : []), ...(active && security.api ? ["dast_api"] : [])]) {
+      if (!(config.closure_gates ?? []).includes(key)) fail(`${key} must be deferred to final closure`);
+    }
+    if (config.ci?.provider !== "none" && security.authentication?.method !== "none") {
+      const expected = [
+        ...Object.values(security.authentication.credentials ?? {}),
+        ...(security.authentication.method === "header" ? [security.authentication.value_env] : []),
+      ];
+      const declared = new Set(config.ci?.secret_environment ?? []);
+      for (const name of expected) if (!declared.has(name)) fail(`ci.secret_environment is missing ${name}`);
+    }
+  }
+  if (config.load_testing != null) {
+    try {
+      validateLoadTesting(config.load_testing, config.security_testing, {
+        [config.load_testing.target_env]: config.load_testing.allowed_targets?.[0],
+      });
+    } catch (error) { fail(error.message); }
+    if (typeof config.commands?.load !== "string") fail("load_testing requires commands.load");
+    if (!(config.closure_gates ?? []).includes("load")) fail("load must be deferred to final closure");
+    if (config.ci?.provider !== "none" && config.ci?.environment?.[config.load_testing.target_env] == null) {
+      fail(`ci.environment is missing ${config.load_testing.target_env}`);
+    }
+  } else if (typeof config.commands?.load === "string") fail("commands.load requires load_testing");
+}
+
+function checkCiGateEvents(config) {
+  const supported = new Set(["push", "pull_request", "schedule", "workflow_dispatch"]);
+  if (config.ci?.gate_events != null) {
+    if (typeof config.ci.gate_events !== "object" || Array.isArray(config.ci.gate_events)) fail("ci.gate_events must be an object");
+    for (const [gate, events] of Object.entries(config.ci.gate_events)) {
+      if (typeof config.commands?.[gate] !== "string") fail(`ci.gate_events names undeclared gate ${gate}`);
+      if (!Array.isArray(events) || events.length === 0 || events.some((event) => !supported.has(event))) {
+        fail(`ci.gate_events.${gate} must name push, pull_request, schedule, or workflow_dispatch`);
+      }
+    }
+  }
+  if (config.ci.environment != null) {
+    if (typeof config.ci.environment !== "object" || Array.isArray(config.ci.environment)) fail("ci.environment must be an object");
+    for (const [name, value] of Object.entries(config.ci.environment)) {
+      if (!/^[A-Z_][A-Z0-9_]*$/.test(name) || typeof value !== "string") fail("ci.environment must map environment names to string values");
+    }
+  }
+  if (config.ci.secret_environment != null) {
+    if (!Array.isArray(config.ci.secret_environment) || config.ci.secret_environment.some((name) => !/^[A-Z_][A-Z0-9_]*$/.test(name))) {
+      fail("ci.secret_environment must list environment names");
+    }
+  }
+  if (config.ci.timeout_minutes != null && (!Number.isSafeInteger(config.ci.timeout_minutes) || config.ci.timeout_minutes < 1 || config.ci.timeout_minutes > 360)) {
+    fail("ci.timeout_minutes must be an integer from 1 through 360");
+  }
+  if (config.ci.artifacts != null) {
+    const artifacts = config.ci.artifacts;
+    if (typeof artifacts.name !== "string" || !Array.isArray(artifacts.paths) || artifacts.paths.length === 0 || artifacts.paths.some((path) => typeof path !== "string" || path.length === 0)) {
+      fail("ci.artifacts must name an artifact and at least one path");
+    }
+    if (config.ci.provider !== "none" && !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+@[a-f0-9]{40}$/.test(config.ci.artifact_upload?.uses ?? "")) {
+      fail("ci.artifact_upload.uses must pin the upload action to an immutable 40-character commit SHA");
+    }
+  }
+}
+
 function checkTestSuites(config) {
   if (config.test_suites == null) return;
   if (typeof config.test_suites !== "object" || Array.isArray(config.test_suites)) {
@@ -655,8 +747,9 @@ function checkDataModel(config) {
   if (normalization == null || typeof normalization !== "object" || Array.isArray(normalization)) {
     fail("data_model.normalization must declare the normal form and its exception decision");
   }
-  if (normalization.target !== "3NF") {
-    fail('data_model.normalization.target must be "3NF"; a deliberate denormalization belongs in its exception decision');
+  const allowedNormalForms = model.governance_version === 2 ? ["3NF", "BCNF", "4NF", "5NF"] : ["3NF"];
+  if (!allowedNormalForms.includes(normalization.target)) {
+    fail(`data_model.normalization.target must be ${allowedNormalForms.join(", ")}; a deliberate denormalization belongs in its exception decision`);
   }
   if (
     typeof normalization.exceptions !== "string" ||
@@ -689,6 +782,33 @@ function checkDataModel(config) {
   ) {
     fail("data_model.timestamps.exceptions must name the committed decision recording exceptions");
   }
+
+  if (model.governance_version == null) return;
+  if (model.governance_version !== 2) fail("data_model.governance_version must be 2 when present");
+  if (typeof model.contract !== "string" || !existsSync(model.contract) || !statSync(model.contract).isFile()) {
+    fail("data_model.contract must name the committed governance v2 JSON contract");
+  }
+  if (typeof model.reports_dir !== "string" || model.reports_dir.trim().length === 0) {
+    fail("data_model.reports_dir must name the evidence directory");
+  }
+  const reportsPath = resolve(model.reports_dir);
+  const contractPath = resolve(model.contract);
+  const projectRoot = resolve(".");
+  if (reportsPath !== projectRoot && !reportsPath.startsWith(`${projectRoot}${sep}`)) fail("data_model.reports_dir must stay inside the project");
+  if (contractPath !== projectRoot && !contractPath.startsWith(`${projectRoot}${sep}`)) fail("data_model.contract must stay inside the project");
+  if (typeof config.commands?.data_model !== "string") fail("data-model governance v2 requires commands.data_model");
+  let contract;
+  try { contract = readDataModelContract(model.contract, { root: process.cwd(), config }); }
+  catch (error) { fail(`data_model.contract is invalid: ${error.message}`); }
+  if (contract.contract.database.schema_source !== model.schema) fail("data_model contract schema_source must match data_model.schema");
+  if (contract.contract.policy.normalization.target !== normalization.target) fail("data_model normalization target differs from its contract");
+  if (!isDeepStrictEqual(model.proof_gates, contract.proofs)) fail("data_model.proof_gates differs from its reviewed contract");
+  for (const [name, proof] of Object.entries(contract.proofs)) {
+    const isPerIssue = perIssueGates(config).includes(proof.gate);
+    if (proof.replay === "per_issue" && !isPerIssue) fail(`data_model proof ${name} must not be deferred from per-issue replay`);
+    if (proof.replay === "closure" && isPerIssue) fail(`data_model proof ${name} declares closure replay but its gate is per_issue`);
+  }
+  if (!perIssueGates(config).includes("data_model")) fail("commands.data_model cannot be deferred to closure");
 }
 
 /**
@@ -774,6 +894,8 @@ function main() {
   }
   checkTestSuites(config);
   checkDataModel(config);
+  checkSecurityTesting(config);
+  checkCiGateEvents(config);
   // A finding routed to the framework needs somewhere outside this project
   // to land, or it is lost at closure — which is how a product backlog ends
   // up carrying the pipeline's own defects.
@@ -843,47 +965,54 @@ function main() {
   }
   if (config.issue_tracker != null && config.issue_tracker.enabled !== false) {
     const tracker = config.issue_tracker;
-    if (tracker.provider !== "sudocode") fail("issue_tracker.provider must be sudocode");
-    for (const key of ["root", "issues_file", "specs_file", "command", "managed_tag"]) {
-      if (typeof tracker[key] !== "string" || tracker[key].trim().length === 0) {
-        fail(`issue_tracker.${key} must be a non-empty string`);
+    if (!["sudocode", "github"].includes(tracker.provider)) fail("issue_tracker.provider must be sudocode or github");
+    if (tracker.provider === "github") {
+      if (typeof tracker.repository !== "string" || !/^[^/\s]+\/[^/\s]+$/.test(tracker.repository)) {
+        fail("issue_tracker.repository must be owner/name for the GitHub adapter");
       }
-    }
-    if (!Array.isArray(tracker.args) || tracker.args.some((arg) => typeof arg !== "string")) {
-      fail("issue_tracker.args must be a list of strings");
+      if (typeof tracker.command !== "string" || tracker.command.trim().length === 0) {
+        fail("issue_tracker.command must name the GitHub CLI command");
+      }
+      if (!Array.isArray(tracker.args) || tracker.args.some((arg) => typeof arg !== "string")) {
+        fail("issue_tracker.args must be a list of strings");
+      }
+      if (typeof tracker.managed_tag !== "string" || tracker.managed_tag.trim().length === 0) {
+        fail("issue_tracker.managed_tag must be a non-empty GitHub label");
+      }
+    } else {
+      for (const key of ["root", "issues_file", "specs_file", "command", "managed_tag"]) {
+        if (typeof tracker[key] !== "string" || tracker[key].trim().length === 0) {
+          fail(`issue_tracker.${key} must be a non-empty string`);
+        }
+      }
+      if (!Array.isArray(tracker.args) || tracker.args.some((arg) => typeof arg !== "string")) {
+        fail("issue_tracker.args must be a list of strings");
+      }
+      const trackerRoot = resolve(tracker.root);
+      const controlRoot = resolve(config.store_dir);
+      if (
+        trackerRoot === controlRoot ||
+        trackerRoot.startsWith(`${controlRoot}${sep}`) ||
+        controlRoot.startsWith(`${trackerRoot}${sep}`)
+      ) {
+        fail("issue_tracker.root and store_dir must be separate directories");
+      }
+      const trackerProbe = join(tracker.root, tracker.issues_file).replaceAll("\\", "/");
+      for (const role of ["product", "orchestrator"]) {
+        if (!pathAllowed(trackerProbe, config.file_policy?.[role])) {
+          fail(
+            `file_policy.${role} forbids ${trackerProbe}, but ${role} must mutate Sudocode through its CLI`,
+          );
+        }
+      }
     }
     if (typeof config.commands.tracker_sync !== "string") {
       fail("commands.tracker_sync missing: a configured issue tracker needs a gate that refuses drift");
     }
-    const trackerRoot = resolve(tracker.root);
-    const controlRoot = resolve(config.store_dir);
-    if (
-      trackerRoot === controlRoot ||
-      trackerRoot.startsWith(`${controlRoot}${sep}`) ||
-      controlRoot.startsWith(`${trackerRoot}${sep}`)
-    ) {
-      fail("issue_tracker.root and store_dir must be separate directories");
-    }
     const statuses = new Set(["open", "in_progress", "blocked", "needs_review", "closed"]);
-    for (const phase of [
-      "planned",
-      "in_progress",
-      "ready_for_qa",
-      "qa_in_progress",
-      "closed",
-      "blocked_*",
-      "operator_escalation",
-    ]) {
+    for (const phase of ["planned", "in_progress", "ready_for_qa", "qa_in_progress", "closed", "blocked_*", "operator_escalation"]) {
       if (!statuses.has(tracker.status_map?.[phase])) {
-        fail(`issue_tracker.status_map.${phase} must be a valid Sudocode status`);
-      }
-    }
-    const trackerProbe = join(tracker.root, tracker.issues_file).replaceAll("\\", "/");
-    for (const role of ["product", "orchestrator"]) {
-      if (!pathAllowed(trackerProbe, config.file_policy?.[role])) {
-        fail(
-          `file_policy.${role} forbids ${trackerProbe}, but ${role} must mutate Sudocode through its CLI`,
-        );
+        fail(`issue_tracker.status_map.${phase} must be a valid pipeline status`);
       }
     }
   }
@@ -999,15 +1128,46 @@ function main() {
     "runtime.with": Object.entries(config.ci.runtime_setup.with)
       .map(([k, v]) => `          ${k}: ${v}`)
       .join("\n"),
+    timeout_minutes: config.ci.timeout_minutes ?? 25,
+    deep_events: (() => {
+      const events = new Set(Object.values(config.ci.gate_events ?? {}).flat());
+      return [
+        ...(events.has("workflow_dispatch") ? ["  workflow_dispatch:"] : []),
+        ...(events.has("schedule") ? ["  schedule:", "    - cron: \"23 2 * * *\""] : []),
+      ].join("\n");
+    })(),
+    environment: (() => {
+      const publicValues = Object.entries(config.ci.environment ?? {}).map(([name, value]) => `      ${name}: ${JSON.stringify(value)}`);
+      const secrets = (config.ci.secret_environment ?? []).map((name) => `      ${name}: \${{ secrets.${name} }}`);
+      const values = [...publicValues, ...secrets];
+      return values.length === 0 ? "" : `    env:\n${values.join("\n")}`;
+    })(),
+    artifacts: (() => {
+      if (config.ci.artifacts == null) return "";
+      return [
+        `      - name: upload-${config.ci.artifacts.name}`,
+        "        if: always()",
+        `        uses: ${config.ci.artifact_upload.uses}`,
+        "        with:",
+        `          name: ${JSON.stringify(config.ci.artifacts.name)}`,
+        "          if-no-files-found: warn",
+        "          path: |",
+        ...config.ci.artifacts.paths.map((path) => `            ${path}`),
+      ].join("\n");
+    })(),
     steps: Object.entries(config.commands)
       .map(([key, cmd]) => {
         // A closure gate judges the spec, not the commit. Run on every push
         // it would be red for the whole branch — the map is stale until the
         // orchestrator regenerates it — and a job red by design is a job
         // people stop reading.
-        const deferred = deferredGates(config).has(key)
-          ? "\n        if: ${{ github.event_name == 'pull_request' }}"
-          : "";
+        const events = config.ci?.gate_events?.[key];
+        const condition = Array.isArray(events)
+          ? events.map((event) => `github.event_name == '${event}'`).join(" || ")
+          : deferredGates(config).has(key)
+            ? "github.event_name == 'pull_request'"
+            : "github.event_name == 'push' || github.event_name == 'pull_request'";
+        const deferred = condition ? `\n        if: \${{ ${condition} }}` : "";
         return `      - name: ${key.replaceAll("_", "-")}${deferred}\n        run: ${cmd}`;
       })
       .join("\n\n"),

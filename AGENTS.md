@@ -1,6 +1,6 @@
 # AGENTS.md — central pipeline policy
 
-Assembled from `agent-pipeline/templates/AGENTS.template.md`. Profile: frontend-typescript.
+Assembled from `agent-pipeline/templates/AGENTS.template.md`. Profile: frontend-solid-vite.
 
 ## 1. Order of precedence
 

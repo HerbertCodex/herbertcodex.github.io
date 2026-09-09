@@ -1,0 +1,189 @@
+{
+  "name": "frontend-solid-vite",
+  "project_type": "frontend",
+  "source_profile": "frontend-typescript",
+  "calibration_required": false,
+  "detected": {
+    "package": "example-basic",
+    "package_manager": {
+      "name": "pnpm",
+      "declaration": "pnpm@11.25.0",
+      "lockfiles": [
+        "pnpm-lock.yaml"
+      ]
+    },
+    "technologies": [
+      {
+        "name": "solid",
+        "package": "solid-js",
+        "declared": "^1.9.14",
+        "installed": "1.9.14"
+      },
+      {
+        "name": "vite",
+        "package": "vite",
+        "declared": "^8.0.0",
+        "installed": "8.1.4"
+      },
+      {
+        "name": "vitest",
+        "package": "vitest",
+        "declared": "^5.0.0",
+        "installed": "5.0.0"
+      },
+      {
+        "name": "typescript",
+        "package": "typescript",
+        "declared": "^5.9.3",
+        "installed": "5.9.3"
+      },
+      {
+        "name": "playwright",
+        "package": "@playwright/test",
+        "declared": "^1.62.1",
+        "installed": "1.62.1"
+      }
+    ],
+    "scripts": {
+      "check": "check",
+      "lint": "lint",
+      "format": "format:check",
+      "build": "build",
+      "test_unit": "test:unit",
+      "test_e2e": "test:e2e",
+      "coverage": "test:coverage",
+      "smoke": "test:smoke",
+      "accessibility": "test:a11y",
+      "architecture": "check:architecture",
+      "design_tokens": "check:tokens",
+      "dead_code": "check:dead-code",
+      "duplication": "check:duplication",
+      "design_limits": "check:design-limits",
+      "comment_policy": "check:comments",
+      "sast": "check:security",
+      "secrets_scan": "scan:secrets",
+      "project_map": "project-map (--check)"
+    }
+  },
+  "capabilities": {
+    "active": [
+      "accessibility",
+      "architecture",
+      "audit",
+      "build",
+      "check",
+      "comment_policy",
+      "coverage",
+      "dead_code",
+      "design_limits",
+      "design_tokens",
+      "doc_lint",
+      "duplication",
+      "format",
+      "lint",
+      "map_coverage",
+      "project_map",
+      "sast",
+      "secrets_scan",
+      "smoke",
+      "test_e2e",
+      "test_unit",
+      "tracker_sync"
+    ],
+    "missing_required": [],
+    "optional_not_detected": [
+      "mutation",
+      "design_system",
+      "visual_regression"
+    ]
+  },
+  "project_map": {
+    "out": "docs/project-map.md",
+    "roots": [
+      "src",
+      "tests"
+    ],
+    "skip": [
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      "**/*.generated.*"
+    ],
+    "regenerate": "pnpm run project-map"
+  },
+  "doc_policy": {
+    "roots": [
+      "src",
+      "tests"
+    ],
+    "skip": [
+      "**/*.generated.*"
+    ]
+  },
+  "comment_policy": {
+    "roots": [
+      "src",
+      "tests"
+    ],
+    "skip": [
+      "**/*.generated.*"
+    ]
+  },
+  "file_policy": {
+    "orchestrator": {
+      "allow": [
+        "pipeline/store/**",
+        "docs/project-map.md",
+        ".sudocode/**"
+      ],
+      "deny": [
+        "src/**",
+        "tests/**"
+      ]
+    },
+    "product": {
+      "allow": [
+        ".sudocode/**"
+      ],
+      "deny": [
+        "src/**",
+        "tests/**",
+        "public/**",
+        "pipeline/**",
+        "agent-pipeline/**",
+        "pipeline.config.json",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".github/**"
+      ]
+    },
+    "implementer": {
+      "allow": [
+        "src/**",
+        "tests/**",
+        "public/**",
+        "mockups/**"
+      ],
+      "deny": [
+        "package.json",
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "yarn.lock",
+        "pipeline.config.json",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".github/**",
+        "agent-pipeline/**",
+        "pipeline/**"
+      ]
+    },
+    "qa": {
+      "allow": [],
+      "deny": [
+        "**"
+      ]
+    }
+  },
+  "calibrated_at": "2026-09-09",
+  "calibration_note": "Les portes de ce profil tournent depuis l'installation d'origine et ont ferme seize issues. DISCOVERY.md ne reclame aucune porte manquante. Les invariants et pitfalls conserves sont ceux ecrits pour ce projet, plus riches que le contrat generique dont ce profil descend."
+}

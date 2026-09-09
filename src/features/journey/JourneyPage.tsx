@@ -54,7 +54,7 @@ function Row(props: RowProps) {
       <span class="rail" aria-hidden="true" />
       <div>
         <strong>{props.name}</strong>
-        <Show when={props.mark}>{(mark) => <span class="mark">{mark()}</span>}</Show>
+        <Show when={props.mark}>{(mark) => <span class="ongoing">{mark()}</span>}</Show>
         <p>{props.detail}</p>
       </div>
       <Show when={props.tools}>

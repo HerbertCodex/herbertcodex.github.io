@@ -66,6 +66,9 @@ jobs:
       - name: design-tokens
         run: pnpm run check:tokens
 
+      - name: css-ownership
+        run: pnpm run check:css-ownership
+
       - name: dead-code
         run: pnpm run check:dead-code
 

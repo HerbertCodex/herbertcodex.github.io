@@ -5,7 +5,7 @@ In case of doubt or conflict, the source document prevails.
 
 ## Project commands
 
-Profile: frontend-typescript. When a rule or a prompt names a command by its key (check, lint, test_unit, audit...), the command below is the one to run.
+Profile: frontend-solid-vite. When a rule or a prompt names a command by its key (check, lint, test_unit, audit...), the command below is the one to run.
 
 - check : `pnpm run check`
 - lint : `pnpm run lint`

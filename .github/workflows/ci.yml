@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   gates:
-    name: gates (frontend-typescript)
+    name: gates (frontend-solid-vite)
     runs-on: ubuntu-latest
     timeout-minutes: 35
 

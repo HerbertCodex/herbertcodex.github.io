@@ -30,6 +30,8 @@ Profile: frontend-typescript. When a rule or a prompt names a command by its key
 - project_map : `pnpm run project-map -- --check`
 - map_coverage : `node agent-pipeline/scripts/map-coverage.mjs`
 - content : `pnpm run check:content`
+- security_scope : `node agent-pipeline/scripts/security-scan.mjs check`
+- dast_baseline : `node agent-pipeline/scripts/security-scan.mjs baseline`
 
 ## Source: git-workflow.md
 
@@ -55,7 +57,7 @@ Every sub-agent ends with a single JSON block between `AGENT_HANDOFF_START` and 
 
 It carries `produced_at`, an ISO 8601 date. That is for legibility, not for measurement: several handoffs sat side by side on a real run with no way to order them, and no way to tell a fresh one from a file left over from an earlier attempt. The durations come from the orchestrator's own stamps, because nothing here trusts an agent's account of its own clock.
 
-They are written under `handoffs_dir`, which git ignores, and `handoffs.mjs --prune` removes those whose issue has closed.
+They are written under `handoffs_dir`, which git ignores. Dispatch archives validated output by content digest under `archive/`; store transitions reference that receipt. `handoffs.mjs --prune` only removes transient top-level files for closed issues, never archived receipts.
 
 ```json
 {
@@ -151,7 +153,7 @@ Reading: `store-read <issue|spec> <id>` returns the record, its SHA-256 hash and
 1. Re-read the record; refuse if its hash differs from `basis.record_hash`.
 2. Build a JSON request file: `target`, `expected_record_hash`, the complete `pipeline_state` (version = previous + 1), and `append_context`. When Sudocode is configured, never use `set_status`: the projection owns it.
 3. `store-update <request.json>`. The script refuses a stale hash, an unknown phase or owner, a non-consecutive version, and a transition absent from `rules.json`. It rewrites only the targeted line, byte for byte for the others.
-4. `tracker-sync --apply`, then `tracker-sync` with no flag. Status changes go through the configured Sudocode CLI; scope drift is never applied automatically.
+4. `tracker-sync --apply`, then `tracker-sync` with no flag. Status changes go through the configured tracker adapter; scope drift is never applied automatically.
 5. `store-verify`.
 6. Read the full `git diff -- <store_dir>/ .sudocode/`: only the targeted control and Sudocode's own projection changed, no context block disappeared.
 7. If the handoff carried a `commit_sha`, push the spec branch so that SHA gets its CI run.
@@ -262,10 +264,6 @@ Two things now scale with the issue rather than with nothing.
 
 **Test suites are metadata, not a stack contract.** `test_suites` optionally maps any suite name to a declared command gate and a replay point: `per_issue` or `closure`. A library may declare only unit; another project may add integration, contract, journey, performance or mutation. The core does not prescribe those names or their tools. Regression, acceptance and security are purposes recorded in criteria and evidence: they can apply to any execution level and are not mutually exclusive suites.
 
-**A relational model is an explicit, progressive contract.** A project that owns relational data may declare `data_model`: the decision that selected persistence, its conceptual/logical model, the physical schema, the migrations directory, a migration command and a per-issue integration suite. The core only verifies those real artefacts and replays the two proofs when the schema or a migration changes; it does not pretend that one SQL parser can validate every database and ORM. The project migration command proves the real upgrade on an empty database and the integration suite proves constraints, relations and the timestamp behaviour.
-
-The declared default is third normal form (`3NF`). A chosen denormalization records its reason and repair cost in the configured decision document; it is not silently copied into a second table or cache. Mutable business entities use `created_at` and `updated_at` in UTC, with exactly one authority — database or application — responsible for advancing the latter. Immutable events, pure join tables and static reference data may be exempt only through that same committed decision. The initial insert, a later update, and the preservation of `created_at` are integration-test evidence, not a convention inferred from column names.
-
 CI is deliberately not on that diet: a machine re-running `audit` on every push costs nothing and reports early, while an agent replaying it per issue costs the run. Only the map gates are deferred there.
 
 **The risk lane follows the files.** `risk.high` and `risk.low` name path patterns; everything else is normal. A low-lane closure owes the gates and the ledger, and no replayed claims — proving a stylesheet twice proves nothing. A high lane owes everything.
@@ -280,12 +278,22 @@ Two commands guard the supply chain and the source: `audit` refuses a dependency
 
 A third joins them where it is declared: `sast` looks for the classic dangerous constructs.
 
+`security_scope` validates a project's dynamic-test boundary, OWASP Top 10 2025
+assurance ledger, target allowlist and accepted-finding expiries without sending
+traffic.
+
+`dast_baseline` proves what ZAP could reach and passively inspect in the configured
+test environment. Its report does not make claims about unreachable behavior.
+
 Each has a limit worth knowing, because a gate believed wider than it is protects less than no gate at all:
 
 - **`secrets_scan` sweeps the working tree, not the git history.** A secret already pushed is rotated, not scanned away. The gate will never catch it.
 - **`audit` reports what its database knows today.** A green result is a statement about the present, and it is the reason the command runs on every push rather than once.
 
 - **`sast` finds patterns, not intentions.** It does not know your domain, so it cannot see an authorisation check that was never written.
+
+- **A dynamic scan sees reached traffic, not the whole product.** Authentication
+  proof, explored URL count, exact target and revision belong with every result.
 
 ## Source: security-gates.md
 
@@ -294,6 +302,49 @@ Each has a limit worth knowing, because a gate believed wider than it is protect
 A finding that is accepted rather than fixed goes into a baseline file at the repository root, with its date and its reason. Without that file, "we know about it" lives in a conversation and dies with it.
 
 Two rules keep the baseline honest: an entry names the finding precisely enough that a reader can tell whether it is still the same one, and **an empty baseline is a statement too** — it says no finding is currently accepted, which is what makes a new finding visibly new.
+
+## Source: security-testing.md
+
+## One project-owned boundary
+
+Dynamic testing is optional until the project declares a reachable web target. Once
+declared, `security_testing` is the authority for the environment lifecycle, exact
+allowed targets, authentication, ZAP image, scan budgets, reports, accepted
+findings, and assurance level. Agents do not invent any of those values per task.
+
+The configuration stores environment variable names, never credential values. A
+dedicated seed command creates test identities in disposable data. The ZAP plan
+uses its declared scan identity. Authorization-sensitive applications add a
+project-owned role-matrix gate with two ordinary identities so access to another
+user's resources can be tested. Administrative credentials exist only when that
+role is part of the application and only in the disposable environment.
+
+The target and API override must exactly equal an entry in `allowed_targets`.
+Every scan requires disposable data with external side effects disabled; active
+and API scans additionally require `allow_active: true`. The Docker image uses an immutable SHA-256 digest.
+The runner never mounts the Docker socket.
+
+The committed OWASP Top 10 2025 matrix is an assurance ledger, not a certificate.
+Every category is `unverified`, `partial`, `verified`, or `not_applicable`, with
+concrete controls and limitations. A green ZAP report covers only the reachable
+runtime surface; it does not silently mark design, supply chain, cryptography,
+logging, authorization, or exceptional-condition handling as verified.
+
+## Source: security-testing.md
+
+## Execution cost and evidence
+
+`security_scope` validates the boundary, all ten assurance entries, and accepted
+finding expiries without starting the application. An expired acceptance refuses
+the run before traffic is sent.
+
+`dast_baseline` runs exploration, authenticated-session proof, passive scanning,
+and HTML, JSON, and SARIF reports. It is a closure gate and runs on pull requests in
+generated CI.
+
+Every run records its target, authentication state, commit, timestamps, duration,
+exit status, and artifact names. The dashboard reads only those whitelisted fields;
+unknown fields, including secret-shaped additions, are not exposed.
 
 ## Source: skills.md
 

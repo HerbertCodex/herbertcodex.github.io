@@ -165,7 +165,8 @@
 				"pipeline.config.json",
 				"AGENTS.md",
 				"CLAUDE.md",
-				".github/**"
+				".github/**",
+				"agent-pipeline.version"
 			]
 		},
 		"implementer": {
@@ -187,7 +188,8 @@
 				".github/**",
 				"agent-pipeline/**",
 				"pipeline/**",
-				"docs/decisions/**"
+				"docs/decisions/**",
+				"agent-pipeline.version"
 			]
 		},
 		"qa": {

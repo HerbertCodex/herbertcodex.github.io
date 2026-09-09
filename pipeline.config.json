@@ -25,7 +25,9 @@
     "tracker_sync": "node agent-pipeline/scripts/tracker-sync.mjs",
     "project_map": "pnpm run project-map -- --check",
     "map_coverage": "node agent-pipeline/scripts/map-coverage.mjs",
-    "content": "pnpm run check:content"
+    "content": "pnpm run check:content",
+    "security_scope": "node agent-pipeline/scripts/security-scan.mjs check",
+    "dast_baseline": "node agent-pipeline/scripts/security-scan.mjs baseline"
   },
   "architecture": {
     "id": "feature-modules",
@@ -61,7 +63,7 @@
       "replay": "closure"
     }
   },
-  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit", "content"],
+  "closure_gates": ["coverage", "test_e2e", "dead_code", "audit", "content", "dast_baseline"],
   "project_map": {
     "out": "docs/project-map.md",
     "roots": ["src"],
@@ -103,7 +105,8 @@
         "pipeline.config.json",
         "AGENTS.md",
         "CLAUDE.md",
-        ".github/**"
+        ".github/**",
+        "agent-pipeline.version"
       ]
     },
     "implementer": {
@@ -125,7 +128,8 @@
         ".github/**",
         "agent-pipeline/**",
         "pipeline/**",
-        "docs/decisions/**"
+        "docs/decisions/**",
+        "agent-pipeline.version"
       ]
     },
     "qa": {
@@ -138,7 +142,8 @@
     "pipeline.config.json",
     "docs/decisions/**",
     ".github/**",
-    "scripts/**"
+    "scripts/**",
+    "agent-pipeline.version"
   ],
   "profiles_dir": "pipeline/profiles",
   "docs_dirs": ["agent-pipeline/docs", "docs/stack"],
@@ -194,7 +199,9 @@
       "Bash(date:*)",
       "--",
       "Tu es le rôle {role} du pipeline. Lis le task package JSON : {package}. Ses champs `prompt` et `brief` désignent ton prompt de rôle et ton brief compilé : lis-les intégralement et suis-les. Le champ `record` est ton issue. Termine par ton handoff JSON entre AGENT_HANDOFF_START et AGENT_HANDOFF_END, sans aucun texte après la balise de fermeture."
-    ]
+    ],
+    "dependency_inputs": ["package.json", "pnpm-lock.yaml"],
+    "workspace_paths": ["node_modules"]
   },
   "workflow": {
     "max_transitions_per_run": 4,
@@ -213,6 +220,53 @@
       "with": {
         "node-version": "24"
       }
+    },
+    "gate_events": {
+      "dast_baseline": ["pull_request"]
+    },
+    "timeout_minutes": 35,
+    "secret_environment": [],
+    "environment": {},
+    "artifacts": {
+      "name": "security-and-load-evidence",
+      "paths": ["pipeline/security/reports/**/run.json"]
+    },
+    "artifact_upload": {
+      "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    }
+  },
+  "security_testing": {
+    "version": 1,
+    "assurance": {
+      "standard": "OWASP ASVS",
+      "level": 1,
+      "top10_2025": "docs/security/owasp-top10-2025.json"
+    },
+    "target": "http://127.0.0.1:41732",
+    "allowed_targets": ["http://127.0.0.1:41732"],
+    "allow_active": false,
+    "environment": {
+      "disposable": true,
+      "external_side_effects": "disabled",
+      "network": "host",
+      "start": "pnpm run build && mkdir -p pipeline/runs && { nohup node scripts/serve-static.mjs 41732 .output/public > pipeline/runs/security-env.log 2>&1 & echo $! > pipeline/runs/security-env.pid; }",
+      "stop": "if [ -f pipeline/runs/security-env.pid ]; then kill \"$(cat pipeline/runs/security-env.pid)\" 2>/dev/null || true; rm -f pipeline/runs/security-env.pid; fi",
+      "health_url": "http://127.0.0.1:41732/fr",
+      "health_timeout_seconds": 60
+    },
+    "zap": {
+      "image": "ghcr.io/zaproxy/zaproxy@sha256:781a2bdaea47324e7bab583e2263f21d257b0aee61ed51521a5be45f5f5081ef",
+      "spider": "traditional",
+      "reports_dir": "pipeline/security/reports",
+      "max_scan_minutes": 5,
+      "max_rule_minutes": 1,
+      "threads_per_host": 2,
+      "fail_level": "Medium",
+      "warn_level": "Low"
+    },
+    "accepted_findings": "docs/security/accepted-findings.json",
+    "authentication": {
+      "method": "none"
     }
   }
 }

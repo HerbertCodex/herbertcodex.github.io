@@ -38,3 +38,5 @@ pipeline/runs/
 test-results/
 playwright-report/
 coverage/
+/pipeline/security/reports
+/pipeline/.env.security.local

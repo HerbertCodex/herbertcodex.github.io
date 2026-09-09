@@ -1,8 +1,9 @@
+import { controlEvidenceHistory, executionHistory, gateHistory } from "../scripts/execution-metrics.mjs";
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createServer } from "node:http";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { readJsonl } from "../scripts/lib.mjs";
 import { computeWave } from "../scripts/next-issues.mjs";
@@ -57,6 +58,12 @@ function appendOutput(run, text) {
   run.updated_at = new Date().toISOString();
 }
 
+function stopClock(run) {
+  if (run.finished_at != null) return;
+  run.duration_ms = Math.max(0, Math.round(performance.now() - run.started_clock));
+  run.finished_at = new Date().toISOString();
+}
+
 function publicRun(run) {
   return {
     id: run.id,
@@ -68,6 +75,8 @@ function publicRun(run) {
     started_at: run.started_at,
     updated_at: run.updated_at,
     elapsed_ms: run.elapsed_ms,
+    duration_ms: run.finished_at == null ? Math.max(0, Math.round(performance.now() - run.started_clock)) : run.duration_ms,
+    finished_at: run.finished_at,
     exit_code: run.exit_code,
     output: run.output,
     interactive: run.interactive,
@@ -83,6 +92,7 @@ function processEvent(run, event) {
   if (event.type === "output" && typeof event.text === "string") appendOutput(run, event.text);
   if (event.type === "interrupted") run.status = "interrupted";
   if (event.type === "completed") {
+    stopClock(run);
     run.status = event.exit_code === 0 ? "completed" : "failed";
     run.exit_code = event.exit_code;
     if (Number.isFinite(event.elapsed_ms)) run.elapsed_ms = event.elapsed_ms;
@@ -105,6 +115,38 @@ function readProjectJson(path, label) {
   } catch (error) {
     throw new Error(`${label} cannot be read: ${error.message}`);
   }
+}
+
+/** Reads only the fixed, non-secret fields of the latest data-governance report. */
+export function readDataModelEvidence(cwd, config) {
+  if (config.data_model?.governance_version !== 2) return [];
+  const path = resolve(cwd, config.data_model.reports_dir ?? "pipeline/evidence/data-model", "latest.json");
+  const root = resolve(cwd);
+  if (path !== root && !path.startsWith(`${root}${sep}`)) throw new Error("data-model evidence path escapes the project");
+  if (!existsSync(path)) return [];
+  const report = readProjectJson(path, "data-model evidence");
+  return [{
+    generated_at: report.generated_at ?? null,
+    revision: report.revision ?? null,
+    contract: report.contract ?? null,
+    summary: {
+      entities: report.summary?.entities ?? null,
+      relations: report.summary?.relations ?? null,
+      access_patterns: report.summary?.access_patterns ?? null,
+      denormalizations: report.summary?.denormalizations ?? null,
+      target_normal_form: report.summary?.target_normal_form ?? null,
+      workload: report.summary?.workload ?? null,
+    },
+    controls: Array.isArray(report.controls) ? report.controls.map((control) => ({
+      name: control.name ?? "unknown",
+      status: control.status ?? "unknown",
+      statement: control.statement ?? "",
+    })) : [],
+    proofs: Object.fromEntries(Object.entries(report.proofs ?? {}).map(([name, proof]) => [name, {
+      gate: proof?.gate ?? null,
+      replay: proof?.replay ?? null,
+    }])),
+  }];
 }
 
 function recommendation(record, rules, ready, waiting) {
@@ -149,6 +191,8 @@ function publicIssue(record, rules, ready, waiting) {
   return {
     id: record.id,
     title: titleOf(record),
+    description: typeof record.content === "string" ? record.content : (record.description ?? ""),
+    acceptance_criteria: Array.isArray(record.acceptance_criteria) ? record.acceptance_criteria : [],
     spec_id: record.spec_id ?? null,
     phase,
     owner: rules.phases?.[phase]?.owner ?? "unknown",
@@ -157,6 +201,7 @@ function publicIssue(record, rules, ready, waiting) {
     reservations: Array.isArray(record.pipeline_state?.file_reservations)
       ? record.pipeline_state.file_reservations
       : [],
+    qa_code_rejections: record.pipeline_state?.qa_code_rejections ?? 0,
     criteria_count: Array.isArray(record.acceptance_criteria)
       ? record.acceptance_criteria.length
       : 0,
@@ -170,6 +215,8 @@ function trackerIssueWithoutControl(entry, dependencies, managedTag) {
   return {
     id: record.id,
     title: titleOf(record),
+    description: typeof record.content === "string" ? record.content : (record.description ?? ""),
+    acceptance_criteria: Array.isArray(record.acceptance_criteria) ? record.acceptance_criteria : [],
     spec_id: null,
     phase: "not_imported",
     tracker_status: record.status,
@@ -191,6 +238,7 @@ function issueFromTracker(control, match, snapshot, config, rules, ready, waitin
   const merged = {
     ...control,
     title: source.title,
+    content: source.content ?? "",
     priority: source.priority ?? null,
     depends_on: snapshot.dependencies.get(source.id) ?? [],
   };
@@ -273,7 +321,11 @@ export function readIssueCatalog(cwd) {
 }
 
 class RunRegistry {
-  constructor(launchProcess, interactiveInput) {
+  constructor(launchProcess, interactiveInput, historySource = () => [], gateSource = () => [], securitySource = () => [], dataModelSource = () => []) {
+    this.gateSource = gateSource;
+    this.historySource = historySource;
+    this.securitySource = securitySource;
+    this.dataModelSource = dataModelSource;
     this.launchProcess = launchProcess;
     this.interactiveInput = interactiveInput;
     this.runs = new Map();
@@ -282,9 +334,14 @@ class RunRegistry {
   }
 
   snapshot() {
+    const live = [...this.runs.values()].reverse().map(publicRun);
+    const ids = new Set(live.map((run) => run.runtime_run_id));
     return {
       generated_at: new Date().toISOString(),
-      runs: [...this.runs.values()].reverse().map(publicRun),
+      runs: [...live, ...this.historySource().filter((run) => !ids.has(run.runtime_run_id))],
+      gate_reports: this.gateSource(),
+      security_reports: this.securitySource(),
+      data_model_reports: this.dataModelSource(),
     };
   }
 
@@ -318,6 +375,9 @@ class RunRegistry {
       started_at: timestamp,
       updated_at: timestamp,
       elapsed_ms: 0,
+      started_clock: performance.now(),
+      duration_ms: 0,
+      finished_at: null,
       exit_code: null,
       output: "",
       interactive: this.interactiveInput,
@@ -363,6 +423,7 @@ class RunRegistry {
   }
 
   fail(run, error) {
+    stopClock(run);
     appendOutput(run, `${error.message}\n`);
     run.status = "failed";
     run.exit_code = 1;
@@ -371,6 +432,7 @@ class RunRegistry {
   }
 
   finish(run, code, buffer) {
+    stopClock(run);
     if (buffer.trim().length > 0) appendOutput(run, `${buffer}\n`);
     if (["starting", "running"].includes(run.status)) {
       run.status = code === 0 ? "completed" : "failed";
@@ -598,6 +660,8 @@ function lifecycle(server, registry, token) {
  * @param {string} [options.frameworkRoot] - Root containing the core scripts.
  * @param {Function} [options.launchProcess] - Testable dispatch launcher.
  * @param {Function} [options.issueSource] - Testable issue catalog reader.
+ * @param {Function} [options.securitySource] - Testable security evidence reader.
+ * @param {Function} [options.dataModelSource] - Testable database-governance evidence reader.
  * @param {boolean} [options.interactiveInput] - Override runtime stdin capability.
  * @returns {object} Dashboard lifecycle and its HTTP server state.
  */
@@ -606,6 +670,8 @@ export function createDashboard({
   frameworkRoot = DEFAULT_FRAMEWORK_ROOT,
   launchProcess = null,
   issueSource = null,
+  securitySource = null,
+  dataModelSource = null,
   interactiveInput = null,
 } = {}) {
   const token = randomBytes(24).toString("hex");
@@ -621,7 +687,25 @@ export function createDashboard({
       acceptsInput = false;
     }
   }
-  const registry = new RunRegistry(launcher, acceptsInput === true);
+  const history = () => {
+    try { return executionHistory(cwd, readProjectJson(resolve(cwd, "pipeline.config.json"), "pipeline configuration")); }
+    catch { return []; }
+  };
+  const gates = () => {
+    try { return gateHistory(cwd, readProjectJson(resolve(cwd, "pipeline.config.json"), "pipeline configuration")); }
+    catch { return []; }
+  };
+  const security = securitySource ?? (() => {
+    try { return controlEvidenceHistory(cwd, readProjectJson(resolve(cwd, "pipeline.config.json"), "pipeline configuration")); }
+    catch { return []; }
+  });
+  const dataModels = dataModelSource ?? (() => {
+    try {
+      const config = readProjectJson(resolve(cwd, "pipeline.config.json"), "pipeline configuration");
+      return readDataModelEvidence(cwd, config);
+    } catch { return []; }
+  });
+  const registry = new RunRegistry(launcher, acceptsInput === true, history, gates, security, dataModels);
   const source = issueSource ?? (() => readIssueCatalog(cwd));
   const server = createServer(requestHandler(registry, token, source));
   return lifecycle(server, registry, token);

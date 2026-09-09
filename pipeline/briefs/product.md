@@ -30,6 +30,8 @@ Profile: frontend-typescript. When a rule or a prompt names a command by its key
 - project_map : `pnpm run project-map -- --check`
 - map_coverage : `node agent-pipeline/scripts/map-coverage.mjs`
 - content : `pnpm run check:content`
+- security_scope : `node agent-pipeline/scripts/security-scan.mjs check`
+- dast_baseline : `node agent-pipeline/scripts/security-scan.mjs baseline`
 
 ## Source: git-workflow.md
 
@@ -71,7 +73,7 @@ Every sub-agent ends with a single JSON block between `AGENT_HANDOFF_START` and 
 
 It carries `produced_at`, an ISO 8601 date. That is for legibility, not for measurement: several handoffs sat side by side on a real run with no way to order them, and no way to tell a fresh one from a file left over from an earlier attempt. The durations come from the orchestrator's own stamps, because nothing here trusts an agent's account of its own clock.
 
-They are written under `handoffs_dir`, which git ignores, and `handoffs.mjs --prune` removes those whose issue has closed.
+They are written under `handoffs_dir`, which git ignores. Dispatch archives validated output by content digest under `archive/`; store transitions reference that receipt. `handoffs.mjs --prune` only removes transient top-level files for closed issues, never archived receipts.
 
 ```json
 {
@@ -222,10 +224,6 @@ Two things now scale with the issue rather than with nothing.
 
 **Test suites are metadata, not a stack contract.** `test_suites` optionally maps any suite name to a declared command gate and a replay point: `per_issue` or `closure`. A library may declare only unit; another project may add integration, contract, journey, performance or mutation. The core does not prescribe those names or their tools. Regression, acceptance and security are purposes recorded in criteria and evidence: they can apply to any execution level and are not mutually exclusive suites.
 
-**A relational model is an explicit, progressive contract.** A project that owns relational data may declare `data_model`: the decision that selected persistence, its conceptual/logical model, the physical schema, the migrations directory, a migration command and a per-issue integration suite. The core only verifies those real artefacts and replays the two proofs when the schema or a migration changes; it does not pretend that one SQL parser can validate every database and ORM. The project migration command proves the real upgrade on an empty database and the integration suite proves constraints, relations and the timestamp behaviour.
-
-The declared default is third normal form (`3NF`). A chosen denormalization records its reason and repair cost in the configured decision document; it is not silently copied into a second table or cache. Mutable business entities use `created_at` and `updated_at` in UTC, with exactly one authority — database or application — responsible for advancing the latter. Immutable events, pure join tables and static reference data may be exempt only through that same committed decision. The initial insert, a later update, and the preservation of `created_at` are integration-test evidence, not a convention inferred from column names.
-
 CI is deliberately not on that diet: a machine re-running `audit` on every push costs nothing and reports early, while an agent replaying it per issue costs the run. Only the map gates are deferred there.
 
 **The risk lane follows the files.** `risk.high` and `risk.low` name path patterns; everything else is normal. A low-lane closure owes the gates and the ledger, and no replayed claims — proving a stylesheet twice proves nothing. A high lane owes everything.
@@ -250,12 +248,22 @@ Two commands guard the supply chain and the source: `audit` refuses a dependency
 
 A third joins them where it is declared: `sast` looks for the classic dangerous constructs.
 
+`security_scope` validates a project's dynamic-test boundary, OWASP Top 10 2025
+assurance ledger, target allowlist and accepted-finding expiries without sending
+traffic.
+
+`dast_baseline` proves what ZAP could reach and passively inspect in the configured
+test environment. Its report does not make claims about unreachable behavior.
+
 Each has a limit worth knowing, because a gate believed wider than it is protects less than no gate at all:
 
 - **`secrets_scan` sweeps the working tree, not the git history.** A secret already pushed is rotated, not scanned away. The gate will never catch it.
 - **`audit` reports what its database knows today.** A green result is a statement about the present, and it is the reason the command runs on every push rather than once.
 
 - **`sast` finds patterns, not intentions.** It does not know your domain, so it cannot see an authorisation check that was never written.
+
+- **A dynamic scan sees reached traffic, not the whole product.** Authentication
+  proof, explored URL count, exact target and revision belong with every result.
 
 ## Source: security-gates.md
 
@@ -278,6 +286,33 @@ Some things no command measures. Name them in the pull request rather than hopin
 A control that cannot decide refuses. A validator that cannot read its input refuses. A parser that meets something unexpected refuses.
 
 The opposite — continuing with a permissive default — produces a system that works in testing and is open in production, and the difference is invisible until someone looks for it.
+
+## Source: security-testing.md
+
+## One project-owned boundary
+
+Dynamic testing is optional until the project declares a reachable web target. Once
+declared, `security_testing` is the authority for the environment lifecycle, exact
+allowed targets, authentication, ZAP image, scan budgets, reports, accepted
+findings, and assurance level. Agents do not invent any of those values per task.
+
+The configuration stores environment variable names, never credential values. A
+dedicated seed command creates test identities in disposable data. The ZAP plan
+uses its declared scan identity. Authorization-sensitive applications add a
+project-owned role-matrix gate with two ordinary identities so access to another
+user's resources can be tested. Administrative credentials exist only when that
+role is part of the application and only in the disposable environment.
+
+The target and API override must exactly equal an entry in `allowed_targets`.
+Every scan requires disposable data with external side effects disabled; active
+and API scans additionally require `allow_active: true`. The Docker image uses an immutable SHA-256 digest.
+The runner never mounts the Docker socket.
+
+The committed OWASP Top 10 2025 matrix is an assurance ledger, not a certificate.
+Every category is `unverified`, `partial`, `verified`, or `not_applicable`, with
+concrete controls and limitations. A green ZAP report covers only the reachable
+runtime surface; it does not silently mark design, supply chain, cryptography,
+logging, authorization, or exceptional-condition handling as verified.
 
 ## Source: skills.md
 

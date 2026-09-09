@@ -10,6 +10,7 @@ on:
       - main
   pull_request:
 
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -18,7 +19,8 @@ jobs:
   gates:
     name: gates (frontend-typescript)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
+
     steps:
       - uses: actions/checkout@v7
         with:
@@ -32,63 +34,83 @@ jobs:
         run: corepack enable && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium
 
       - name: check
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check
 
       - name: lint
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run lint
 
       - name: format
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run format:check
 
       - name: build
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run build
 
       - name: test-unit
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run test:unit
 
       - name: test-e2e
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run test:e2e
 
       - name: coverage
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run test:coverage
 
       - name: smoke
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run test:smoke
 
       - name: accessibility
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run test:a11y
 
       - name: architecture
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:architecture
 
       - name: design-tokens
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:tokens
 
       - name: dead-code
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:dead-code
 
       - name: duplication
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:duplication
 
       - name: design-limits
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:design-limits
 
       - name: comment-policy
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:comments
 
       - name: doc-lint
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:docs
 
       - name: sast
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:security
 
       - name: secrets-scan
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run scan:secrets
 
       - name: audit
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm audit --audit-level high
 
       - name: tracker-sync
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: node agent-pipeline/scripts/tracker-sync.mjs
 
       - name: project-map
@@ -100,7 +122,16 @@ jobs:
         run: node agent-pipeline/scripts/map-coverage.mjs
 
       - name: content
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         run: pnpm run check:content
+
+      - name: security-scope
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        run: node agent-pipeline/scripts/security-scan.mjs check
+
+      - name: dast-baseline
+        if: ${{ github.event_name == 'pull_request' }}
+        run: node agent-pipeline/scripts/security-scan.mjs baseline
 
       - name: core-tests
         run: node --test "agent-pipeline/test/**/*.test.mjs"
@@ -113,3 +144,12 @@ jobs:
 
       - name: store-invariants
         run: node agent-pipeline/scripts/store-verify.mjs
+
+      - name: upload-security-and-load-evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: "security-and-load-evidence"
+          if-no-files-found: warn
+          path: |
+            pipeline/security/reports/**/run.json

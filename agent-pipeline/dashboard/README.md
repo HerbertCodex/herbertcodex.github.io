@@ -40,6 +40,35 @@ Orchestrator has created its bound control record. Scope or status drift also
 blocks dispatch with the exact synchronization action. The catalog refreshes
 every five seconds so transitions become visible without a page reload.
 
+Click an issue card (or press Enter when focused) to open its full description,
+acceptance criteria, dependencies, reservations and dispatch status. Details also
+remain available for blocked, closed and unimported issues. Close the dialog or
+press Escape to return to the selected card. An open dialog refreshes with the
+catalog; opening it does not dispatch an agent.
+
+Each run shows its start, finish and execution duration. The clock starts at
+dispatch, includes preparation, advances even without runtime heartbeats and
+freezes on completion or process failure. An interruption request keeps counting
+until the process exits. A separate table adds attempts by task and role, with
+the longest totals first; concurrent durations are summed, not treated as project
+wall-clock duration. These totals combine the current session with durable run records and survive server restarts.
+An interrupted historical run is marked incomplete; its clock does not keep ticking.
+Gate reports separate local execution time from gates reused from successful CI on the same commit.
+Gate time is already included in agent time: do not add those totals.
+These measurements do not identify model thinking time or token cost.
+
+The security and load table reads durable `run.json` records from the configured
+evidence directories. It shows the control, exact target, result, authentication
+state, commit, duration and artifact names. Only this fixed metadata is exposed;
+report bodies and unknown fields are not served by the dashboard. ZAP HTML, JSON
+and SARIF reports remain files in the project-owned evidence directory.
+
+When relational governance v2 is configured, the dashboard also reads the latest
+sanitized data-model report. It shows every structural control, its evidence or
+limitation and exact revision. It deliberately labels runtime checks as requiring
+their project-owned proof gates; a reviewed JSON contract is not presented as proof
+of authorization, query latency, database grants or backup restoration.
+
 The browser's selection is not authority. `/api/dispatch` reads the catalog
 again and refuses an unknown issue, a non-dispatchable phase, a role mismatch,
 or a second live process for the same issue.

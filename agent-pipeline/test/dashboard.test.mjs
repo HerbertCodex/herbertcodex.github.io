@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { PassThrough } from "node:stream";
 import { afterEach, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createDashboard, readIssueCatalog } from "../dashboard/server.mjs";
+import { createDashboard, readDataModelEvidence, readIssueCatalog } from "../dashboard/server.mjs";
 import { readIssueTracker, trackerBinding } from "../scripts/issue-tracker.mjs";
 import {
   createSandbox,
@@ -116,10 +116,82 @@ describe("live dashboard: a local view over portable agent events", () => {
     assert.match(page, /Dependencies:/);
     assert.match(page, /Reservations:/);
     assert.match(page, /aria-live="polite"/);
+    assert.match(page, /Security and load reports/);
+    assert.match(page, /id="security-reports"/);
+    assert.match(page, /Relational data governance/);
+    assert.match(page, /id="data-model-reports"/);
     assert.match(page, /output\.textContent/);
     assert.doesNotMatch(page, /innerHTML/);
     assert.doesNotMatch(page, /<script[^>]+src=/);
     assert.doesNotMatch(page, /<link[^>]+href=/);
+  });
+
+  test("exposes durable security reports with scan coverage and timing", async () => {
+    const dashboard = createDashboard({
+      issueSource: selectableIssues,
+      securitySource: () => [{
+        kind: "zap",
+        mode: "baseline",
+        status: "passed",
+        target: "http://app:3000",
+        authenticated: true,
+        commit_sha: "deadbeef",
+        duration_ms: 1250,
+        summary: { discovered_url_count: 18, affected_url_count: 2, alert_count: 2, risks: { High: 0, Medium: 2 } },
+        reports: ["report.html", "report.sarif.json"],
+      }],
+    });
+    dashboards.push(dashboard);
+    await dashboard.listen(0, "127.0.0.1");
+    const address = dashboard.address();
+    const snapshot = await (await fetch(`http://127.0.0.1:${address.port}/api/snapshot`)).json();
+
+    assert.equal(snapshot.security_reports.length, 1);
+    assert.equal(snapshot.security_reports[0].authenticated, true);
+    assert.equal(snapshot.security_reports[0].duration_ms, 1250);
+    assert.equal(snapshot.security_reports[0].summary.discovered_url_count, 18);
+  });
+
+  test("exposes sanitized relational governance controls and limitations", async () => {
+    const dashboard = createDashboard({
+      issueSource: selectableIssues,
+      dataModelSource: () => [{
+        revision: "cafebabe",
+        contract: "docs/data-model.contract.json",
+        summary: { entities: 4 },
+        controls: [
+          { name: "normalization", status: "contract_verified", statement: "Declared dependencies checked." },
+          { name: "data_authorization", status: "proof_required", statement: "Execute authorization gate." },
+        ],
+        proofs: { authorization: { gate: "test_data_authorization", replay: "per_issue" } },
+      }],
+    });
+    dashboards.push(dashboard);
+    await dashboard.listen(0, "127.0.0.1");
+    const address = dashboard.address();
+    const snapshot = await (await fetch(`http://127.0.0.1:${address.port}/api/snapshot`)).json();
+
+    assert.equal(snapshot.data_model_reports[0].revision, "cafebabe");
+    assert.equal(snapshot.data_model_reports[0].controls[1].status, "proof_required");
+  });
+
+  test("reads only fixed non-secret fields from relational governance evidence", () => {
+    const root = mkdtempSync(join(tmpdir(), "pipeline-data-dashboard-"));
+    sandboxes.push(root);
+    mkdirSync(join(root, "evidence"), { recursive: true });
+    writeFileSync(join(root, "evidence", "latest.json"), JSON.stringify({
+      generated_at: "2026-09-08T00:00:00.000Z",
+      revision: "abc",
+      contract: "docs/model.json",
+      secret: "must-not-leak",
+      summary: { entities: 2, credential: "must-not-leak" },
+      controls: [{ name: "database_security", status: "proof_required", statement: "Run the gate.", raw_credentials: "must-not-leak" }],
+      proofs: { database_security: { gate: "db_security", replay: "per_issue", token: "must-not-leak" } },
+    }));
+    const reports = readDataModelEvidence(root, { data_model: { governance_version: 2, reports_dir: "evidence" } });
+    assert.equal(reports[0].controls[0].name, "database_security");
+    assert.doesNotMatch(JSON.stringify(reports), /must-not-leak/);
+    assert.throws(() => readDataModelEvidence(root, { data_model: { governance_version: 2, reports_dir: "../outside" } }), /escapes the project/);
   });
 
   test("lists selectable issues from the durable store view", async () => {
@@ -187,6 +259,23 @@ describe("live dashboard: a local view over portable agent events", () => {
     assert.equal(snapshot.runs[0].status, "completed");
     assert.equal(snapshot.runs[0].elapsed_ms, 3200);
     assert.match(snapshot.runs[0].output, /red test pinned/);
+  });
+
+  test("measures silent execution and freezes duration when a child exits without events", async () => {
+    const child = fakeProcess();
+    const { dashboard, origin } = await runningDashboard(() => child);
+    await post(origin, "/api/dispatch", dashboard.token, { issue_id: "i-001", role: "implementer" });
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    const running = (await (await fetch(`${origin}/api/snapshot`)).json()).runs[0];
+    assert.ok(running.duration_ms >= 20);
+    assert.equal(running.finished_at, null);
+    child.emit("close", 1);
+    const finished = (await (await fetch(`${origin}/api/snapshot`)).json()).runs[0];
+    assert.ok(finished.duration_ms >= running.duration_ms);
+    assert.ok(finished.finished_at);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    const later = (await (await fetch(`${origin}/api/snapshot`)).json()).runs[0];
+    assert.equal(later.duration_ms, finished.duration_ms);
   });
 
   test("interrupts the exact child attached to a run", async () => {
@@ -340,6 +429,7 @@ describe("live dashboard: a local view over portable agent events", () => {
       {
         id: "i-ready",
         title: "Ready work",
+        description: "Full issue description",
         spec_id: "s-one",
         priority: 1,
         acceptance_criteria: ["first", "second"],
@@ -378,6 +468,8 @@ describe("live dashboard: a local view over portable agent events", () => {
     assert.equal(byId.get("i-ready").dispatchable, true);
     assert.equal(byId.get("i-ready").role, "implementer");
     assert.equal(byId.get("i-ready").criteria_count, 2);
+    assert.equal(byId.get("i-ready").description, "Full issue description");
+    assert.deepEqual(byId.get("i-ready").acceptance_criteria, ["first", "second"]);
     assert.equal(byId.get("i-waiting").dispatchable, false);
     assert.match(byId.get("i-waiting").reason, /depends on i-active/);
     assert.equal(byId.get("i-active").role, "implementer");
@@ -401,6 +493,9 @@ describe("live dashboard: a local view over portable agent events", () => {
 
     let catalog = new Map(readIssueCatalog(root).map((item) => [item.id, item]));
     assert.equal(catalog.get("i-t1").title, "Authoritative title");
+    assert.equal(catalog.get("i-t1").description, source.content);
+    assert.equal(catalog.get("i-new").description, unimported.content);
+    assert.deepEqual(catalog.get("i-new").acceptance_criteria, []);
     assert.equal(catalog.get("i-t1").tracker_status, "open");
     assert.equal(catalog.get("i-t1").dispatchable, true);
     assert.equal(catalog.get("i-new").phase, "not_imported");

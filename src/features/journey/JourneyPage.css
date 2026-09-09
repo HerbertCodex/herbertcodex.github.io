@@ -72,8 +72,14 @@
  * seulement colores. La maquette ne les distinguait que par un noeud plein sur
  * le rail : une difference de couleur qu aucun lecteur daltonien ni aucun
  * lecteur d ecran ne recoit. Le noeud plein reste, en second.
+ *
+ * Il ne s appelle PAS `mark` : ce nom appartient deja au nom de marque de la
+ * barre, dans `src/shared/SiteBar.css`. Les feuilles sont globales, et le
+ * routeur precharge la feuille de cette page des que le lien Parcours entre
+ * dans le champ — la marque de l en-tete se peignait alors en plaque rouge
+ * sur toutes les pages, sans qu aucune d elles n ait rien demande.
  */
-.mark {
+.ongoing {
   display: inline-block;
   margin-top: var(--space-1);
   padding: 0 var(--space-2);

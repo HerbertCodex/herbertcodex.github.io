@@ -105,15 +105,36 @@
   border-bottom: 0;
 }
 
-.mark,
 .bar nav a {
   font-size: var(--text-sm);
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
 }
 
+/*
+ * Le nom porte une plaque pleine : c'est le seul aplat de couleur de la
+ * barre, donc le seul point vers lequel l'oeil va d'abord, et il tombe sur
+ * qui signe la page. Le mono et le petit corps le detachent des liens, qui
+ * gardent le grotesque : ce n'est pas un lien de plus, c'est l'origine.
+ *
+ * `--accent-plate` plutot que `--accent` : c'est le jeton dont le contraste
+ * avec `--on-accent` est mesure par la suite d'accessibilite dans les deux
+ * themes, et un aplat de texte est exactement le cas qu'il couvre.
+ *
+ * La plaque n'a de rembourrage QUE lateral. La barre aligne ses trois blocs
+ * sur la ligne de base, et la hauteur de 72 px est mesuree par la suite du
+ * rythme vertical : un rembourrage vertical la grandirait sans que la
+ * maquette l'ait demande.
+ */
 .mark {
+  padding: 0 var(--space-2);
+  background: var(--accent-plate);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   font-weight: var(--weight-bold);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
 }
 
 .bar nav a {

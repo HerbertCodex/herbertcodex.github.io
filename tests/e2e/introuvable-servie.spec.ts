@@ -1,4 +1,5 @@
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 import { PRERENDERED } from "../../scripts/routes.mjs";
 
@@ -94,3 +95,44 @@ for (const address of ["/fr/inconnu", "/en/unknown", "/de/x", "/nimportequoi"]) 
     expect(said().filter((line) => !line.startsWith("Failed to load resource:"))).toEqual([]);
   });
 }
+
+/*
+ * L'accessibilite de cet ecran n'etait mesuree par rien.
+ * `tests/e2e/accessibility.spec.ts` balaye les huit adresses PUBLIEES, et
+ * celle-ci n'en est pas une : aucun serveur local ne la sert, seule la regle
+ * de GitHub Pages y mene. Le balayage vit donc ici, ou l'interception qui
+ * reproduit cette regle est deja ecrite, plutot que recopiee la-bas.
+ *
+ * Les deux adresses ne sont pas le meme ecran : sous un prefixe publie une
+ * seule langue est dite, hors de tout prefixe il y en a deux, et c'est la
+ * seconde forme qui porte les attributs `lang` par moitie.
+ */
+for (const address of ["/fr/inconnu", "/nimportequoi"]) {
+  test(`${address} : l'ecran introuvable ne porte aucune violation d'accessibilite detectable @a11y`, async ({
+    context,
+    page,
+  }) => {
+    await serveLikePages(context);
+    await page.goto(address);
+    await expect(page.locator("h1")).toContainText("Page");
+
+    const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+
+    expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([]);
+  });
+}
+
+test("hors de tout prefixe, chaque moitie nomme sa langue dans le document que l'hebergeur sert @a11y", () => {
+  const html = readFileSync(DOCUMENT, "utf8");
+
+  // Le document ne declare qu'une langue et cet ecran en dit deux : sans ces
+  // attributs, une synthese vocale lit les mots anglais avec la voix
+  // francaise. C'est l'artefact qui est lu ici, pas le rendu client : c'est ce
+  // fichier que GitHub Pages envoie.
+  // Le balisage porte aussi les marques d'hydratation de Solid, donc on ne
+  // fixe pas l'ordre des attributs : ce qui est exige est l'attribut, et le
+  // texte qu'il qualifie.
+  expect(html).toMatch(/<span[^>]*lang="fr"[^>]*>Page introuvable<\/span>/);
+  expect(html).toMatch(/<span[^>]*lang="en"[^>]*>Page not found<\/span>/);
+  expect(html).toMatch(/<a[^>]*href="\/en"[^>]*lang="en"/);
+});

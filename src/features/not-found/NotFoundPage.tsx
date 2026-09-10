@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta";
-import { For, useContext } from "solid-js";
+import { For, Show, useContext } from "solid-js";
 import { DICTIONARIES, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
 import "./NotFoundPage.css";
 
@@ -8,6 +8,7 @@ type Line = "title" | "heading" | "lede" | "home";
 type Way = {
   readonly href: string;
   readonly label: string;
+  readonly locale: Locale;
 };
 
 /*
@@ -29,6 +30,36 @@ function said(line: Line, locales: readonly Locale[]): string {
   return locales.map((locale) => DICTIONARIES[locale].notFound[line]).join(" · ");
 }
 
+/*
+ * Le titre du document est une chaine, pas du balisage : il ne peut porter
+ * qu'une langue, celle que le document declare. C'est pourquoi `said` reste,
+ * pour lui seul.
+ *
+ * Tout le reste passe par ce composant, et la raison est un lecteur d'ecran.
+ * Un document declare UNE langue ; cet ecran est le seul du site a en dire
+ * deux. Sans `lang` sur chaque moitie, les mots anglais sont annonces avec la
+ * voix francaise que le document declare, ou l'inverse. L'attribut est ce qui
+ * permet a la synthese de changer de voix en cours de ligne.
+ *
+ * Il n'est pose QUE lorsque deux langues sont dites. Sous un prefixe publie,
+ * le document declare deja la seule langue en force, et un `lang` de plus ne
+ * marquerait aucun changement — or c'est tout ce que cet attribut sait dire.
+ */
+function Said(props: { readonly line: Line; readonly locales: readonly Locale[] }) {
+  return (
+    <Show when={props.locales.length > 1} fallback={said(props.line, props.locales)}>
+      <For each={props.locales}>
+        {(locale, rank) => (
+          <>
+            <Show when={rank() > 0}>{" · "}</Show>
+            <span lang={locale}>{DICTIONARIES[locale].notFound[props.line]}</span>
+          </>
+        )}
+      </For>
+    </Show>
+  );
+}
+
 /**
  * The screen an address the site does not publish leads to.
  *
@@ -43,14 +74,25 @@ export default function NotFoundPage() {
   const i18n = useContext(I18nContext);
   const spoken = () => (i18n === undefined ? LOCALES : [i18n.locale()]);
   const ways = (): readonly Way[] =>
-    spoken().map((locale) => ({ href: `/${locale}`, label: DICTIONARIES[locale].notFound.home }));
+    spoken().map((locale) => ({ href: `/${locale}`, label: DICTIONARIES[locale].notFound.home, locale }));
+  const bilingual = () => spoken().length > 1;
   return (
     <main class="not-found">
       <Title>{said("title", spoken())}</Title>
-      <h1>{said("heading", spoken())}</h1>
-      <p>{said("lede", spoken())}</p>
+      <h1>
+        <Said line="heading" locales={spoken()} />
+      </h1>
+      <p>
+        <Said line="lede" locales={spoken()} />
+      </p>
       <div class="links">
-        <For each={ways()}>{(way) => <a href={way.href}>{way.label}</a>}</For>
+        <For each={ways()}>
+          {(way) => (
+            <a href={way.href} lang={bilingual() ? way.locale : undefined}>
+              {way.label}
+            </a>
+          )}
+        </For>
       </div>
     </main>
   );

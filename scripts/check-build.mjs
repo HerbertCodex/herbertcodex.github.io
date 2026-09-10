@@ -20,6 +20,11 @@ import { PRERENDERED } from "./routes.mjs";
 const ROOT = ".output/public";
 
 const missing = PRERENDERED.filter((route) => {
+  // Une adresse qui se termine par « .html » DESIGNE le fichier, elle ne le
+  // prefixe pas : /404.html est le document que l hebergeur sert a une adresse
+  // inconnue, pas un dossier portant une page d index. Sans cette lecture, un
+  // build correct serait refuse pour un fichier qu il vient d ecrire.
+  if (route.endsWith(".html")) return !existsSync(join(ROOT, route));
   const base = route === "/" ? ROOT : join(ROOT, route);
   return !existsSync(join(base, "index.html")) && !existsSync(`${base}.html`);
 });

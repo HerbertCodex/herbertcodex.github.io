@@ -23,4 +23,4 @@ import { PAGES, addressesToPrerender } from "../src/shared/pages.ts";
  * `vite.config.ts` bundles this file to read the list, and would compile the
  * JSX it found there with the wrong runtime.
  */
-export const PRERENDERED = ["/", ...addressesToPrerender(PAGES)];
+export const PRERENDERED = ["/", "/404.html", ...addressesToPrerender(PAGES)];

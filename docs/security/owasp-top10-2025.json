@@ -17,9 +17,10 @@
         }
       ],
       "limitations": [
-        "Seul le serveur de la CI est mesuré : dast_baseline et la suite navigateur le traversent, jamais l'hébergeur de production.",
-        "GitHub Pages, l'hébergeur de production, n'envoie aucun en-tête de sécurité et n'offre aucun moyen d'en configurer (curl -sI https://pages.github.com/, le 2026-09-10) : ce qui atteint le visiteur est ce que le HTML porte.",
-        "Sur GitHub Pages, le refus de mise en cadre (frame-ancestors, X-Frame-Options), nosniff (X-Content-Type-Options) et la Permissions-Policy ne sont pas délivrés : aucun n'a de forme en balise.",
+        "Seul le serveur de la CI est mesuré PAR UNE PORTE : dast_baseline et la suite navigateur le traversent à chaque cycle. L'hébergeur de production n'est mesuré par aucune porte ; il l'a été à la main, une fois, le 2026-09-10, et cette mesure vieillira sans que rien ne le signale.",
+        "GitHub Pages, l'hébergeur de production, n'offre aucun moyen de configurer les en-têtes de réponse. Mesuré sur le site lui-même le 2026-09-10 (curl -sI https://herbertcodex.github.io/fr/), il n'envoie AUCUN des cinq en-têtes que le build calcule : ni Content-Security-Policy, ni X-Frame-Options, ni X-Content-Type-Options, ni Referrer-Policy, ni Permissions-Policy. Ce qui atteint le visiteur est ce que le HTML porte.",
+        "La plateforme envoie en revanche un en-tête que le site ne pose pas et qu'aucune porte ne mesure : strict-transport-security: max-age=31556952, soit un an, avec HTTPS forcé sur le domaine par défaut. C'est une protection reçue, non demandée : elle disparaîtrait avec un changement d'hébergeur sans que rien ici ne s'en aperçoive.",
+        "Sur GitHub Pages, le refus de mise en cadre (frame-ancestors, X-Frame-Options), nosniff (X-Content-Type-Options) et la Permissions-Policy ne sont pas délivrés : aucun n'a de forme en balise. Confirmé par la mesure du 2026-09-10 sur le site en ligne, et non plus seulement déduit.",
         "L'impact d'une mise en cadre est borné au choix de thème du visiteur : le site n'a ni formulaire, ni appel réseau, ni compte. Aucun script de défense contre la mise en cadre n'est ajouté (décision D-5, spec s-5d3y).",
         "Un rapport ZAP vert ne couvre que ce que le scan a atteint : il ne fait pas passer la catégorie à vérifiée."
       ]

@@ -28,7 +28,11 @@ describe("une réalisation prise seule", () => {
     expect(container.querySelector("figure")).toBeNull();
     expect(container.querySelector("svg")).toBeNull();
     expect(container.querySelector("img")).toBeNull();
-    expect(getByRole("heading", { level: 2 }).textContent).toBe(bare.title);
+    // Niveau 3 : le titre d'une realisation est un enfant du titre de la
+    // section « Realisations », lui-meme un h2 de la page unique. Le niveau est
+    // assert ici plutot que devine, parce qu'un saut de niveau est un defaut
+    // qu'aucune porte de ce depot ne mesure.
+    expect(getByRole("heading", { level: 3 }).textContent).toBe(bare.title);
     expect(getByText(bare.problem)).toBeTruthy();
     expect(getByText(bare.did)).toBeTruthy();
 

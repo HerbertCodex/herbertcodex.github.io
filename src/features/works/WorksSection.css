@@ -1,0 +1,9 @@
+/*
+ * Le bandeau, sa regle, son echelle et le compte sont la primitive de
+ * `src/app.css`. La section ne fixe que ce qui lui appartient : sa respiration
+ * au-dessus du bandeau, ou elle suit la rangee de faits de l'ouverture, et
+ * sous lui, ou la premiere carte commence.
+ */
+.works .section-head {
+  margin: var(--space-6) 0 var(--space-5);
+}

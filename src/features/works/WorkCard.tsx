@@ -165,7 +165,7 @@ export default function WorkCard(props: WorkCardProps) {
       <Show when={props.work.diagram}>{(diagram) => <Schema diagram={diagram()} />}</Show>
       <div>
         <span class="kind">{provenance()}</span>
-        <h2>{props.work.title}</h2>
+        <h3>{props.work.title}</h3>
         <dl class="story">
           <For each={story()}>
             {(line) => (

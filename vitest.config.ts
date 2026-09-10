@@ -30,7 +30,7 @@ export default defineConfig({
       // `src/shared` vers `src/features/<page>`, et une liste qui ne suit pas
       // laisse un ecran compter a 0 %. Mesure par Produit avant le travail :
       // sans ce deplacement, coverage sort a 89,96 % pour un seuil de 90, la
-      // cause etant HomePage.tsx seul.
+      // cause etant Opening.tsx seul.
       //
       // Screens are listed ONE BY ONE, never by a name pattern. A first attempt
       // excluded `src/shared/*Page.tsx`, and QA named the flaw before it bit: that
@@ -62,10 +62,10 @@ export default defineConfig({
         "src/routes/[locale]/index.tsx",
         "src/routes/[locale]/[slug].tsx",
         "src/routes/[...404].tsx",
-        "src/features/home/HomePage.tsx",
-        "src/features/works/WorksPage.tsx",
-        "src/features/journey/JourneyPage.tsx",
-        "src/features/contact/ContactPage.tsx",
+        "src/features/home/Opening.tsx",
+        "src/features/works/WorksSection.tsx",
+        "src/features/journey/JourneySection.tsx",
+        "src/features/contact/ContactSection.tsx",
         "src/shared/SiteBar.tsx",
         "src/shared/LanguageSwitch.tsx",
       ],

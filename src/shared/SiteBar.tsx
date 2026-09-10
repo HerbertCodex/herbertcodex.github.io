@@ -1,15 +1,10 @@
-import { useParams } from "@solidjs/router";
-import { For, Show } from "solid-js";
+import { For } from "solid-js";
 import LanguageSwitch from "~/shared/LanguageSwitch";
 import ThemeToggle from "~/shared/ThemeToggle";
-import { useI18n, type Locale } from "~/shared/i18n";
+import { useI18n } from "~/shared/i18n";
 import { PERSON } from "~/shared/identity";
-import { PAGES, addressOf, type Page } from "~/shared/pages";
+import { NAMED_PAGES, addressOf } from "~/shared/pages";
 import "./SiteBar.css";
-
-function pageAt(locale: Locale, slug: string): Page | undefined {
-  return PAGES.find((page) => page.slugs[locale] === slug);
-}
 
 type SiteBarProps = {
   readonly contentId: string;
@@ -28,9 +23,7 @@ type SiteBarProps = {
  * @returns the skip link and the header bar, in the language in force
  */
 export default function SiteBar(props: SiteBarProps) {
-  const params = useParams();
   const { locale, t } = useI18n();
-  const current = () => pageAt(locale(), params.slug ?? "");
   return (
     <>
       <a class="skip" href={`#${props.contentId}`}>
@@ -39,15 +32,9 @@ export default function SiteBar(props: SiteBarProps) {
       <header class="bar">
         <span class="mark">{PERSON}</span>
         <nav aria-label={t("bar.nav")}>
-          <For each={PAGES}>
-            {(page) => (
-              <a href={addressOf(page, locale())} aria-current={page.key === current()?.key ? "page" : undefined}>
-                {t(`nav.${page.key}`)}
-              </a>
-            )}
-          </For>
+          <For each={NAMED_PAGES}>{(page) => <a href={addressOf(page, locale())}>{t(`nav.${page.key}`)}</a>}</For>
         </nav>
-        <Show when={current()}>{(page) => <LanguageSwitch page={page()} />}</Show>
+        <LanguageSwitch />
         <ThemeToggle />
       </header>
     </>

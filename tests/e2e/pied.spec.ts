@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { PAGES, addressesToPrerender } from "../../src/shared/pages";
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
 
-const ADDRESSES = addressesToPrerender(PAGES);
+const ADDRESSES = publishedAddresses(PAGES);
 
 const HOMES = ["/fr", "/en"];
 

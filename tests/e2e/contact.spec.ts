@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test, expect } from "@playwright/test";
-import { PAGES, addressesToPrerender } from "../../src/shared/pages";
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
 
 /*
  * L'adresse est ecrite ICI en toutes lettres, jamais importee du module qui la
@@ -16,19 +16,13 @@ const LOCAL_PART = "kraherbertdonatienkoffi";
 
 const OUTPUT = ".output/public";
 
-const ADDRESSES = addressesToPrerender(PAGES);
+const ADDRESSES = publishedAddresses(PAGES);
 
-const CONTACT = ["/fr/contact", "/en/contact"];
+/* La section contact, sous son ancre : elle porte le meme nom dans les deux langues. */
+const CONTACT = ["/fr#contact", "/en#contact"];
 
 const LINKEDIN = "https://linkedin.com/in/donatien-koffi";
 const GITHUB = "https://github.com/HerbertCodex";
-
-/*
- * La barre porte huit arrets — l'evitement, quatre pages, deux langues, le
- * theme — avant que le contenu commence. Seize fait donc un tour large de la
- * page de contact sans dependre du nombre exact de moyens affiches.
- */
-const TAB_BUDGET = 16;
 
 function servedFiles(): string[] {
   return readdirSync(OUTPUT, { withFileTypes: true, recursive: true })
@@ -48,7 +42,7 @@ test("aucun fichier de l'artefact déployé ne porte l'adresse, scripts de _buil
   expect(carrying).toEqual([]);
 });
 
-test("aucune des huit adresses ne porte de lien de messagerie", async ({ page }) => {
+test("aucune des pages publiées ne porte de lien de messagerie", async ({ page }) => {
   const carrying: string[] = [];
   for (const address of ADDRESSES) {
     await page.goto(address);
@@ -56,20 +50,28 @@ test("aucune des huit adresses ne porte de lien de messagerie", async ({ page })
     if (links > 0) carrying.push(`${address} : ${links}`);
   }
 
-  expect(ADDRESSES).toHaveLength(8);
+  expect(ADDRESSES).toHaveLength(2);
   expect(carrying).toEqual([]);
 });
 
 for (const address of CONTACT) {
   test(`${address} atteint LinkedIn au clavier, puis GitHub, et rien d'autre`, async ({ page }) => {
     await page.goto(address);
+
+    /*
+     * Le budget est MESURE sur la page plutot que fixe : depuis que le site
+     * publie une page unique, la section contact est la derniere, et un nombre
+     * de tabulations ecrit a la main aurait cesse de l'atteindre des qu'une
+     * realisation s'ajoute.
+     */
+    const focusable = await page.locator("a[href], button, input, select, textarea").count();
     const reached: string[] = [];
-    for (let step = 0; step < TAB_BUDGET; step += 1) {
+    for (let step = 0; step < focusable + 3; step += 1) {
       await page.keyboard.press("Tab");
       const href = await page.evaluate(() => {
         const active = document.activeElement;
-        const inMain = active instanceof HTMLAnchorElement && active.closest("main") != null;
-        return inMain ? active.getAttribute("href") : null;
+        const inSection = active instanceof HTMLAnchorElement && active.closest("section.contact") != null;
+        return inSection ? active.getAttribute("href") : null;
       });
       if (href != null && !reached.includes(href)) reached.push(href);
     }

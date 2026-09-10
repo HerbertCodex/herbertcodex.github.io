@@ -1,45 +1,19 @@
 import { test, expect, type Page } from "@playwright/test";
 import { LOCALES } from "../../src/shared/i18n";
-import { NAMED_PAGES, PAGES, addressOf, addressesToPrerender } from "../../src/shared/pages";
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
 
-const ADDRESSES = addressesToPrerender(PAGES);
+const ADDRESSES = publishedAddresses(PAGES);
 
-const HOME = LOCALES.map((locale) => ({
-  address: `/${locale}`,
-  entries: NAMED_PAGES.map((page) => addressOf(page, locale)),
-}));
-
-const CONTACT = ["/fr/contact", "/en/contact"];
-
-/* Les deux pages dont un bandeau de section est le PREMIER contenu. */
-const OPENING = ["/fr/realisations", "/en/work"];
-
-/* Les deux pages dont le premier bandeau de section suit un titre et un chapô. */
-const FOLLOWING = ["/fr/parcours", "/en/about"];
+/* La section contact, sur la page de chaque langue. */
+const CONTACT = LOCALES.map((locale) => `/${locale}#contact`);
 
 const WIDE = { width: 1440, height: 900 };
-
-const NARROW = { width: 375, height: 900 };
 
 /* L'écran large sur lequel le vide latéral de 590 px avait été mesuré. */
 const DESKTOP = { width: 1920, height: 900 };
 
 /* Les largeurs auxquelles les cibles de la barre sont mesurées : le téléphone, la bascule, le bureau. */
 const TAP_WIDTHS = [320, 768, 1440];
-
-/*
- * Le rang de chaque entrée, écrit plutôt que recalculé. Le dériver de
- * NAMED_PAGES par la même expression que le composant ferait un test qui
- * répète le code au lieu de le contredire.
- */
-const RANKS = ["01", "02", "03"];
-
-/*
- * La hauteur à partir de laquelle une cellule de l'accueil réserve de la place
- * au lieu de la prendre. La maquette en a d'abord porté une de 260 px, et elle
- * refabriquait exactement le vide que cette grille corrige.
- */
-const RESERVED = 260;
 
 type Box = {
   readonly top: number;
@@ -92,108 +66,14 @@ function acrossThePage(boxes: readonly Box[]): Box[] {
   return [...boxes].sort((one, other) => one.left - other.left);
 }
 
-test.describe("l'accueil ouvre sur trois cellules", () => {
-  test("les trois sont sur une seule rangée à 1440 px, dans les deux langues", async ({ page }) => {
-    const faults: string[] = [];
-    await page.setViewportSize(WIDE);
-
-    for (const { address } of HOME) {
-      await page.goto(address);
-      const cells = await boxesOf(page, "main .entries > li");
-
-      if (cells.length !== NAMED_PAGES.length) {
-        faults.push(`${address} : ${cells.length} cellule(s) au lieu de ${NAMED_PAGES.length}`);
-        continue;
-      }
-      const tops = new Set(cells.map((cell) => cell.top));
-      if (tops.size !== 1) faults.push(`${address} : les bords supérieurs sont à ${[...tops].join(", ")} px`);
-
-      const ordered = acrossThePage(cells);
-      for (let rank = 1; rank < ordered.length; rank += 1) {
-        const before = ordered[rank - 1];
-        const cell = ordered[rank];
-        if (cell.left < before.right) {
-          faults.push(`${address} : une cellule commence à ${cell.left} px, la précédente finit à ${before.right} px`);
-        }
-      }
-    }
-
-    expect(faults).toEqual([]);
-  });
-
-  test("les trois sont l'une sous l'autre à 375 px, dans les deux langues", async ({ page }) => {
-    const stacked: string[] = [];
-    await page.setViewportSize(NARROW);
-
-    for (const { address } of HOME) {
-      await page.goto(address);
-      const cells = await boxesOf(page, "main .entries > li");
-
-      if (cells.length !== NAMED_PAGES.length) {
-        stacked.push(`${address} : ${cells.length} cellule(s) au lieu de ${NAMED_PAGES.length}`);
-        continue;
-      }
-      for (let rank = 1; rank < cells.length; rank += 1) {
-        const above = cells[rank - 1];
-        const cell = cells[rank];
-        if (cell.top < above.bottom) {
-          stacked.push(`${address} : une cellule commence à ${cell.top} px, la précédente finit à ${above.bottom} px`);
-        }
-      }
-    }
-
-    expect(stacked).toEqual([]);
-  });
-
-  test("aucune hauteur ne leur est réservée à 1440 px, dans les deux langues", async ({ page }) => {
-    const reserved: string[] = [];
-    await page.setViewportSize(WIDE);
-
-    for (const { address } of HOME) {
-      await page.goto(address);
-      const measured = await boxesOf(page, "main .entries > li");
-      const tallest = Math.max(0, ...measured.map((cell) => cell.height));
-
-      if (tallest >= RESERVED) reserved.push(`${address} : la plus haute cellule mesure ${tallest} px`);
-    }
-
-    expect(reserved).toEqual([]);
-  });
-
-  test("chaque entrée porte son rang, le nom de la page et une ligne de description", async ({ page }) => {
-    const missing: string[] = [];
-    await page.setViewportSize(WIDE);
-
-    for (const { address, entries } of HOME) {
-      await page.goto(address);
-      const read = await page.locator("main .entries > li").evaluateAll((nodes) => {
-        const said = (cell: Element, selector: string) => cell.querySelector(selector)?.textContent?.trim() ?? "";
-        return nodes.map((node) => ({
-          rank: said(node, ".entry-rank"),
-          name: said(node, ".entry-name"),
-          line: said(node, ".entry-line"),
-          href: node.querySelector("a[href]")?.getAttribute("href") ?? "",
-        }));
-      });
-
-      if (read.map((entry) => entry.href).join(" ") !== entries.join(" ")) {
-        missing.push(`${address} : les entrées mènent à ${read.map((entry) => entry.href).join(", ")}`);
-        continue;
-      }
-      if (read.map((entry) => entry.rank).join(" ") !== RANKS.join(" ")) {
-        missing.push(`${address} : les rangs lus sont « ${read.map((entry) => entry.rank).join(" ")} »`);
-      }
-      for (const entry of read) {
-        if (entry.name.length === 0) missing.push(`${address} ${entry.href} : aucun nom de page`);
-        if (entry.line.length === 0) missing.push(`${address} ${entry.href} : aucune ligne de description`);
-        if (entry.name === entry.line) missing.push(`${address} ${entry.href} : le nom et la ligne sont le même texte`);
-      }
-    }
-
-    expect(missing).toEqual([]);
-  });
-});
-
+/*
+ * Le bloc « l'accueil ouvre sur trois cellules » a été retiré le 2026-09-10
+ * avec la liste qu'il mesurait. Cette liste conduisait aux trois autres pages ;
+ * il n'y en a plus qu'une, et aucune des deux maquettes ne l'a jamais dessinée.
+ * Ce que le menu de la barre offre désormais est mesuré par
+ * tests/e2e/menu-ancres.spec.ts, et l'ordre des cinq sections par
+ * tests/e2e/adressage.spec.ts.
+ */
 test.describe("le contact se lit comme une fiche", () => {
   test("l'appel et les conditions sont côte à côte à 1440 px, dans les deux langues", async ({ page }) => {
     const apart: string[] = [];
@@ -272,7 +152,7 @@ test.describe("le contact se lit comme une fiche", () => {
 });
 
 test.describe("la page prend la largeur de page", () => {
-  test("main a la même largeur sur les huit adresses à 1920 px, et au moins la largeur de page", async ({ page }) => {
+  test("main a la même largeur sur les pages publiées à 1920 px, et au moins la largeur de page", async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto(ADDRESSES[0]);
     const floor = Number.parseFloat(await resolved(page, "width: var(--page-max)", "width"));
@@ -290,14 +170,14 @@ test.describe("la page prend la largeur de page", () => {
       widths.add(content.width);
       if (content.width < floor) narrow.push(`${address} : main mesure ${content.width} px, moins que ${floor} px`);
     }
-    if (widths.size > 1) narrow.push(`les huit adresses rendent main à ${[...widths].join(", ")} px`);
+    if (widths.size > 1) narrow.push(`les pages publiées rendent main à ${[...widths].join(", ")} px`);
 
     expect(narrow).toEqual([]);
   });
 
-  test("la ligne de lecture ne suit pas la page : le chapô de l'accueil reste plus étroit", async ({ page }) => {
+  test("la ligne de lecture ne suit pas la page : le chapô de l'ouverture reste plus étroit", async ({ page }) => {
     await page.setViewportSize(DESKTOP);
-    await page.goto(HOME[0].address);
+    await page.goto(ADDRESSES[0]!);
 
     const measured = await page.evaluate(() => {
       const content = document.querySelector("main");
@@ -315,7 +195,7 @@ test.describe("la page prend la largeur de page", () => {
       };
     });
 
-    expect(measured, "ni main ni chapô à mesurer sur l'accueil").not.toBeNull();
+    expect(measured, "ni main ni chapô à mesurer sur la page").not.toBeNull();
     if (measured === null) return;
     expect(
       measured.line,
@@ -325,37 +205,29 @@ test.describe("la page prend la largeur de page", () => {
 });
 
 test.describe("le filet du bandeau de section", () => {
-  test("le bandeau qui ouvre une page n'en porte pas", async ({ page }) => {
-    const doubled: string[] = [];
+  /*
+   * L'exception qui retirait le filet au bandeau OUVRANT une page a été retirée
+   * le 2026-09-10 : depuis que le site publie une page unique, aucun bandeau
+   * n'ouvre plus rien — le premier suit la rangée de faits de l'ouverture, donc
+   * la séparation qu'il annonce existe vraiment. Les cinq le portent, et c'est
+   * ce que ce test dit.
+   */
+  test("les cinq bandeaux portent leur filet, sur chaque page", async ({ page }) => {
     await page.setViewportSize(WIDE);
-
-    for (const address of OPENING) {
-      await page.goto(address);
-      const width = await page.evaluate(() => {
-        const first = document.querySelector("main")?.firstElementChild;
-        return first == null ? null : getComputedStyle(first).borderTopWidth;
-      });
-
-      if (width !== "0px") doubled.push(`${address} : le premier enfant de main porte un filet de ${width}`);
-    }
-
-    expect(doubled).toEqual([]);
-  });
-
-  test("un bandeau qui suit du contenu garde le sien", async ({ page }) => {
-    await page.setViewportSize(WIDE);
-    await page.goto(FOLLOWING[0]);
+    await page.goto(ADDRESSES[0]!);
     const heavy = await resolved(page, "border-top: var(--border-heavy) solid", "border-top-width");
     const lost: string[] = [];
 
-    for (const address of FOLLOWING) {
+    for (const address of ADDRESSES) {
       await page.goto(address);
-      const width = await page.evaluate(() => {
-        const head = document.querySelector("main .section-head");
-        return head === null ? null : getComputedStyle(head).borderTopWidth;
-      });
+      const widths = await page
+        .locator("main .section-head")
+        .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderTopWidth));
 
-      if (width !== heavy) lost.push(`${address} : le premier bandeau porte ${width} au lieu de ${heavy}`);
+      if (widths.length !== 5) lost.push(`${address} : ${widths.length} bandeau(x) au lieu de cinq`);
+      for (const [rank, width] of widths.entries()) {
+        if (width !== heavy) lost.push(`${address} : le bandeau ${rank + 1} porte ${width} au lieu de ${heavy}`);
+      }
     }
 
     expect(lost).toEqual([]);
@@ -363,7 +235,7 @@ test.describe("le filet du bandeau de section", () => {
 });
 
 test.describe("les cibles de la barre", () => {
-  test("le bouton de thème montre une icône, sur les huit adresses", async ({ page }) => {
+  test("le bouton de thème montre une icône, sur les pages publiées", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto(ADDRESSES[0]);
     const ceiling = Number.parseFloat(await resolved(page, "width: var(--space-5)", "width"));

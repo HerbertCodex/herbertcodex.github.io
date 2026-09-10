@@ -6,3 +6,14 @@
  * a screenshot, and a rename touches whichever of the two its author knew.
  */
 export const PERSON = "Donatien Koffi";
+
+/**
+ * Where the site is published, written once for the addresses that must be
+ * absolute.
+ *
+ * A canonical link is one of those: it tells a search engine which address
+ * holds the content, and a relative one leaves the answer to the reader's
+ * interpretation. The site is a GitHub Pages USER site, so it sits at the root
+ * of this origin and no base path has to be carried here.
+ */
+export const SITE = "https://herbertcodex.github.io";

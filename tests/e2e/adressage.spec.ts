@@ -1,53 +1,73 @@
 import { test, expect } from "@playwright/test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { LOCALES } from "../../src/shared/i18n";
+import { NAMED_PAGES, PAGES, anchorOf, publishedAddresses, redirectedAddresses } from "../../src/shared/pages";
 
 const OUTPUT = ".output/public";
 
-const ADDRESSES = [
-  "/fr",
-  "/en",
-  "/fr/realisations",
-  "/en/work",
-  "/fr/parcours",
-  "/en/about",
-  "/fr/contact",
-  "/en/contact",
-];
+const PUBLISHED = publishedAddresses(PAGES);
+
+const REDIRECTED = redirectedAddresses(PAGES);
 
 const FACTS = ["CDI ou freelance", "Rennes", "Master MIAGE", "FR · EN"];
 
-const ENTRIES = ["/fr/realisations", "/fr/parcours", "/fr/contact"];
-
 test.describe("the addresses of the site", () => {
-  test("the build writes the works page under both of its names", () => {
-    const written = ["/fr/realisations", "/en/work"].filter((address) =>
-      existsSync(join(OUTPUT, address, "index.html")),
-    );
+  test("the build writes one page per language, and a document for each address that was one", () => {
+    const missing = [...PUBLISHED, ...REDIRECTED].filter((address) => !existsSync(join(OUTPUT, address, "index.html")));
 
-    expect(written).toEqual(["/fr/realisations", "/en/work"]);
+    expect(missing).toEqual([]);
   });
 
-  test("home answers under the language prefix alone", async ({ page }) => {
-    for (const [address, works] of [
-      ["/fr", "/fr/realisations"],
-      ["/en", "/en/work"],
-    ]) {
-      const response = await page.goto(address);
-      expect(response?.status(), address).toBe(200);
-      expect(new URL(page.url()).pathname, address).toBe(address);
-      await expect(page.locator(`main a[href="${works}"]`), address).toHaveCount(1);
+  test("each published page answers in its own language and carries every section", async ({ page }) => {
+    for (const locale of LOCALES) {
+      const response = await page.goto(`/${locale}`);
+
+      expect(response?.status(), locale).toBe(200);
+      expect(new URL(page.url()).pathname, locale).toBe(`/${locale}`);
+      expect(await page.locator("html").getAttribute("lang"), locale).toBe(locale);
+      await expect(page.getByRole("heading", { level: 1 }), locale).toBeVisible();
+
+      for (const part of NAMED_PAGES) {
+        await expect(page.locator(`#${anchorOf(part, locale)}`), `${locale} ${part.key}`).toHaveCount(1);
+      }
     }
   });
 
-  test("the eight addresses answer", async ({ request }) => {
-    const answered: string[] = [];
-    for (const address of ADDRESSES) {
-      const response = await request.get(address);
-      if (response.status() === 200) answered.push(address);
+  /*
+   * Les six adresses qui etaient des pages jusqu'au 2026-09-10. Elles repondent
+   * encore parce qu'un lien deja partage ne se rappelle pas : le CV et le profil
+   * LinkedIn les portent dehors. L'hebergeur est statique et n'offre aucune
+   * redirection, donc c'est le document qui renvoie — et ce test mesure les
+   * trois choses qu'il doit porter, chacune pour un lecteur different.
+   */
+  test("each address that was a page sends the visitor to its anchor, three ways", async ({ request }) => {
+    const wrong: string[] = [];
+
+    for (const part of NAMED_PAGES) {
+      for (const locale of LOCALES) {
+        const anchor = anchorOf(part, locale);
+        const response = await request.get(`/${locale}/${anchor}`);
+        const html = await response.text();
+
+        if (response.status() !== 200) wrong.push(`/${locale}/${anchor} repond ${response.status()}`);
+        if (!html.includes(`content="0; url=/${locale}#${anchor}"`)) wrong.push(`/${locale}/${anchor} : pas de renvoi`);
+        if (!html.includes(`rel="canonical" href="https://herbertcodex.github.io/${locale}#${anchor}"`)) {
+          wrong.push(`/${locale}/${anchor} : pas de canonique`);
+        }
+        if (!html.includes(`href="/${locale}#${anchor}"`)) wrong.push(`/${locale}/${anchor} : pas de lien visible`);
+      }
     }
 
-    expect(answered).toEqual(ADDRESSES);
+    expect(wrong).toEqual([]);
+  });
+
+  test("a visitor arriving on one of them lands on the anchor", async ({ page }) => {
+    await page.goto("/fr/realisations");
+    await page.waitForURL(/\/fr#realisations$/);
+
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur logiciel");
+    await expect(page.locator("#realisations")).toBeVisible();
   });
 
   test("an address mixing the two languages leads to the page not found", async ({ request }) => {
@@ -66,7 +86,7 @@ test.describe("the addresses of the site", () => {
     expect(new URL(page.url()).pathname).toBe("/fr/about");
   });
 
-  test("home carries the opening and a named entry to each of the three other pages", async ({ page }) => {
+  test("the page opens on the name, the sentence and the facts, then on the work", async ({ page }) => {
     await page.goto("/fr");
 
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur logiciel");
@@ -74,10 +94,25 @@ test.describe("the addresses of the site", () => {
     for (const fact of FACTS) {
       await expect(page.locator("main").getByText(fact).first()).toBeVisible();
     }
-    for (const entry of ENTRIES) {
-      await expect(page.locator(`main a[href="${entry}"]`)).toHaveCount(1);
-    }
-    expect(await page.locator("main h2, main h3").count()).toBe(0);
+
+    // Les cinq bandeaux, numerotes dans l'ordre et sans trou : c'est ce que la
+    // maquette dessine, et le numero du contact est CALCULE — les certifications
+    // n'apparaissent que s'il en existe une.
+    const heads = await page.locator("main .section-head").evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        num: node.querySelector(".num")?.textContent,
+        name: node.querySelector("h2")?.textContent,
+      })),
+    );
+
+    expect(heads.map((head) => head.num)).toEqual(["01", "02", "03", "04", "05"]);
+    expect(heads.map((head) => head.name)).toEqual([
+      "Réalisations",
+      "Expérience",
+      "Formation",
+      "Compétences",
+      "Contact",
+    ]);
     expect(await page.locator("main").innerText()).not.toContain("@");
   });
 });

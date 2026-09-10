@@ -1,4 +1,13 @@
 /*
+ * Le bandeau de la derniere section respire comme ceux du parcours : la page
+ * unique les aligne, et un dernier bandeau plus serre que les autres se lirait
+ * comme une fin de page involontaire.
+ */
+.contact .section-head {
+  margin: var(--space-6) 0 var(--space-4);
+}
+
+/*
  * Le contact est une FICHE posee sur le papier : l'appel d'un cote, les
  * conditions de l'autre. L'aplat vermillon plein qui portait toute la page a
  * disparu — un aplat qui couvre les deux tiers d'un ecran n'est plus un

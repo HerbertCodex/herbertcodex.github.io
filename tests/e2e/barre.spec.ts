@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
-import { PAGES, addressesToPrerender } from "../../src/shared/pages";
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
 
-const ADDRESSES = addressesToPrerender(PAGES);
+const ADDRESSES = publishedAddresses(PAGES);
 
 /*
  * La fenêtre de référence. La barre y tient sur une seule ligne, donc rien

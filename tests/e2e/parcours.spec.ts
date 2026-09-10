@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 import { LOCALES, type Locale } from "../../src/shared/i18n";
 import { resumeOf } from "../../src/shared/resume";
 
-const ADDRESS: Readonly<Record<Locale, string>> = { fr: "/fr/parcours", en: "/en/about" };
+const ADDRESS: Readonly<Record<Locale, string>> = { fr: "/fr#parcours", en: "/en#about" };
 
 test.describe("le CV de la page parcours", () => {
   for (const locale of LOCALES) {

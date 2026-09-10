@@ -6,6 +6,11 @@
     qu un fichier de public/ est servi tel quel : il ne traverse ni le build ni
     la feuille de style, et ne peut donc pas lire un jeton.
 
+    --accent-plate en vaut DEUX : #b3271a dans le theme clair, #c93a24 dans le
+    sombre. C est le sombre qui est copie ici, et non par hasard : une icone
+    d onglet ne suit aucun theme, il faut en choisir une, et la barre d onglets
+    est sombre chez la plupart des lecteurs. Le clair y reste lisible.
+
     La plaque occupe tout le carre plutot qu un rond ou une pastille : a 16 px
     un aplat plein reste lisible la ou une forme decoupee devient une tache.
 

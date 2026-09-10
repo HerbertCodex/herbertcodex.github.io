@@ -237,4 +237,57 @@ test.describe("la barre du site", () => {
 
     expect(overflowing).toEqual([]);
   });
+
+  /*
+   * La plaque vermillon du nom, sur les huit adresses et dans les deux themes.
+   *
+   * Elle n'etait peinte que sur six : la feuille du Parcours declarait `.mark`
+   * de son cote et la repeignait sur ses deux pages. La porte `css_ownership`
+   * refuse desormais qu'une classe soit revendiquee par deux feuilles, donc le
+   * defaut ne peut plus revenir en silence — mais une porte qui interdit la
+   * SECONDE declaration ne dit rien de ce que la premiere peint. C'est ce que
+   * ce test mesure.
+   *
+   * Les couleurs sont lues dans les jetons du document, jamais ecrites ici :
+   * l'assertion porte sur « la marque porte la plaque », pas sur un vermillon
+   * particulier, et elle survit donc a un changement de palette.
+   */
+  test("le nom du site porte la plaque d'accent sur les huit adresses, dans les deux themes", async ({ page }) => {
+    const wrong: string[] = [];
+
+    for (const theme of ["light", "dark"] as const) {
+      for (const address of ADDRESSES) {
+        await page.goto(address);
+        await page.evaluate((chosen) => document.documentElement.setAttribute("data-theme", chosen), theme);
+        const seen = await page.evaluate(() => {
+          const mark = document.querySelector(".mark");
+          if (mark == null) return null;
+          const root = getComputedStyle(document.documentElement);
+          const worn = getComputedStyle(mark);
+          const asRendered = (value: string) => {
+            const probe = document.createElement("span");
+            probe.style.color = value.trim();
+            document.body.append(probe);
+            const resolved = getComputedStyle(probe).color;
+            probe.remove();
+            return resolved;
+          };
+          return {
+            background: worn.backgroundColor,
+            plate: asRendered(root.getPropertyValue("--accent-plate")),
+            color: worn.color,
+            onAccent: asRendered(root.getPropertyValue("--on-accent")),
+          };
+        });
+
+        if (seen == null) wrong.push(`${address} en ${theme} : aucune marque`);
+        else if (seen.background !== seen.plate)
+          wrong.push(`${address} en ${theme} : fond ${seen.background}, plaque ${seen.plate}`);
+        else if (seen.color !== seen.onAccent)
+          wrong.push(`${address} en ${theme} : encre ${seen.color}, attendue ${seen.onAccent}`);
+      }
+    }
+
+    expect(wrong).toEqual([]);
+  });
 });

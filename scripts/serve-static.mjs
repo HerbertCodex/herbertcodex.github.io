@@ -8,11 +8,19 @@
  * two servers drift and the drift is only found when one suite passes and
  * the other does not.
  *
+ * Every answer carries the headers the build computed for the site it
+ * serves, read from the list the build wrote beside it. The server knows no
+ * value of its own and has no way to serve without them: a build that could
+ * not compute its policy writes no list, and without a list nothing is
+ * served. No HSTS: this server speaks HTTP on the loopback address, where a
+ * forced upgrade would break every resource.
+ *
  * Usage: node scripts/serve-static.mjs [port] [root]
  */
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { join, extname, normalize } from "node:path";
+import { readSecurityHeaders } from "./security-headers.mjs";
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -52,22 +60,37 @@ async function resolveFile(root, url) {
   return null;
 }
 
+function securityHeadersOf(root) {
+  try {
+    return readSecurityHeaders(root);
+  } catch (error) {
+    throw new Error(`${error.message}. Nothing is served without it: run \`pnpm run build\`.`, { cause: error });
+  }
+}
+
 /**
  * Starts the static server and resolves once it is accepting connections.
+ *
+ * The list of headers is read before anything listens, so a refusal leaves
+ * the port free.
  *
  * @param root - the directory to serve
  * @param port - the port to bind on the loopback interface
  * @returns the running server
+ * @throws naming the list's path, when the list beside the root is missing,
+ *   unreadable, or does not carry the five headers each with a value
  */
 export async function startServer(root, port) {
+  const security = securityHeadersOf(root);
+  const head = (response, status, type) => response.writeHead(status, { ...security, "content-type": type });
   const server = createServer(async (request, response) => {
     const path = await resolveFile(root, request.url ?? "/");
     if (path == null) {
-      response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+      head(response, 404, "text/plain; charset=utf-8");
       response.end("not found");
       return;
     }
-    response.writeHead(200, { "content-type": TYPES[extname(path)] ?? "application/octet-stream" });
+    head(response, 200, TYPES[extname(path)] ?? "application/octet-stream");
     response.end(await readFile(path));
   });
   await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
@@ -77,6 +100,11 @@ export async function startServer(root, port) {
 if (process.argv[1]?.endsWith("serve-static.mjs")) {
   const port = Number(process.argv[2] ?? 4173);
   const root = process.argv[3] ?? ".output/public";
-  await startServer(root, port);
+  try {
+    await startServer(root, port);
+  } catch (error) {
+    console.error(`serve-static: ${error.message}`);
+    process.exit(1);
+  }
   console.log(`serving ${root} on http://127.0.0.1:${port}`);
 }

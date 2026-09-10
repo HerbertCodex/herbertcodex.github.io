@@ -208,9 +208,32 @@ function readPage(file) {
  * policy while the list says every page carries one.
  */
 function pagesUnder(root) {
-  const pages = readdirSync(root, { recursive: true, withFileTypes: true }).filter(
-    (entry) => entry.name.endsWith(".html") && !entry.isDirectory(),
+  const entries = readdirSync(root, { recursive: true, withFileTypes: true });
+  // A linked directory is refused as a linked file already was: its pages
+  // would be tagged by writing THROUGH the link, hence outside the folder the
+  // host serves. Measured on 2026-09-10: a root whose `en` pointed elsewhere
+  // reported `pages: 2` while modifying a file nothing serves.
+  const linked = entries.find((entry) => entry.isSymbolicLink());
+  if (linked !== undefined) {
+    throw refusal(
+      join(linked.parentPath, linked.name),
+      "a link under the root: what it points at is not the folder being served",
+    );
+  }
+  // A name that looks like a page without carrying the exact extension is
+  // refused rather than skipped: `old.htm` and `INDEX.HTML` both slipped
+  // through the filter, the list was written, and the page carried neither tag
+  // nor hash. This module refuses what it cannot read; it never skips it.
+  const missed = entries.find(
+    (entry) => !entry.isDirectory() && /\.(html?|xhtml)$/i.test(entry.name) && !entry.name.endsWith(".html"),
   );
+  if (missed !== undefined) {
+    throw refusal(
+      join(missed.parentPath, missed.name),
+      "a page this cannot read: only a name ending in .html is tagged",
+    );
+  }
+  const pages = entries.filter((entry) => entry.name.endsWith(".html") && !entry.isDirectory());
   const irregular = pages.find((entry) => !entry.isFile());
   if (irregular !== undefined) {
     throw refusal(join(irregular.parentPath, irregular.name), "a page that is not a regular file, such as a link");
@@ -317,6 +340,12 @@ export function readSecurityHeaders(root) {
     Object.keys(headers).sort().join("\n") === [...HEADER_NAMES].sort().join("\n") &&
     Object.values(headers).every((value) => typeof value === "string" && value !== "");
   if (!complete) throw refusal(list, `a list that does not carry exactly ${HEADER_NAMES.join(", ")}`);
+  // Refused HERE so the list at fault is named while nothing yet listens: a
+  // refusal that arrives at the first answer names nothing a reader can act on.
+  for (const [name, value] of Object.entries(headers)) {
+    if (/[\r\n\0]/.test(value))
+      throw refusal(list, `a value for ${name} that no header can carry: it holds a line break`);
+  }
   return headers;
 }
 

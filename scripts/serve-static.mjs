@@ -47,7 +47,17 @@ const TYPES = {
  * @returns the absolute file path, or null when it escapes the root
  */
 async function resolveFile(root, url) {
-  const requested = decodeURIComponent(new URL(url, "http://localhost").pathname);
+  // Un pourcentage malforme est une adresse que ce site ne publie pas, pas une
+  // panne : `decodeURIComponent` leve sur `/%E0`, et la levee sortait du
+  // processus avant toute reponse — mesure le 2026-09-10. Le serveur porte la
+  // CI, le smoke et la porte de securite : un scan qui tombe sur une telle
+  // adresse les arretait toutes.
+  let requested;
+  try {
+    requested = decodeURIComponent(new URL(url, "http://localhost").pathname);
+  } catch {
+    return null;
+  }
   const candidate = normalize(join(root, requested));
   if (!candidate.startsWith(normalize(root))) return null;
   for (const path of [candidate, join(candidate, "index.html"), `${candidate}.html`]) {

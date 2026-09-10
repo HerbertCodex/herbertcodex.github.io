@@ -1,8 +1,7 @@
-import { useLocation } from "@solidjs/router";
-import { For, createEffect, createSignal, onCleanup, onMount } from "solid-js";
+import { For, createSignal, onCleanup, onMount } from "solid-js";
 import LanguageSwitch from "~/shared/LanguageSwitch";
 import ThemeToggle from "~/shared/ThemeToggle";
-import { useI18n } from "~/shared/i18n";
+import { useI18n, type Locale } from "~/shared/i18n";
 import { PERSON } from "~/shared/identity";
 import { NAMED_PAGES, addressOf, anchorOf } from "~/shared/pages";
 import "./SiteBar.css";
@@ -12,48 +11,80 @@ type SiteBarProps = {
 };
 
 /**
- * The section the address names, or nothing when it names none.
+ * The section being read, named by the anchor it answers to.
  *
- * The router's own address is the source, and the window's hash only fills in
- * when the router carries none. That order is the opposite of the obvious one,
- * and it was measured rather than reasoned: when the reader clicks a link of
- * the menu, the router knows the new anchor BEFORE the browser's address bar
- * shows it. Reading the window first marked the link for an instant, then
- * cleared it — measured on 2026-09-10.
+ * It is decided by ONE line across the window — the reading line — and by the
+ * rule that the section in force is the LAST whose heading has passed above it.
+ * Nothing is marked until the first heading does, which is the truth at the top
+ * of the page: the opening belongs to no section.
  *
- * Nothing else announces such a click: the router answers it by pushing the
- * address itself, which emits neither `hashchange` nor `popstate`. The address
- * is therefore read again on every router navigation, on `hashchange` for a
- * hash the browser resolves alone, and once the page comes alive — which is how
- * a shared link arrives already marked.
+ * The line is not a number of our own. It is `scroll-padding-top`, the reserve
+ * the stylesheet already keeps under the bar, which is exactly where the
+ * browser puts a heading a reader has just clicked. Clicking and scrolling
+ * therefore agree by construction rather than by coincidence, and the line
+ * follows the reserve when a media query moves it.
  *
- * It is read rather than remembered. A mark held in a variable of our own would
- * disagree with the address bar the day the reader goes back.
+ * Reading positions rather than remembering a choice is also what makes the
+ * mark honest in every other case: a shared link scrolls the page before this
+ * ever runs, and the back button scrolls it again.
  *
- * The server cannot know any of it: a hash never leaves the browser. The mark
- * appears once the page is live, which a reader who has just clicked does not
- * see happen.
- *
- * @returns the anchor in force, empty before hydration and outside any section
+ * @param locale - the language in force, whose anchors name the sections
+ * @returns the anchor in force, empty at the top of the page and before hydration
  */
-function anchorInForce() {
-  const address = useLocation();
+function anchorInForce(locale: () => Locale) {
   const [reached, setReached] = createSignal("");
-  const read = () => {
-    const said = address.hash === "" ? globalThis.location.hash : address.hash;
-    setReached(decodeURIComponent(said.slice(1)));
-  };
-
-  createEffect(() => {
-    /* Lues pour etre SUIVIES : c'est ce qui fait relire l'ancre a chaque navigation. */
-    void address.pathname;
-    void address.hash;
-    read();
-  });
 
   onMount(() => {
-    globalThis.addEventListener("hashchange", read);
-    onCleanup(() => globalThis.removeEventListener("hashchange", read));
+    let asked = false;
+    const read = () => {
+      asked = false;
+      const reserve = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+      const line = Number.isNaN(reserve) ? 0 : reserve;
+      const anchors = NAMED_PAGES.map((page) => anchorOf(page, locale())).filter(
+        (anchor) => document.getElementById(anchor) != null,
+      );
+      let current = "";
+      for (const anchor of anchors) {
+        /* Le pixel de tolerance absorbe l'arrondi d'un defilement fractionnaire. */
+        if ((document.getElementById(anchor)?.getBoundingClientRect().top ?? Infinity) <= line + 1) current = anchor;
+      }
+
+      /*
+       * Le bas de la page, qui est le seul endroit ou la regle de la ligne ne
+       * suffit pas : la DERNIERE section ne peut pas atteindre la ligne, parce
+       * que la page ne defile pas au-dela de sa fin. Mesure a 1440 px — il
+       * manque 314 px de defilement pour y amener le titre du contact, donc
+       * sans ce cas la derniere section n'aurait jamais ete marquee.
+       *
+       * Un lecteur arrive en bas lit la fin : c'est la derniere section, et
+       * cela ne se deduit d'aucune position de titre.
+       */
+      const bottom =
+        globalThis.innerHeight + Math.ceil(globalThis.scrollY) >= document.documentElement.scrollHeight - 1;
+      if (bottom && anchors.length > 0) current = anchors[anchors.length - 1]!;
+
+      setReached(current);
+    };
+
+    /*
+     * Une lecture par image au plus. Un evenement de defilement arrive des
+     * dizaines de fois par seconde, et mesurer une position a chaque fois fait
+     * recalculer la mise en page autant de fois.
+     */
+    const ask = () => {
+      if (asked) return;
+      asked = true;
+      requestAnimationFrame(read);
+    };
+
+    read();
+    globalThis.addEventListener("scroll", ask, { passive: true });
+    /* La reserve change avec la largeur : la ligne de lecture doit suivre. */
+    globalThis.addEventListener("resize", ask, { passive: true });
+    onCleanup(() => {
+      globalThis.removeEventListener("scroll", ask);
+      globalThis.removeEventListener("resize", ask);
+    });
   });
 
   return reached;
@@ -72,7 +103,7 @@ function anchorInForce() {
  */
 export default function SiteBar(props: SiteBarProps) {
   const { locale, t } = useI18n();
-  const reached = anchorInForce();
+  const reached = anchorInForce(locale);
   return (
     <>
       <a class="skip" href={`#${props.contentId}`}>

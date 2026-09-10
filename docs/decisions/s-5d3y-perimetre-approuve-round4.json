@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "mode": "spec_proposal",
+  "agent": "product",
+  "produced_at": "2026-09-10T04:59:00Z",
+  "round": 4,
+  "title": "Les en-tetes de securite : sept decisions tranchees, confrontees deux a deux, et plus rien a decider",
+  "scope": { "spec_id": "s-5d3y", "working_title": "en-tetes-securite" },
+  "basis": {
+    "record_hash": "ebb66f221cacd117121c0f23b3e76257854aeebb9973f95d040993007ae352dd",
+    "note": "sha256 du champ `record` du paquet de tache pipeline/handoffs/en-tetes-securite-product-round4-package.json, serialise tel quel, par la meme methode qu'aux rounds 1 a 3. Le record est de type operator_requirements : il ne porte ni state_version ni pipeline_version. Le paquet ne porte pas d'attempt_id ; rien n'est recopie sous ce nom."
+  },
+  "outcome": "awaiting_operator",
+  "review_page": { "path": "pipeline/pages/proposal-en-tetes-securite-round4.html" },
+  "scope_final": true,
+  "scope_final_because": "Sept decisions sont tranchees sur trois rounds et aucune n'attend : D-1, D-3, D-4 au round 1 ; l'hebergeur GitHub Pages, D-5 et D-6 au round 2 ; D-2 au round 3. Ce round les a confrontees deux a deux, onze paires nommees, et toutes composent : aucune ne rend une autre fausse, inutile ou inverifiable. La seule chose que la confrontation aurait pu ouvrir, un fichier de plus a ouvrir a l'implementeur sous la voie retenue en D-2, est verifiee contre pipeline/rules.json et pipeline.config.json : il n'y en a aucun. Ce qui reste a mesurer, la porte sur le run pull_request du SHA exact, n'est pas une decision mais une preuve de phase 2, et son resultat reviendrait vers vous s'il contredisait la mesure de l'orchestrateur. Je n'invente pas de question pour remplir le champ : le perimetre est celui du round 3, avec la regle R4 et la premiere issue devenues fermes, et il peut etre approuve tel quel.",
+  "handoff_file": { "path": "pipeline/handoffs/en-tetes-securite-proposal-round4.json" },
+  "operator_feedback": {
+    "summary": "Vous avez tranche D-2 : un seul element <style> en tete de la page des realisations, ecrit par la page depuis les schemas qu'elle montre, hache au build comme les scripts, ma recommandation du round 3 retenue telle quelle ; l'element <style> par schema et la feuille generee depuis la grille sont ecartes. Ce qui change : la regle R4 de la fonctionnalite 01 cesse d'etre conditionnelle et dit ou vivent les trajets, la premiere issue du decoupage cesse d'etre conditionnelle et ne porte plus de variante, et les deux voies ecartees sortent des alternatives pour rejoindre les lectures ecartees, avec la raison de chacune, pour qu'on ne les repropose pas. Le contrat perd ses mentions de variantes : style-src porte l'empreinte d'un seul element <style>, une aujourd'hui, la meme en francais et en anglais ; les fichiers a ouvrir avant le dispatch sont ceux du round 1, sans troisieme fichier. Ce round repond a la consigne de l'orchestrateur : sept decisions tranchees sur trois rounds sont confrontees deux a deux, onze paires nommees, et la paire D-2 avec D-1 est verifiee contre pipeline/rules.json plutot qu'affirmee. Toutes composent, aucun conflit. Il ne reste rien a decider, et je le dis plutot que d'inventer une question : le perimetre est declare final. Tout le reste du round 3 est garde tel quel, phrase pour phrase, hors les quelques mots qui renvoyaient a une question ouverte et qui seraient devenus faux.",
+    "decided": [
+      {
+        "id": "D-2",
+        "question_verbatim": "Ou vivent les 14 trajets des points des schemas, puisque la porte refuse 'unsafe-hashes' ?",
+        "operator_answer_verbatim": "Un seul element <style> en tete de la page des realisations, ecrit par la page depuis les schemas qu elle montre, hache au build comme les scripts — la recommandation de Product au round 3, retenue telle quelle. L element <style> par schema et la feuille generee depuis la grille sont ecartes.",
+        "what_changed": "La regle R4 de la fonctionnalite 01 est reecrite au present, sans renvoi a une question : les 14 trajets vivent dans un seul element <style> en tete de la page des realisations, ecrit par la page depuis les schemas qu'elle montre, autorise par son empreinte calculee au build, et aucun attribut de style ne subsiste dans le HTML prerendu. La premiere issue du decoupage garde son titre du round 3 et perd ses deux variantes conditionnelles : elle tient le composant du schema, la page des realisations, leurs tests unitaires et la spec navigateur des realisations, rien d'autre. Les deux voies ecartees quittent les alternatives, puisqu'il n'y a plus de decision ouverte, et rejoignent les lectures ecartees avec la raison mesuree de chacune : le style qui se lit comme du contenu pour l'element par schema, la geometrie en deux endroits et le troisieme fichier a ouvrir pour la feuille generee. Le contrat, les fichiers a ouvrir et l'intention de parallelisme perdent leurs mentions de variantes. L'intention de la spec ne dit plus qu'une question vous revient."
+      }
+    ],
+    "previously_decided_and_carried": [
+      { "id": "D-1", "round": 1, "answer_verbatim": "Corvee d operateur avant le dispatch : scripts/serve-static.mjs et le script de build des en-tetes ajoutes nommement a file_policy.implementer.allow, puis apply-profile — la recommandation de Product, retenue telle quelle. Si le round 2 change le nom ou l emplacement des fichiers a ouvrir, l orchestrateur ouvrira ceux du round 2, pas ceux du round 1." },
+      { "id": "D-3", "round": 1, "answer_verbatim": "strict-origin-when-cross-origin — la recommandation de Product, retenue telle quelle." },
+      { "id": "D-4", "round": 1, "answer_verbatim": "Un JSON produit par le build, hors du dossier publie, non commite, lu par le serveur de la CI — la recommandation de Product, retenue telle quelle. MAIS lire le fait nouveau ci-dessous : l hebergeur nomme ne peut reproduire aucun en-tete. Ce que cette liste sert encore est a redire." },
+      { "id": "PAGES", "round": 2, "answer_verbatim": "Verbatim de l operateur : « je compte deployer le repo sur github page ». Le round 1 disait l hebergeur inconnu et non choisi : c est faux desormais." },
+      { "id": "D-5", "round": 2, "answer_verbatim": "Nommer la limite, sans script — la recommandation de Product, retenue telle quelle." },
+      { "id": "D-6", "round": 2, "answer_verbatim": "Oui, ici — la recommandation de Product, retenue telle quelle." }
+    ],
+    "disagreements": []
+  },
+  "answers_composition_check": {
+    "method": "Les sept decisions tranchees sur trois rounds, confrontees deux a deux la ou l'une peut rendre l'autre fausse, inutile ou inverifiable : les cinq paires que l'orchestrateur nomme en priorite, puis les six autres ou D-2, la seule decision nouvelle depuis le round 3, ou GitHub Pages, le seul fait qui a contredit une fonctionnalite, touche une decision anterieure. Les paires entre decisions du round 1 seul (D-1/D-3, D-1/D-4, D-3/D-4) ont ete confrontees au round 2 et rien ne les a changees depuis ; elles ne sont pas relues ici. La paire D-2/D-1 est verifiee contre pipeline/rules.json et pipeline.config.json, lus ce round, et non affirmee de memoire. Chaque note dit ce qui a ete regarde et ce qui a ete mesure, aux rounds precedents ou ici.",
+    "pairs_checked": [
+      {
+        "pair": ["D-2", "D-1"],
+        "composes": true,
+        "note": "Aucun script de plus a ouvrir, verifie contre pipeline/rules.json ce round : file_policy.implementer.allow porte src/**, tests/**, public/**, mockups/**, docs/**, package.json, pnpm-lock.yaml et scripts/routes.mjs, et deny porte pipeline/**, agent-pipeline/**, .github/**, docs/decisions/**. La voie retenue ecrit le composant du schema et la page des realisations sous src/features/works/**, leurs tests sous tests/**, tous deja ouverts ; le calcul des empreintes d'elements <style> vit dans scripts/security-headers.mjs, deja nomme par la corvee D-1 avec scripts/serve-static.mjs. Le troisieme fichier sous scripts/** qu'aurait exige un generateur de feuille disparait avec la voie ecartee. La corvee D-1 est donc exactement celle du round 1 : deux fichiers, puis apply-profile."
+      },
+      {
+        "pair": ["D-2", "D-4"],
+        "composes": true,
+        "note": "Les empreintes des elements <style> entrent dans la liste que le build produit : la liste porte toujours une seule entree Content-Security-Policy, dont style-src porte 'self' et l'empreinte sha256 de l'element <style> de la page des realisations, une aujourd'hui, identique en francais et en anglais, calculee au build par le meme mecanisme que les deux empreintes de scripts. Le mot-cle 'unsafe-hashes' n'y figure pas. Meme source, memes directives, meme JSON hors du dossier publie, non commite, lu par le serveur de la CI. Ce que la liste sert encore, redit au round 2 et inchange : la reference que le serveur de la CI pose, la source des deux balises, et ce que la spec de deploiement confrontera a Pages."
+      },
+      {
+        "pair": ["D-2", "D-6"],
+        "composes": true,
+        "note": "La balise meta porte aussi l'empreinte du <style> : elle est ecrite depuis la meme liste que l'en-tete, moins frame-ancestors, donc avec la meme directive style-src et la meme empreinte. Mesure au round 3 sur l'arbre jetable de la voie retenue, servi sans aucun en-tete avec la politique en balise seule, comme Pages sert : aucune violation, aucun message de la politique, hydratation intacte, element <style> reutilise a l'hydratation et marqueur retire, script injecte refuse, 14 points sur 7 trajets. Un point d'ordre tient les deux ensemble : la balise est ecrite avant le premier script, et l'element <style> vient apres le titre, donc apres la balise, ce qui est la seule position ou une politique en balise le regit."
+      },
+      {
+        "pair": ["D-5", "D-6"],
+        "composes": true,
+        "note": "La balise ne porte jamais frame-ancestors : la specification l'ignore en balise, un navigateur signalerait dans sa console une directive ignoree, et le critere « aucun message de la politique » serait faux. Le refus de mise en cadre reste dans l'en-tete seul, la balise est silencieuse sur le cadre, et D-5 nomme cette limite sans script : aucune des deux decisions ne pretend proteger le visiteur de Pages contre la mise en cadre, et la fonctionnalite 06 le dit."
+      },
+      {
+        "pair": ["D-1", "PAGES"],
+        "composes": true,
+        "note": "scripts/** reste sous relecture humaine, verifie ce round dans pipeline.config.json : human_review_paths porte scripts/**, et la corvee D-1 n'y change rien, elle ouvre deux fichiers a l'ecriture sans les sortir de la relecture. Que Pages n'envoie aucun en-tete ne retire rien au serveur de la CI : c'est lui que la porte, le smoke et la suite navigateur traversent, et c'est lui qui reste la reference de ce que le site attend. Les deux issues qui le touchent, la deuxieme et la troisieme, exigent donc toujours votre recu de relecture pour clore, et la PR le nomme."
+      },
+      {
+        "pair": ["D-2", "D-3"],
+        "composes": true,
+        "note": "Independantes : le referent n'a rien a voir avec la place des trajets, et aucune des deux n'ecrit dans la directive de l'autre."
+      },
+      {
+        "pair": ["D-2", "D-5"],
+        "composes": true,
+        "note": "Independantes : D-5 n'ajoute aucun script, donc aucune empreinte de script de plus ; D-2 ne touche que style-src."
+      },
+      {
+        "pair": ["D-2", "PAGES"],
+        "composes": true,
+        "note": "Le visiteur de Pages recoit la politique par la balise, et une empreinte d'element <style> y est lue comme en en-tete : mesure au round 3 sans aucun en-tete. Rien de ce que Pages ne delivre pas ne change avec D-2 : cadre, nosniff et Permissions-Policy restent nommes comme non delivres."
+      },
+      {
+        "pair": ["D-4", "PAGES"],
+        "composes": true,
+        "note": "Confrontee au round 2 et inchangee : Pages ne peut reproduire aucun en-tete de la liste, et la liste sert quand meme, comme reference du serveur de la CI, comme source des deux balises qui atteignent le visiteur de Pages, et comme ce que la spec de deploiement confrontera a Pages en-tete par en-tete."
+      },
+      {
+        "pair": ["D-3", "D-6"],
+        "composes": true,
+        "note": "La politique de referent tranchee en D-3 est aussi ecrite en balise, par sa propre balise et non par la politique de contenu, avec la meme valeur, depuis la meme liste. Comme cette valeur est celle que les navigateurs appliquent par defaut, un visiteur de Pages l'obtient meme si son navigateur ne lisait pas la balise."
+      },
+      {
+        "pair": ["D-5", "PAGES"],
+        "composes": true,
+        "note": "D-5 est la reponse au fait Pages : la limite est nommee, son impact est mesure et borne au choix de theme, aucun script de defense n'est ajoute, et la spec de deploiement en herite plutot que de la redecouvrir."
+      }
+    ],
+    "conflicts_found": []
+  },
+  "functional_scope": {
+    "intent": "Faire dire au serveur de la CI, sur chaque reponse, ce que le site attend de tout navigateur : quels scripts et quels styles il a le droit d'executer, qu'il ne se laisse pas mettre en cadre, que les types de fichiers ne se devinent pas. La porte de securite qui rougit mesure exactement cela, et elle redevient verte parce que le site change, pas parce qu'on l'accepte. L'hebergeur est GitHub Pages, et il n'enverra aucun de ces en-tetes : le HTML prerendu porte donc, de cette attente, tout ce qu'un HTML peut porter, avec les memes empreintes, et la spec nomme ce qui, sur Pages, n'atteindra pas le visiteur, plutot que de laisser le vert de la porte le faire croire. Les trajets des points des schemas quittent les attributs de style, que la porte ne peut plus autoriser, pour un seul element <style> en tete de la page des realisations, hache au build comme les scripts, sans qu'un pixel ne change.",
+    "features": [
+      {
+        "name": "Le site dit a tout navigateur ce qu'il a le droit d'executer",
+        "user_value": "Un visiteur dont le navigateur lit la politique de contenu ne peut executer sur ce site que ce que le site a lui-meme construit : ses propres scripts, ses propres feuilles de style, ses propres images. Un script injecte par une extension malveillante, un reseau compromis ou un hebergeur mal configure est refuse par le navigateur avant de tourner. Aujourd'hui rien n'est dit, et la porte de securite le classe Medium (regle 10038).",
+        "rules": [
+          "Seuls les scripts du site lui-meme sont executables. Le HTML prerendu porte deux amorces inline (celle de l'hydratation sur les 9 pages, celle de l'etat du routeur sur 3 pages) : mesure faite, elles n'ont que deux empreintes distinctes sur l'ensemble du site. Elles sont autorisees par empreinte sha256, jamais par la permission generale d'executer n'importe quel script inline.",
+          "Les empreintes sont calculees a chaque build, sur le site construit, et injectees dans la politique : aucune n'est jamais recopiee a la main. Une empreinte recopiee derive au premier changement de version du framework et le site cesse de s'hydrater sans qu'aucun test unitaire ne le voie.",
+          "Un build qui ne peut pas calculer les empreintes echoue : il ne produit jamais un site servi avec une politique vide ou incomplete. Un serveur qui ne trouve pas le resultat du calcul refuse de demarrer plutot que de servir sans politique.",
+          "Les styles : le mot-cle 'unsafe-hashes' est exclu, parce que la porte le classe Medium (regle 10055, mesuree par l'orchestrateur le 2026-09-10, en en-tete comme en balise). Aucun attribut de style ne subsiste donc dans le HTML prerendu, et un build qui en trouve un echoue, parce qu'un tel attribut ne peut etre autorise que par le mot-cle refuse. Les 14 trajets que suivent les points des schemas, 7 valeurs distinctes issues du contenu, vivent dans un seul element <style> en tete de la page des realisations, ecrit par la page depuis les schemas qu'elle montre, et autorise par son empreinte sha256 calculee au build par le meme mecanisme que les scripts : une empreinte aujourd'hui, identique en francais et en anglais, recalculee a chaque build, jamais recopiee. Vous l'avez tranche (D-2). Mesure dans Chromium sous cette politique, avec les en-tetes comme sans aucun en-tete : aucune violation, les 14 points suivent les memes 7 trajets avant et apres hydratation, le mouvement s'arrete sous prefers-reduced-motion comme aujourd'hui, et rien ne change a l'ecran.",
+          "Aucune autre origine n'est autorisee, pour rien : ni script, ni style, ni image, ni police, ni connexion. Mesure faite, le site n'en charge aucune ; les seuls liens vers l'exterieur sont des liens de navigation vers GitHub, LinkedIn et le site d'une realisation, que la politique ne regit pas.",
+          "Le site refuse les greffons, refuse de servir de cible a un formulaire et refuse qu'on change sa base d'adresses : ces trois directives sont dites explicitement parce que la porte signale une directive sans repli comme un manque.",
+          "La politique est identique sur toute reponse du serveur de la CI, page trouvee comme page introuvable, fichier de script comme feuille de style : une seule regle la pose, une seule regle la lit. La meme politique, moins ce qu'une balise ne peut pas porter, est ecrite dans chaque page prerendue : c'est la fonctionnalite 05."
+        ]
+      },
+      {
+        "name": "Le site refuse d'etre mis en cadre, partout ou un en-tete peut le dire",
+        "user_value": "Personne ne peut afficher ce portfolio a l'interieur d'une page tierce pour faire cliquer un visiteur sur ce qu'il ne voit pas. La porte le classe Medium aujourd'hui (regle 10020), et c'est le premier des deux constats qui ferment toute PR. Ce refus atteint tout visiteur servi par un hebergeur qui envoie des en-tetes ; sur GitHub Pages, il n'atteint personne, et la fonctionnalite 06 le dit.",
+        "rules": [
+          "Aucune page du site ne s'affiche dans un cadre, quelle que soit l'origine de la page qui l'encadre, y compris le site lui-meme.",
+          "Le refus est dit deux fois, dans la politique de contenu pour les navigateurs qui la lisent et dans l'en-tete historique pour ceux qui ne lisent que lui, et les deux disent la meme chose.",
+          "Le refus vaut sur toute reponse du serveur de la CI, page trouvee comme introuvable, et sur aucune balise du HTML : aucune balise ne peut le porter, c'est une limite des navigateurs et non un oubli. Il n'est jamais ecrit dans la balise meta, parce qu'un navigateur signale dans sa console une directive qu'il ignore, et le critere « aucun message de la politique » serait faux.",
+          "Sur GitHub Pages, ce refus ne sera pas delivre, et la spec ne pretend pas le contraire. Vous avez tranche (D-5) : la limite est nommee, sans script de defense."
+        ]
+      },
+      {
+        "name": "Le navigateur ne devine pas, et le site ne raconte que le minimum",
+        "user_value": "Un navigateur qui recoit un fichier du site le traite pour ce que le site dit qu'il est, jamais pour ce qu'il ressemble ; un fichier de texte ne devient pas un script par ressemblance. Les sites vers lesquels le portfolio renvoie apprennent le minimum sur la page d'ou vient le visiteur, et aucune page ne peut demander la camera, le micro ni la position, parce que le site n'en a pas besoin.",
+        "rules": [
+          "Chaque reponse du serveur de la CI dit au navigateur de ne pas deviner le type du fichier. C'est le constat Low de la porte (regle 10021), et il est corrige, pas accepte. Aucune balise ne peut le porter : sur GitHub Pages il n'est pas delivre, et la fonctionnalite 06 le nomme.",
+          "Chaque reponse porte la politique de referent que vous avez tranchee (D-3) : l'origine seule aux sites tiers, l'adresse complete a l'interieur du site, rien vers une page tierce sans HTTPS. GitHub, LinkedIn et le site de la realisation apprennent qu'un visiteur vient du portfolio, jamais de quelle page.",
+          "La politique de referent est aussi ecrite dans chaque page prerendue, par sa balise, avec la meme valeur : c'est la seule protection, avec la politique de contenu, qui atteigne un visiteur sur GitHub Pages. Et comme la valeur retenue est celle que les navigateurs appliquent par defaut, un visiteur sur Pages l'obtient meme si son navigateur ne lisait pas la balise.",
+          "Chaque reponse refuse explicitement la camera, le micro et la geolocalisation. Rien d'autre n'est refuse : une liste plus longue dirait des choses sur des capacites que le site n'a jamais demandees, et personne ne saurait plus ce qui est deliberement refuse. Aucune balise ne peut porter ce refus : sur Pages, il n'est pas delivre, et le site ne demande de toute facon aucune de ces capacites.",
+          "Chaque en-tete est pose par une seule regle, une seule fois, sur toute reponse."
+        ]
+      },
+      {
+        "name": "La porte mesure le serveur de la CI, et le vert est prouve plutot que declare",
+        "user_value": "La porte de securite est une porte de cloture : tant qu'elle est rouge, aucune spec ne peut plus fermer sa PR, celle-ci comme les suivantes. Elle redevient verte parce que le serveur de la CI envoie les en-tetes, et la preuve est celle du site construit dans un vrai navigateur, pas celle d'une lecture de code. Ce vert dit ce que le serveur de la CI envoie ; il ne dit rien d'un visiteur sur GitHub Pages, et personne ne le citera comme s'il le disait.",
+        "rules": [
+          "La porte de securite est verte sur l'evenement pull_request, sur le SHA exact de la tete de branche. Le run push du meme SHA ne joue pas cette porte et ne prouve rien ici.",
+          "Aucune entree n'est ajoutee au registre des constats acceptes pour les regles 10020, 10038 et 10021. Si un autre constat devait etre accepte, il le serait par URL exacte, avec raison, date et expiration, et une acceptation n'est pas une correction : elle est nommee comme telle dans la PR.",
+          "Dans un vrai navigateur, sur le site construit et servi avec ses en-tetes : chaque page s'hydrate, le bouton de theme change le theme et le choix survit a un rechargement, le changement de langue mene a la page traduite, et la console ne rapporte aucune violation ni aucun message de la politique de contenu.",
+          "Le smoke repond sur les 9 adresses declarees, avec les en-tetes.",
+          "Ce que la porte fait d'une page qui porte une politique en balise est connu, mesure par l'orchestrateur le 2026-09-10 sur le site construit servi sans aucun en-tete : la porte lit la balise comme une politique, la regle 10038 s'eteint avec la balise seule, une empreinte ordinaire dans style-src ou script-src n'est pas signalee, et 'unsafe-hashes' dans style-src est signale Medium (regle 10055) en balise comme en en-tete. La phase 2 le reprouve sur le run pull_request du SHA exact, et un signalement de la porte sur la balise serait un retour vers vous, jamais une entree dans le registre des constats acceptes.",
+          "Le registre d'assurance OWASP du depot dit ce qui est desormais mesure : la categorie « Security Misconfiguration » passe de non verifiee a partielle, en nommant ces en-tetes et les balises comme controles, et en nommant ses limites : seul le serveur de la CI est mesure, et GitHub Pages ne delivre pas le refus de mise en cadre, le nosniff ni la Permissions-Policy. Il ne passe pas a « verifiee », parce qu'un rapport vert ne couvre que ce que le scan a atteint."
+        ]
+      },
+      {
+        "name": "Le build dit ce que le site attend, et le HTML en porte ce qu'un HTML peut porter",
+        "user_value": "L'hebergeur est GitHub Pages, et il n'envoie aucun en-tete de securite ni n'offre de moyen d'en configurer. Ce qui protege le visiteur reel est donc ce que le HTML lui-meme porte : la politique de contenu, avec les memes empreintes, et la politique de referent. Le serveur de la CI reste la reference de ce que le site attend ; le HTML en porte la part que les navigateurs acceptent de lire dans une page ; et la difference entre les deux est ecrite, pas devinee. Vous avez tranche (D-6) : cela entre ici.",
+        "rules": [
+          "Chaque build produit, a cote du site construit et hors du dossier publie, la liste complete des en-tetes et de leurs valeurs, empreintes comprises, comme vous l'avez tranche (D-4). Elle n'est pas commitee : les empreintes bougent avec la version du framework.",
+          "Le serveur de la CI ne fait que lire cette liste : il n'a aucune valeur ecrite en propre, et il refuse de demarrer si elle manque. Deux sources de verite deriveraient, et la derive ne se verrait qu'en production.",
+          "Depuis la meme liste, le build ecrit dans chaque page prerendue une balise de politique de contenu, portant chaque directive qu'une balise peut porter, avec les memes empreintes, et une balise de politique de referent. Rien n'est recopie a la main : l'en-tete et la balise viennent du meme calcul, au meme build, et ne peuvent pas deriver l'un de l'autre.",
+          "La balise de politique est placee avant le premier script de la page : une politique ecrite dans une page ne regit rien de ce qui la precede, et le script de theme est aujourd'hui le premier element apres le titre de la page.",
+          "Ce qu'une balise ne peut pas porter n'y est pas ecrit : le refus de mise en cadre reste dans l'en-tete seul. Un navigateur signale dans sa console une directive qu'il ignore, et la balise doit etre silencieuse.",
+          "La preuve est prise la ou le visiteur de Pages sera : le site construit, servi sans aucun en-tete, dans un vrai navigateur. Chaque page s'hydrate, le theme et la langue fonctionnent, la console ne rapporte aucune violation ; et un script inline injecte dans la page depuis l'exterieur du build est refuse par le navigateur et rapporte comme violation. Sans ce dernier point, une balise presente et une balise qui protege seraient indistinguables.",
+          "La liste reste la reference : la spec de deploiement confrontera ce que Pages envoie vraiment a cette liste, en-tete par en-tete, et ecrira ce qui est delivre et ce qui ne l'est pas. Cette spec ne le mesure pas."
+        ]
+      },
+      {
+        "name": "Ce que GitHub Pages ne delivrera pas est nomme, pas suppose couvert",
+        "user_value": "Un lecteur de la spec, du registre OWASP ou de la PR sait exactement ce qui protege le visiteur reel et ce qui ne le protege pas, au lieu de lire un vert de porte et d'en deduire que tout est en place. Sur Pages, trois protections n'atteignent personne, et le dire est la seule chose honnete que cette spec puisse en faire.",
+        "rules": [
+          "Sur GitHub Pages, le refus de mise en cadre, le refus de deviner les types de fichiers et le refus de la camera, du micro et de la position ne sont pas delivres : aucune balise ne peut les porter, et Pages n'offre aucune configuration. Mesure par vous le 2026-09-10 : Pages n'envoie aucun de ces en-tetes.",
+          "L'impact de la mise en cadre est ecrit avec sa mesure, pas avec un adjectif : le site n'a aucun formulaire, aucun appel reseau, aucun compte, aucune action qui change un etat cote serveur ; le seul etat qu'un visiteur mis en cadre pourrait etre amene a changer est son propre choix de theme, garde dans son navigateur. La limite est nommee comme reelle et bornee, jamais comme absente, et aucun script de defense n'est ajoute (D-5).",
+          "Le registre OWASP nomme GitHub Pages et ces trois protections dans les limites de la categorie « Security Misconfiguration ». La PR les nomme aussi, et dit que le vert de la porte est une preuve sur le serveur de la CI et sur aucun visiteur de Pages.",
+          "Rien ici ne deploie, ne configure ni ne mesure Pages : la spec de deploiement le fera, et elle heritera de cette liste de ce qui manque plutot que de la redecouvrir."
+        ]
+      }
+    ],
+    "out_of_scope": [
+      "L'hebergeur est GitHub Pages, choisi par vous le 2026-09-10, et cette spec ne le deploie, ne le configure ni ne le mesure : pas de workflow de publication, pas de page 404 a la racine du dossier publie, pas de decision sur le chemin de base d'un site projet contre un site utilisateur ou un domaine personnalise. Ces sujets appartiennent a une spec de deploiement, qui confrontera ce que Pages envoie a la liste que ce build produit.",
+      "Le HSTS et la montee automatique vers HTTPS ne sont pas poses : ils n'ont de sens qu'en HTTPS chez l'hebergeur, aucune balise ne peut les porter, et sur le serveur de la CI, qui parle en HTTP sur l'adresse locale, la montee automatique casserait le chargement de chaque ressource. Ce que le domaine de Pages impose deja en la matiere est a mesurer par la spec de deploiement.",
+      "Les en-tetes d'isolation d'origine (COEP, COOP, CORP, regle 90004) ne sont pas poses : la porte les classe Low au mieux, ils n'ont d'utilite que pour des capacites que le site n'emploie pas, et un COEP pose sans besoin peut bloquer des ressources tierces le jour ou il y en aura.",
+      "Le cache et sa duree (regle 10049, informationnelle) ne sont pas traites : c'est une politique d'hebergement, pas une politique de securite.",
+      "Aucun point de rapport de violations n'est declare : il faudrait un service qui recoive les rapports, le site n'a pas de serveur, et une balise ne peut de toute facon pas le porter.",
+      "Aucun nonce : le site est prerendu, le meme HTML sert a tout le monde, et un nonce identique pour tous n'est pas un nonce. Les empreintes sont la seule forme honnete sur un site statique.",
+      "Aucune integrite de sous-ressource : le site ne charge rien d'une autre origine, il n'y a rien a signer.",
+      "Le contenu du site ne change pas, aucun ecran ne change, aucune maquette n'est touchee ni dessinee. Deux balises s'ajoutent a l'en-tete invisible de chaque page prerendue, et les trajets des points des schemas changent de place dans le HTML sans changer de valeur : mesure sur la voie que vous avez retenue en D-2, les 14 points suivent les memes 7 trajets, avant et apres hydratation, et le mouvement s'arrete sous prefers-reduced-motion exactement comme aujourd'hui. La maquette de reference, qui porte encore les trajets en attributs, n'est pas retouchee : elle dessine ce que le visiteur voit, et cela ne bouge pas.",
+      "Le mot-cle 'unsafe-hashes' n'est pas employe, dans aucune directive : la porte le classe Medium, c'est mesure, et l'accepter dans le registre des constats serait une acceptation deguisee en correction.",
+      "Aucun element <style> par schema ni aucune feuille de style generee depuis la grille : vous les avez ecartes en D-2, et les trajets ne vivent qu'a un seul endroit, l'element <style> en tete de la page des realisations.",
+      "Aucun script de defense contre la mise en cadre n'est ajoute au HTML : vous l'avez tranche (D-5), la limite est nommee a la place.",
+      "Aucun paquet n'est ajoute, retire ni mis a jour : tout ce qui est calcule l'est avec ce que la plateforme fournit deja.",
+      "Aucune modification du coeur du pipeline, aucune porte desactivee ni assouplie, aucun constat accepte pour les trois regles qui rougissent, ni pour la regle 10055, ni pour ce que la porte pourrait dire d'une balise de politique : cela reviendrait vers vous.",
+      "Le run pull_request de la porte de securite n'est pas etendu a l'evenement push : l'evenement est une configuration de CI, hors de ce que le cycle produit.",
+      "La page d'erreur que GitHub Pages sert lui-meme pour une adresse inconnue ne porte aucune politique et n'est pas du ressort de ce build : la spec de deploiement, qui decidera d'une page 404 a la racine, en heritera."
+    ]
+  },
+  "decisions_for_operator": [],
+  "domain_reading": {
+    "retained": [
+      "Le serveur de la CI reste la reference de ce que le site attend : la porte le mesure, le smoke et la suite navigateur le traversent, et tout hebergeur capable d'envoyer des en-tetes copiera sa liste. GitHub Pages est un hebergeur, pas la definition de ce que le site attend.",
+      "GitHub Pages n'envoie aucun en-tete de securite et n'offre aucun moyen d'en configurer : mesure par vous le 2026-09-10 sur pages.github.com.",
+      "La porte lit une politique en balise meta : mesure par l'orchestrateur le 2026-09-10 sur le site construit servi sans en-tete. La regle 10038 s'eteint avec la balise seule ; une empreinte ordinaire dans script-src ou style-src n'est pas signalee ; 'unsafe-hashes' dans style-src est signale Medium par la regle 10055, en balise comme en en-tete, parce que la regle analyse la politique elle-meme. C'est ce qui a exclu la recommandation D-2 du round 1.",
+      "Un attribut de style ne peut etre autorise par empreinte qu'avec 'unsafe-hashes' ; un element <style> l'est par une empreinte ordinaire. Mesure de reference dans Chromium sur le site tel quel, politique sans 'unsafe-hashes' : 14 violations style-src-attr sur la page des realisations, et sans script les 14 points restent a l'origine du schema (trajet calcule « none ») ; apres hydratation, Solid repose le trajet par l'API de style et les points repartent, mais les 14 violations sont deja rapportees. C'est le defaut que D-2 corrige, et la preuve que le banc voit bien les violations.",
+      "La voie retenue en D-2, mesuree au round 3 sur le depot au commit cd16a8a dans un arbre jetable : un seul element <style> en tete de page, ecrit par la page des realisations depuis tous ses schemas via le composant de tete de @solidjs/meta, une regle par trajet distinct ciblant un attribut de donnees du point. Servie avec la politique calculee depuis son propre HTML, en en-tete puis en balise seule sans aucun en-tete : aucune violation, aucun message de la politique, hydratation intacte (le bouton de theme pose data-theme), l'element reutilise a l'hydratation et son marqueur data-sm retire, script injecte apres coup refuse et rapporte, 14 points sur les 7 memes trajets sans script comme apres hydratation, 0 point anime sous prefers-reduced-motion avec trajet conserve. Une empreinte de style pour tout le site, la meme sur /fr/realisations et /en/work. Les deux voies ecartees avaient ete mesurees avec les memes resultats a l'ecran ; leur cout est dans les lectures ecartees.",
+      "Portes du depot sur la voie retenue, mesurees au round 3 : lint, check, design_tokens, css_ownership, design_limits, comment_policy et test_unit (62 tests) passent sans qu'aucun test existant ne change ; la spec navigateur existante de la page des realisations (accessibilite, reflow, textes de remplacement, trajets sans script, arret du mouvement) passe telle quelle, 7 tests.",
+      "Le rendu de Solid n'echappe pas le contenu d'un element <style> (mesure sur le HTML construit : guillemets et apostrophes bruts) et son hydratation ne le reecrit pas quand il est pose par innerHTML (le code client saute cette ecriture en hydratation) : l'empreinte calculee sur le HTML servi est celle que le navigateur verifie, et rien ne la change apres coup. Pour le composant de tete, l'element est reutilise a l'hydratation et son marqueur data-sm retire, sans violation.",
+      "Sous prefers-reduced-motion, l'arret est celui d'aujourd'hui : la feuille du composant pose animation: none sur le point, le trajet reste defini, le point est immobile au depart de son trajet. La voie retenue ne touche pas a cette regle.",
+      "Une politique en balise ne regit rien de ce qui la precede dans la page. Mesure sur le HTML construit : le script de theme est le premier element apres le titre de la page, suivi des deux amorces inline ; la balise doit donc etre ecrite avant lui. L'element <style> de la page des realisations vient apres le titre, donc apres la balise.",
+      "Le site n'a aucun formulaire, aucun appel reseau, aucun compte : mesure au round 2 par recherche dans le code source. L'impact d'une mise en cadre est borne au choix de theme, et c'est ce qui fonde D-5, que vous avez retenue.",
+      "Les fichiers a ouvrir a l'implementeur sont ceux du round 1, verifie ce round sur pipeline/rules.json et pipeline.config.json : src/** et tests/** sont ouverts, scripts/** hors routes.mjs ne l'est pas et reste sous human_review_paths ; le composant du schema et la page des realisations sont sous src/features/works, et le calcul des empreintes d'elements <style> vit dans scripts/security-headers.mjs, deja nomme par la corvee D-1."
+    ],
+    "discarded": [
+      "« Un element <style> par schema, ecrit dans la figure par le composant qui dessine le schema » : ecartee par vous en D-2. Mesuree au round 3 avec les memes resultats a l'ecran, 4 empreintes pour tout le site ; son cout mesure est la raison : pose dans le corps de la carte, le texte des regles entre dans le contenu textuel de l'article, et le test unitaire existant qui verifie qu'une realisation sans resultat n'affiche aucun chiffre rougit sur ce texte. Un style qui se lit comme du contenu n'est pas a sa place.",
+      "« Une feuille de style servie depuis 'self', generee depuis la grille du schema » : ecartee par vous en D-2. Mesuree au round 3 avec les memes resultats a l'ecran sous style-src 'self' seul ; son cout est la raison : la geometrie des trajets existerait a deux endroits, dans le composant qui trace les traits et dans la feuille qui fait courir les points, et les tenir d'accord exigerait soit un generateur sous scripts/**, un troisieme fichier a ouvrir nommement par la corvee D-1, soit une feuille ecrite une fois et tenue par un test unitaire.",
+      "« Autoriser les attributs de style par empreinte avec 'unsafe-hashes' » : la recommandation du round 1, retenue par vous puis retiree au round 3 parce que la porte la classe Medium (regle 10055), mesure par l'orchestrateur. Elle est citee pour qu'on ne la repropose pas.",
+      "« Poser les trajets par une propriete personnalisee en attribut de style » : ecartee, c'est encore un attribut de style, et il exige le meme mot-cle.",
+      "« Ecrire les 30 regles a la main dans la feuille du composant » : ecartee avec la feuille generee dont elle etait la variante.",
+      "« Generer la feuille depuis le contenu plutot que depuis la grille » : ecartee, le contenu n'apporte rien que la grille ne borne deja, et la feuille generee est elle-meme ecartee.",
+      "« Une animation SVG declarative » : ecartee au round 1 et depuis, parce qu'elle echappe a prefers-reduced-motion et change ce que la spec navigateur mesure.",
+      "« Accepter 10055 avec une expiration » : ecartee par la spec elle-meme et par votre preference.",
+      "Le reste des lectures ecartees aux rounds 1 et 2 (balise meta comme remplacement, script de defense, changement d'hebergeur, empreintes recopiees, nonce, 'strict-dynamic', isolation d'origine et cache) est inchange."
+    ]
+  },
+  "contract_sketch": {
+    "nature": "Aucune route, aucune donnee, aucun ecran. Le contrat est une liste d'en-tetes de reponse, la valeur de chacun, l'artefact de build qui les porte, les deux balises que le build ecrit dans chaque page prerendue depuis la meme liste, et la forme du HTML prerendu que le build accepte de hacher.",
+    "headers": [
+      "Content-Security-Policy : default-src 'self' ; script-src 'self' + les empreintes sha256 des scripts inline calculees au build (2 aujourd'hui) ; style-src 'self' + l'empreinte sha256 de l'element <style> de la page des realisations calculee au build (1 aujourd'hui, la meme en francais et en anglais), sans 'unsafe-hashes' ; img-src 'self' ; font-src 'self' ; connect-src 'self' ; object-src 'none' ; base-uri 'self' ; form-action 'none' ; frame-ancestors 'none'.",
+      "X-Frame-Options : DENY.",
+      "X-Content-Type-Options : nosniff.",
+      "Referrer-Policy : strict-origin-when-cross-origin.",
+      "Permissions-Policy : camera=(), microphone=(), geolocation=().",
+      "Chaque en-tete est present sur toute reponse du serveur de la CI, 200 et 404, HTML et fichiers."
+    ],
+    "html": [
+      "<meta http-equiv=\"Content-Security-Policy\" content=\"...\"> dans chaque page prerendue, avant le premier script : la meme politique que l'en-tete, moins frame-ancestors, avec les memes empreintes, scripts et element <style> compris.",
+      "<meta name=\"referrer\" content=\"strict-origin-when-cross-origin\"> dans chaque page prerendue.",
+      "Aucun attribut style dans aucune page prerendue : le build le refuse. Un seul element <style> dans la tete de chaque page des realisations, apres le titre, et un attribut de donnees sur chaque point nommant son trajet (D-2).",
+      "Aucune balise pour X-Frame-Options, X-Content-Type-Options ni Permissions-Policy : il n'en existe pas."
+    ],
+    "artefact": "Le build calcule les empreintes des scripts inline et des elements <style> sur le site construit, ecrit la liste des en-tetes hors du dossier publie, puis ecrit les deux balises dans chaque page prerendue depuis cette liste. Le serveur de la CI la lit au demarrage et refuse de demarrer sans elle. Le build echoue s'il ne trouve aucune page, s'il rencontre un attribut de style, un script ou un element <style> qu'il ne sait pas empreinter, ou s'il ne peut pas ecrire la balise avant le premier script d'une page.",
+    "files_to_open_before_dispatch": "Corvee D-1, inchangee par les rounds 2 a 4 et verifiee ce round contre pipeline/rules.json : scripts/serve-static.mjs et scripts/security-headers.mjs ajoutes nommement a file_policy.implementer.allow, puis apply-profile. docs/security/owasp-top10-2025.json, src/features/works/**, tests/** et package.json sont deja ouverts. Aucun troisieme fichier : la feuille generee qui en aurait exige un est ecartee.",
+    "measured_today": "Scripts inline : sha256-VmEf2BGdqVUwcvyhTyarJo/bY7DNqS2+T2sz4IO/kbw= (hydratation, 9 pages) et sha256-czFd6iCdRs1uyO5Zm+Ax70UeWTcjAZIBr4/GqzlUL0E= (etat du routeur, 3 pages), inchangees depuis le round 1 au commit cd16a8a. Element <style> sous la voie retenue, mesure au round 3 dans l'arbre jetable : 1 empreinte, la meme sur les deux pages des realisations, francais et anglais. Ces valeurs ne seront jamais recopiees : c'est le build qui les produit."
+  },
+  "decomposition_titles": {
+    "titles": [
+      "Les trajets des points des schemas quittent les attributs de style pour un seul element <style> en tete de la page des realisations, et l'ecran ne change pas : memes trajets sans script, meme arret sous prefers-reduced-motion",
+      "Le build calcule ce que la politique autorise, scripts et elements <style>, refuse tout attribut de style, et l'ecrit deux fois depuis une seule source : la liste des en-tetes hors du dossier publie, et les balises dans chaque page prerendue ; un build qui ne peut pas calculer echoue",
+      "Le serveur de la CI pose les en-tetes qu'il lit, refuse de demarrer sans la liste, et la suite navigateur prouve que le site s'hydrate sous la politique sans un seul message",
+      "Le visiteur de GitHub Pages est protege par le HTML seul : servi sans aucun en-tete, le site s'hydrate et refuse un script injecte ; le registre OWASP nomme ce qui est mesure et ce que Pages ne delivrera pas"
+    ],
+    "parallelism_intent": "Quatre issues. La premiere, tranchee en D-2, ne touche que src/features/works et ses tests, sous aucun chemin de relecture humaine, et ne depend de rien : elle peut etre dispatchee en tete, et la deuxieme n'a de sens qu'apres elle, puisque le build refuse tout attribut de style. Les trois suivantes restent en serie, comme au round 2 : la troisieme lit la liste que la deuxieme produit, la quatrieme sert le site sans en-tete par le meme serveur que la troisieme rend capable de les poser. Toutes lancent build et suite navigateur, ce que la decision 0011 serialise de toute facon. Reservations disjointes malgre la serie : la premiere tient le composant du schema, la page des realisations, leurs tests unitaires et la spec navigateur des realisations ; la deuxieme tient le script de build, package.json et ses tests unitaires ; la troisieme tient le serveur et le test navigateur des en-tetes ; la quatrieme tient le test navigateur du site nu et le registre OWASP. La deuxieme et la troisieme touchent scripts/**, donc leurs clotures exigent votre recu de relecture ; la premiere et la quatrieme n'y touchent pas. La corvee D-1 n'est pas une issue : c'est de la configuration, prouvee par une commande, hors du cycle."
+  },
+  "design_commitments_carried_into_issues": [
+    "Aucune empreinte n'est ecrite a la main, nulle part : ni dans le serveur, ni dans une page, ni dans un test, ni dans la documentation. Un test qui verifie les empreintes les recalcule depuis le site construit.",
+    "Le HTML prerendu ne porte aucun attribut de style, et le build le refuse : c'est ce qui rend 'unsafe-hashes' impossible par construction plutot que par discipline. Un critere le prouve sur les 9 pages, et un critere negatif prouve qu'un HTML portant un attribut de style fait echouer le build avec un code de sortie non nul.",
+    "Les trajets des points sont les memes avant et apres : un critere navigateur, sans script, prouve que chaque point a un trajet calcule qui commence par path(, et un critere prouve l'arret sous prefers-reduced-motion ; les deux existent deja dans la spec navigateur des realisations et passent telle quelle sur la voie retenue.",
+    "L'en-tete et la balise viennent du meme calcul, au meme build, depuis la meme liste : un critere prouve que la balise porte exactement les directives de l'en-tete moins frame-ancestors, avec les memes empreintes, scripts et element <style> compris.",
+    "La balise est ecrite avant le premier script de chaque page, et un critere le prouve sur les 9 pages ; un build qui ne peut pas la placer la echoue.",
+    "Chaque en-tete est pose par une seule regle, et un critere le prouve sur une reponse 200 et sur une reponse 404.",
+    "La preuve de l'hydratation sous la politique est prise dans un vrai navigateur sur le site construit, en ecoutant les violations et les messages rapportes par le navigateur lui-meme, jamais en lisant la politique. Elle est prise deux fois : avec les en-tetes, et sans aucun en-tete, comme Pages sert.",
+    "Sans en-tete, un critere injecte un script inline etranger au build et prouve que le navigateur le refuse et le rapporte : c'est ce qui distingue une balise presente d'une balise qui protege.",
+    "Le build echoue plutot que de produire une politique vide, et le serveur refuse de demarrer plutot que de servir sans politique : les deux sont des criteres negatifs, chacun prouve par un code de sortie non nul observe.",
+    "Le registre OWASP nomme les controles, nomme GitHub Pages et les trois protections qu'il ne delivre pas, et ne passe jamais a « verifiee » sur la foi d'un scan.",
+    "Ce que la porte dit de la balise et des empreintes est mesure sur le run pull_request et rapporte tel quel ; un signalement, y compris sur la regle 10055, revient vers l'operateur et n'entre jamais dans le registre des constats acceptes.",
+    "Les portes de cloture restent coverage, test_e2e, dead_code, audit, content et dast_baseline ; aucune n'est desactivee ni assouplie, et aucune modification n'est apportee au coeur du pipeline."
+  ],
+  "pr_commitments": [
+    "La PR nomme scripts/serve-static.mjs et scripts/security-headers.mjs comme surfaces sous revue humaine : ce sont les fichiers que la CI, le smoke et la suite navigateur executent, et un en-tete mal forme s'y voit mieux a la lecture qu'a la mesure.",
+    "Elle nomme la politique de contenu comme decision de securite : sa valeur exacte, ce qu'elle autorise par empreinte (scripts et element <style>) et ce qu'elle refuse (tout attribut de style, 'unsafe-inline', 'unsafe-hashes'), sous ses deux formes, en-tete et balise, pour qu'un relecteur la lise en entier plutot que de faire confiance au vert de la porte.",
+    "Elle cite le run pull_request sur le SHA exact de la tete de branche, dit explicitement que le run push ne joue pas la porte de securite, et rapporte ce que la porte a dit de la balise et des empreintes, meme si c'est rien.",
+    "Elle dit que l'hebergeur est GitHub Pages, que le vert de la porte est une preuve sur le serveur de la CI et sur aucun visiteur de Pages, et nomme les trois protections que Pages ne delivrera pas : le refus de mise en cadre, le nosniff et la Permissions-Policy. Aucune surface d'authentification, aucune donnee personnelle, aucun identifiant enumerable, aucun paquet touche, aucune porte modifiee."
+  ],
+  "evidence": {
+    "commands": [
+      {
+        "key": "git",
+        "cmd": "git status --porcelain; git rev-parse HEAD; git branch --show-current; git worktree list",
+        "exit": 0,
+        "observation": "Arbre propre, HEAD cd16a8a sur spec/en-tetes-securite, inchange depuis le round 1. Aucune branche creee, rien materialise dans le tracker, aucun arbre jetable cree ce round : c'est encore la phase 1. git worktree list montre l'arbre du depot et un arbre detache sur f0ae7b1 sous le scratchpad d'une autre session, qui n'est pas le mien."
+      },
+      {
+        "key": "record-hash",
+        "cmd": "node -e (sha256 de JSON.stringify(record) du paquet product round 4)",
+        "exit": 0,
+        "observation": "ebb66f221cacd117121c0f23b3e76257854aeebb9973f95d040993007ae352dd, meme methode qu'aux rounds 1 a 3. Le paquet ne porte pas d'attempt_id."
+      },
+      {
+        "key": "relecture-rules-json",
+        "cmd": "lecture de pipeline/rules.json (file_policy) et de pipeline.config.json (file_policy, human_review_paths)",
+        "exit": 0,
+        "observation": "Les deux fichiers portent la meme politique. implementer.allow : src/**, tests/**, public/**, mockups/**, docs/**, package.json, pnpm-lock.yaml, scripts/routes.mjs ; implementer.deny : pnpm-workspace.yaml, pipeline.config.json, AGENTS.md, CLAUDE.md, .github/**, agent-pipeline/**, pipeline/**, docs/decisions/**, agent-pipeline.version. human_review_paths : src/shared/tokens.css, pipeline.config.json, docs/decisions/**, .github/**, scripts/**, agent-pipeline.version. product.allow porte pipeline/pages/** et pipeline/handoffs/**, ou ce round ecrit. Sous D-2, la paire D-2/D-1 compose : aucun fichier sous scripts/** au-dela des deux nommes par la corvee, et scripts/** reste sous relecture humaine."
+      },
+      {
+        "key": "mesures-du-round-3",
+        "cmd": "non rejouees ce round",
+        "exit": 0,
+        "observation": "Les mesures de la voie retenue (Chromium sous la politique, en en-tete et en balise seule ; portes statiques et unitaires ; spec navigateur des realisations) sont celles du round 3 sur cd16a8a, reprises telles quelles : rien dans la reponse D-2 ne les change, et le depot est au meme commit. Les mesures de la porte sont celles de l'orchestrateur du 2026-09-10, reprises du record."
+      }
+    ],
+    "files": [],
+    "commit_sha": null,
+    "notes": [
+      "Ce round ne mesure rien de nouveau et le dit : il tranche ce que D-2 rend ferme, confronte les sept decisions deux a deux, et declare le perimetre final. La seule verification faite ici est celle de la paire D-2/D-1 contre pipeline/rules.json et pipeline.config.json.",
+      "Non mesure, et dit comme tel : la porte dast_baseline sur la voie retenue. Ce que je rapporte de la porte (10038 eteint par la balise, empreinte ordinaire non signalee, 10055 sur 'unsafe-hashes') est la mesure de l'orchestrateur du 2026-09-10 ; la phase 2 la reprouve sur le run pull_request du SHA exact.",
+      "Aucun paquet n'est en jeu : le composant de tete de @solidjs/meta, que la voie retenue emploie, est deja une dependance du site, employee pour les titres de chaque page.",
+      "Ce round est la phase 1 : aucune issue, rien de materialise dans le tracker, aucune branche creee. La spec s-5d3y existe deja et le plan de phase 2 s'y liera sans la recreer. Si vous approuvez ce round, la corvee D-1 (deux fichiers ajoutes a file_policy.implementer.allow, puis apply-profile) precede le dispatch de la deuxieme issue ; la premiere n'en a pas besoin.",
+      "Le registre des sept decisions est porte dans operator_feedback.previously_decided_and_carried, verbatim, pour que la phase 2 n'ait pas a relire trois rounds pour les retrouver.",
+      "validate-handoff : handoff valid (product, spec_proposal, outcome awaiting_operator), apres une premiere refus sur un produced_at ecrit en avance sur l'horloge, corrige a l'heure reelle. La page de revue pipeline/pages/proposal-en-tetes-securite-round4.html porte le digest cbfb1bb3a4473c999eb33b1a1961d76becf80e452e3f7893633ea1a6e12b6513 et il correspond au contenu soumis (round 4, perimetre fonctionnel, aucune decision ouverte, scope_final true). git status est vide apres ce round : la page et le handoff sont sous des chemins que git ignore, rien n'est commite."
+    ]
+  },
+  "blockers": []
+}

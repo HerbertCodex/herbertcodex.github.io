@@ -84,6 +84,7 @@ required of every addition is judged against this document.
 
 ### src/features/works/WorkCard.tsx
 
+- `routeSheetOf` — function — The rules giving every moving point of these works' schemas its route, one rule per distinct route.
 - `WorkCard` (default) — function — One work: the schema of what it does, then what it was and what came of it.
 
 ### src/features/works/WorksPage.css

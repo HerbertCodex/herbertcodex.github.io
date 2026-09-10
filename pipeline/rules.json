@@ -178,7 +178,9 @@
 				"docs/**",
 				"package.json",
 				"pnpm-lock.yaml",
-				"scripts/routes.mjs"
+				"scripts/routes.mjs",
+				"scripts/serve-static.mjs",
+				"scripts/security-headers.mjs"
 			],
 			"deny": [
 				"pnpm-workspace.yaml",

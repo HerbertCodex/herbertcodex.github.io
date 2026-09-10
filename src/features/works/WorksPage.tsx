@@ -1,6 +1,6 @@
-import { Title } from "@solidjs/meta";
+import { Style, Title } from "@solidjs/meta";
 import { For } from "solid-js";
-import WorkCard from "./WorkCard";
+import WorkCard, { routeSheetOf } from "./WorkCard";
 import { contentFor } from "~/shared/content";
 import { useI18n } from "~/shared/i18n";
 import "./WorksPage.css";
@@ -19,6 +19,7 @@ export default function WorksPage() {
   return (
     <main class="works">
       <Title>{t("works.title")}</Title>
+      <Style>{routeSheetOf(works())}</Style>
       <div class="section-head">
         <h1>{t("works.heading")}</h1>
         <span class="count">{String(works().length).padStart(2, "0")}</span>

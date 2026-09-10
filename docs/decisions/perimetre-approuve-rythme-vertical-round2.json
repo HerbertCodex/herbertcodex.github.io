@@ -4,6 +4,13 @@
   "agent": "product",
   "produced_at": "2026-09-08T09:50:00Z",
   "round": 2,
+  "amendment": {
+    "at": "2026-09-10",
+    "by": "operateur",
+    "what": "Les 606 px annonces a 1278 px de large sont faux : la page livree mesure 584 px a cette largeur comme aux trois autres. Le chiffre n'est corrige nulle part ailleurs dans ce document, qui est signe et reste lisible tel qu'il a ete approuve ; c'est ici qu'il faut lire la mesure.",
+    "measured": "CI run 34224637889, job « gates (frontend-typescript) », etape test-e2e : echec de tests/e2e/rythme-accueil.spec.ts sur « /fr a 1278 px : le pied finit a 584 px, annonce a 606 px », et le meme pour /en, reprise comprise ; les six autres cas passaient. Cause mesuree par sonde dans le navigateur sur l'artefact construit : la station de CI ne resout aucune des quatre faces que --font-grotesk nomme et retombe sur DejaVu Sans, plus large a corps egal. La description de la cellule 02 y passe sur une seconde ligne, ce qui ajoute exactement les 22 px de l'ecart. 606 n'a jamais existe ailleurs que sur la station qui l'a mesure.",
+    "consequence": "Le seuil de 640 px que vous avez tranche reste tenu, et plus largement qu'annonce : 56 px de marge au cas le plus serre au lieu de 34. tests/e2e/rythme-accueil.spec.ts annonce desormais 584 px aux quatre largeurs, et saute la mesure au pixel pres sur une machine qui ne resout aucune face de --font-grotesk, une hauteur y decrivant sa police de secours et non le site."
+  },
   "title": "Le rythme vertical : vos quatre reponses tiennent ensemble, et le compte du round 1 etait faux de 24 px",
   "scope": { "spec_id": null, "working_title": "rythme-vertical" },
   "basis": {

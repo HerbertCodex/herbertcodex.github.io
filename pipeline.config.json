@@ -36,13 +36,17 @@
     "decided_at": "2026-09-04",
     "layers": {
       "shared": ["src/shared/**"],
-      "features": ["src/features/**"]
+      "features": ["src/features/**"],
+      "routes": ["src/routes/**"],
+      "unplaced": ["src/*/**"]
     },
     "allowed": {
+      "routes": ["features", "shared"],
       "features": ["shared"],
-      "shared": []
+      "shared": [],
+      "unplaced": []
     },
-    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possede deja src/routes, et une couche pages supplementaire dupliquerait cette frontiere sans rien refuser de plus. Deux couches, une seule direction autorisee. AMENDEE le 2026-09-07 : features valait src/*/**, motif qui matchait AUSSI src/shared/**. Les deux couches se recouvraient entierement et la porte ne pouvait rien refuser — verte a vide. Elle designe desormais src/features/** seul. Le defaut a ete repere par l'operateur en lisant le code, jamais par une porte."
+    "note": "Retenue contre feature-sliced : le routage par fichiers de SolidStart possede deja src/routes, et une couche pages supplementaire dupliquerait cette frontiere sans rien refuser de plus. Deux couches, une seule direction autorisee. AMENDEE le 2026-09-07 : features valait src/*/**, motif qui matchait AUSSI src/shared/**. Les deux couches se recouvraient entierement et la porte ne pouvait rien refuser — verte a vide. Elle designe desormais src/features/** seul. Le defaut a ete repere par l'operateur en lisant le code, jamais par une porte. AMENDEE le 2026-09-10 : routes et unplaced etaient absentes. layerOf classait src/routes a null, donc inspect ne visitait AUCUN import fait par une route — la porte lisait 13 imports inter-couches la ou elle en lit 24 desormais, et une route pouvait importer n'importe quoi sans que rien rougisse. unplaced vaut src/*/**, moins specifique que les trois autres couches : un repertoire pose a cote demain y tombe et ne peut rien atteindre, au lieu d'etre saute en silence. Les deux refus ont ete mesures en les provoquant, pas supposes."
   },
   "design_system": {
     "tokens": "src/shared/tokens.css",

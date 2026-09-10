@@ -61,7 +61,7 @@ async function resolved(page: Page, declaration: string, property: string): Prom
   return page.evaluate(
     ({ declaration: written, property: read }) => {
       const probe = document.createElement("div");
-      probe.setAttribute("style", `position: fixed; left: 0; top: 0; visibility: hidden; ${written}`);
+      probe.style.cssText = `position: fixed; left: 0; top: 0; visibility: hidden; ${written}`;
       document.body.append(probe);
       const value = getComputedStyle(probe).getPropertyValue(read);
       probe.remove();

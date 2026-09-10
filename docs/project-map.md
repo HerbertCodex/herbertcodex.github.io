@@ -197,7 +197,7 @@ required of every addition is judged against this document.
 
 ### src/shared/SiteBar.tsx
 
-- `SiteBar` (default) — function — The bar every page carries: the way out, the four pages, the languages and the theme.
+- `SiteBar` (default) — function — The bar every page carries: the way out, the three sections, the languages and the theme.
 
 ### src/shared/SiteFooter.css
 

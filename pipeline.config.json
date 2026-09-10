@@ -205,6 +205,17 @@
     "dependency_inputs": ["package.json", "pnpm-lock.yaml"],
     "workspace_paths": ["node_modules"]
   },
+  "attempt_isolation": {
+    "strategy": "git-worktree",
+    "root": "pipeline/handoffs/worktrees",
+    "one_attempt_per_worktree": true,
+    "restore_before_replay": true
+  },
+  "evidence_retention": {
+    "control_store": "pipeline/store",
+    "run_records": "pipeline/runs",
+    "handoffs": "pipeline/handoffs"
+  },
   "workflow": {
     "max_transitions_per_run": 4,
     "gates": {

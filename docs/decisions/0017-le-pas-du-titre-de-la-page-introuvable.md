@@ -40,3 +40,10 @@ l'énumération qui gouverne, et l'écart remonte à l'opérateur au lieu d'êtr
 tranché en silence dans un sens ou dans l'autre.
 
 Voir aussi [[0016-la-station-de-mesure-n-est-pas-le-visiteur]].
+
+**Ajout du 2026-09-10** : cet écran est resté le seul du site qu'aucune maquette
+ne dessinait — il avait été livré en mode direct, sans planche. Il en a une :
+`mockups/introuvable.html`, qui dessine ses deux états, celui rendu dans le
+cadre et celui rendu hors de lui. Quatre assertions de
+`tests/unit/maquette-planche.test.ts` la confrontent aux dictionnaires et à la
+feuille de l'écran, pour qu'elle ne dérive pas à son tour.

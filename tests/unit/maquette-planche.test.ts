@@ -1,9 +1,12 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { DICTIONARIES, LOCALES } from "~/shared/i18n";
 
 const PLANCHE = "mockups/accueil-contact.html";
 
 const PROJET = "mockups/portfolio-v1.html";
+
+const INTROUVABLE = "mockups/introuvable.html";
 
 /*
  * Les quatre valeurs du pied sont NOMMÉES ici et LUES dans la maquette du
@@ -88,5 +91,53 @@ describe("la planche de l'accueil et du contact", () => {
     for (const [selector, declaration] of UNCHANGED) {
       expect(declaredBy(drawn, selector), `${selector} { ${declaration} }`).toContain(declaration);
     }
+  });
+});
+
+/*
+ * L'ecran introuvable a ete livre sans planche, en mode direct, et il est
+ * reste le seul ecran du site qu'aucune maquette ne dessinait. Une reference
+ * qui manque ne se voit pas : elle se decouvre le jour ou quelqu'un redessine
+ * l'ecran de memoire. Ces trois assertions sont ce qui l'empeche de deriver a
+ * son tour — elles confrontent le dessin aux dictionnaires et a la feuille,
+ * jamais a des valeurs recopiees ici.
+ */
+describe("la planche de l'écran introuvable", () => {
+  it("dessine les deux états, et le second seul est sans cadre", () => {
+    const drawn = new DOMParser().parseFromString(readFileSync(INTROUVABLE, "utf8"), "text/html");
+    const framed = [...drawn.querySelectorAll(".cadre")];
+
+    expect(framed.length, "un cadre par état").toBe(2);
+    expect(framed.map((screen) => screen.querySelector("header.bar") !== null)).toEqual([true, false]);
+    expect(framed.map((screen) => screen.querySelector("footer") !== null)).toEqual([true, false]);
+  });
+
+  it("porte les mots des dictionnaires, et non des mots redessinés de mémoire", () => {
+    const drawn = readFileSync(INTROUVABLE, "utf8");
+
+    for (const locale of LOCALES) {
+      for (const line of ["heading", "lede", "home"] as const) {
+        expect(drawn, `${locale}.notFound.${line}`).toContain(DICTIONARIES[locale].notFound[line]);
+      }
+    }
+  });
+
+  it("donne son attribut lang à chaque moitié de l'état hors préfixe, comme l'écran le fait", () => {
+    const drawn = new DOMParser().parseFromString(readFileSync(INTROUVABLE, "utf8"), "text/html");
+    const bare = [...drawn.querySelectorAll(".cadre")][1];
+    const halves = [...(bare?.querySelectorAll("[lang]") ?? [])];
+
+    expect(halves.map((half) => half.getAttribute("lang"))).toEqual(["fr", "en", "fr", "en", "fr", "en"]);
+    expect(halves[0]?.textContent).toBe(DICTIONARIES.fr.notFound.heading);
+    expect(halves[1]?.textContent).toBe(DICTIONARIES.en.notFound.heading);
+  });
+
+  it("descend le titre par le même plancher que la feuille de l'écran, mesuré à 320 px", () => {
+    const drawn = readFileSync(INTROUVABLE, "utf8");
+    const sheet = readFileSync("src/features/not-found/NotFoundPage.css", "utf8");
+    const asked = declaredBy(sheet, ".not-found h1").find((one) => one.startsWith("font-size"));
+
+    expect(asked, "la feuille de l'écran déclare un font-size").toBeTruthy();
+    expect(declaredBy(drawn, ".introuvable h1"), "le titre de la planche").toContain(asked);
   });
 });

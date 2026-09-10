@@ -26,6 +26,8 @@ const REFLOW = [320, 768];
 const animatedCount = (nodes: (SVGElement | HTMLElement)[]) =>
   nodes.filter((node) => getComputedStyle(node).animationName !== "none").length;
 
+const geometry = (route: string) => route.replace(/["']/g, "").replace(/\s+/g, " ").trim();
+
 test.describe("la page des réalisations", () => {
   for (const { path, heading } of ADDRESSES) {
     test(`${path} présente les quatre réalisations sans violation d'accessibilité @a11y`, async ({ page }) => {
@@ -76,19 +78,53 @@ test.describe("la page des réalisations", () => {
     }
   });
 
-  test("chaque point suit son trajet dès le rendu, sans attendre le script de la page", async ({ browser }) => {
-    const context = await browser.newContext({ javaScriptEnabled: false });
-    const still = await context.newPage();
-    await still.goto("/fr/realisations");
+  for (const { path } of ADDRESSES) {
+    test(`${path} sert un HTML où aucun élément ne porte d'attribut style, avec un seul élément style en tête`, async ({
+      page,
+      request,
+    }) => {
+      const served = await request.get(path);
+      expect(served.status()).toBe(200);
 
-    const routes = await still
-      .locator("main .packet")
-      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).offsetPath));
+      const counted = await page.evaluate(
+        (html) => {
+          const parsed = new DOMParser().parseFromString(html, "text/html");
+          return {
+            styleAttributes: parsed.querySelectorAll("[style]").length,
+            styleElementsInHead: parsed.head.querySelectorAll("style").length,
+          };
+        },
+        await served.text(),
+      );
 
-    expect(routes.length).toBeGreaterThan(0);
-    expect(routes.filter((route) => route.startsWith("path("))).toEqual(routes);
-    await context.close();
-  });
+      expect(counted).toEqual({ styleAttributes: 0, styleElementsInHead: 1 });
+    });
+  }
+
+  for (const { path } of ADDRESSES) {
+    test(`${path} : chaque point suit son trajet dès le rendu, sans attendre le script de la page`, async ({
+      browser,
+    }) => {
+      const context = await browser.newContext({ javaScriptEnabled: false });
+      const still = await context.newPage();
+      await still.goto(path);
+
+      const schemas = await still.locator("main article figure svg").evaluateAll((svgs) =>
+        svgs.map((svg) => ({
+          strokes: [...svg.querySelectorAll("path.edge")].map((stroke) => stroke.getAttribute("d") ?? ""),
+          routes: [...svg.querySelectorAll(".packet")].map((packet) => getComputedStyle(packet).offsetPath),
+        })),
+      );
+
+      expect(schemas.length).toBeGreaterThan(0);
+      for (const { strokes, routes } of schemas) {
+        expect(routes.length).toBeGreaterThan(0);
+        expect(routes.filter((route) => route.startsWith("path("))).toEqual(routes);
+        expect(routes.map(geometry)).toEqual(strokes.map((stroke) => geometry(`path("${stroke}")`)));
+      }
+      await context.close();
+    });
+  }
 
   test("le mouvement des schémas s'arrête lorsque le lecteur demande moins d'animation", async ({ page }) => {
     await page.goto("/fr/realisations");
@@ -98,8 +134,13 @@ test.describe("la page des réalisations", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
     const stilled = await page.locator("main .packet").evaluateAll(animatedCount);
+    const kept = await page
+      .locator("main .packet")
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).offsetPath));
 
     expect(running).toBeGreaterThan(0);
     expect(stilled).toBe(0);
+    expect(kept.length).toBeGreaterThan(0);
+    expect(kept.filter((route) => route !== "none")).toEqual(kept);
   });
 });

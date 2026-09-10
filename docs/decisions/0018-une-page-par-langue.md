@@ -74,6 +74,12 @@ Ce qui est tranché, point par point :
    la maquette n'en dessine aucun, et son unique script n'animer que les
    schémas. La règle CSS qui peignait le lien en cours est retirée plutôt que
    laissée sans sujet.
+
+   **RÉVISÉ le 2026-09-10 par [[0019-la-marque-suit-la-lecture]]** : l'opérateur
+   a demandé cette fonctionnalité, et elle est faite. La marque est revenue,
+   d'abord sur l'ancre de l'adresse, puis sur ce qui est réellement lu — la
+   dernière section dont le titre est passé au-dessus de la ligne de lecture.
+
 8. **Le sélecteur de langue ne reporte pas l'endroit où le lecteur a défilé.**
    Un document prérendu ne peut pas le savoir ; l'y renvoyer au hasard serait
    pire que de l'accueillir en haut.

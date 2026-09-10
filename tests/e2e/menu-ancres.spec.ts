@@ -37,20 +37,42 @@ async function shapeOf(page: Page, marked: boolean): Promise<Record<string, stri
 }
 
 /*
+ * Amène la ligne de lecture juste sous le titre d'une section, SANS clic ni
+ * ancre : c'est le défilement seul qui doit déplacer la marque. Les dix pixels
+ * de dépassement mettent le titre franchement au-dessus de la ligne plutôt
+ * qu'exactement dessus, pour qu'un arrondi ne décide pas du résultat.
+ */
+async function scrollPast(page: Page, anchor: string): Promise<void> {
+  await page.evaluate((wanted) => {
+    const heading = document.getElementById(wanted);
+    if (heading === null) throw new Error(`aucun élément ne porte l'ancre ${wanted}`);
+    const line = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    window.scrollTo(0, heading.getBoundingClientRect().top + window.scrollY - line + 10);
+  }, anchor);
+}
+
+/* Le lien du menu qui mène à une ancre, dans la langue de la page ouverte. */
+function linkTo(page: Page, address: string) {
+  return page.locator(`.bar nav a[href="${address}"]`);
+}
+
+/*
  * Le menu menait à quatre PAGES et marquait celle qu'on lisait. Le site n'en
- * publie plus qu'une : ses liens sont les trois ancres de cette page, et c'est
- * l'ANCRE DE L'ADRESSE qui porte la marque — celle sur laquelle le lecteur a
- * cliqué, ou celle que portait le lien qu'on lui a partagé.
+ * publie plus qu'une : ses liens sont les trois ancres de cette page, et la
+ * marque suit CE QUI EST LU — la dernière section dont le titre est passé
+ * au-dessus de la ligne de lecture.
  *
- * Elle est lue dans l'adresse et jamais retenue ailleurs : le retour arrière du
- * navigateur change l'ancre, et une marque gardée de notre côté finirait par
- * contredire la barre d'adresse. Le serveur, lui, ne peut pas la connaître —
- * une ancre ne quitte jamais le navigateur — donc elle se pose une fois la page
- * vivante, ce qu'un lecteur qui vient de cliquer ne voit pas passer.
+ * Cette ligne n'est pas un nombre choisi : c'est `scroll-padding-top`, la
+ * réserve que la feuille garde déjà sous la barre, et c'est exactement là que
+ * le navigateur pose un titre sur lequel on vient de cliquer. Cliquer et
+ * défiler s'accordent donc par construction, et non par coïncidence.
  *
- * La marque ne suit PAS le défilement, et c'est une décision : la maquette
- * approuvée ne dessine aucun suivi, et son unique script n'anime que les
- * schémas.
+ * Rien n'est marqué en haut de la page : l'ouverture n'appartient à aucune
+ * section. Et le bas de la page est le seul cas que la ligne ne tranche pas —
+ * la dernière section ne peut pas l'atteindre, faute de défilement restant.
+ *
+ * La marque se pose apres un defilement et une image d'animation : les
+ * assertions l'ATTENDENT au lieu de la lire tout de suite.
  */
 test.describe("le menu mène aux trois sections de la page", () => {
   test("chaque lien porte l'ancre de sa section, dans la langue de la page", async ({ page }) => {
@@ -82,53 +104,68 @@ test.describe("le menu mène aux trois sections de la page", () => {
   });
 
   test("celui sur lequel on clique se marque, et lui seul, dans les deux langues", async ({ page }) => {
-    const wrong: string[] = [];
-
     for (const locale of LOCALES) {
       for (const part of NAMED_PAGES) {
-        const anchor = anchorOf(part, locale);
+        const address = `/${locale}#${anchorOf(part, locale)}`;
         await page.goto(`/${locale}`);
-        await page.locator(`.bar nav a[href="/${locale}#${anchor}"]`).click();
-        await page.waitForURL(new RegExp(`#${anchor}$`));
+        await linkTo(page, address).click();
 
-        const marked = (await navLinks(page)).filter((link) => link.current !== null);
-
-        if (marked.length !== 1) wrong.push(`/${locale}#${anchor} : ${marked.length} lien(s) marqué(s) au lieu d'un`);
-        else if (marked[0]!.href !== `/${locale}#${anchor}`) {
-          wrong.push(`/${locale}#${anchor} : marque sur ${marked[0]!.href}`);
-        } else if (marked[0]!.current !== "location") {
-          wrong.push(`/${locale}#${anchor} : aria-current vaut ${marked[0]!.current}`);
-        }
+        await expect(linkTo(page, address), address).toHaveAttribute("aria-current", "location");
+        await expect(page.locator('.bar nav a[aria-current="location"]'), address).toHaveCount(1);
       }
     }
-
-    expect(wrong).toEqual([]);
   });
 
   test("un lien partagé vers une section arrive déjà marqué", async ({ page }) => {
     await page.goto("/fr#parcours");
 
-    const marked = (await navLinks(page)).filter((link) => link.current !== null);
-
-    expect(marked.map((link) => link.href)).toEqual(["/fr#parcours"]);
+    await expect(linkTo(page, "/fr#parcours")).toHaveAttribute("aria-current", "location");
+    await expect(page.locator('.bar nav a[aria-current="location"]')).toHaveCount(1);
   });
 
   test("la marque suit le retour arrière du navigateur", async ({ page }) => {
     await page.goto("/fr");
-    await page.locator('.bar nav a[href="/fr#realisations"]').click();
-    await page.waitForURL(/#realisations$/);
-    await page.locator('.bar nav a[href="/fr#contact"]').click();
-    await page.waitForURL(/#contact$/);
+    await linkTo(page, "/fr#realisations").click();
+    await expect(linkTo(page, "/fr#realisations")).toHaveAttribute("aria-current", "location");
+    await linkTo(page, "/fr#contact").click();
+    await expect(linkTo(page, "/fr#contact")).toHaveAttribute("aria-current", "location");
 
     await page.goBack();
-    await page.waitForURL(/#realisations$/);
 
-    const marked = (await navLinks(page)).filter((link) => link.current !== null);
-    expect(marked.map((link) => link.href)).toEqual(["/fr#realisations"]);
+    await expect(linkTo(page, "/fr#realisations")).toHaveAttribute("aria-current", "location");
+  });
+
+  test("elle suit le défilement, sans aucun clic, dans les deux langues", async ({ page }) => {
+    for (const locale of LOCALES) {
+      await page.goto(`/${locale}`);
+
+      for (const part of NAMED_PAGES) {
+        const anchor = anchorOf(part, locale);
+        await scrollPast(page, anchor);
+
+        await expect(linkTo(page, `/${locale}#${anchor}`), `${locale} ${anchor}`).toHaveAttribute(
+          "aria-current",
+          "location",
+        );
+        await expect(page.locator('.bar nav a[aria-current="location"]'), `${locale} ${anchor}`).toHaveCount(1);
+      }
+
+      /* Et elle revient : en haut, aucune section n'est lue. */
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await expect(page.locator('.bar nav a[aria-current="location"]'), locale).toHaveCount(0);
+    }
+  });
+
+  test("au bas de la page, c'est la dernière section qui est lue", async ({ page }) => {
+    await page.goto("/fr");
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+
+    await expect(linkTo(page, "/fr#contact")).toHaveAttribute("aria-current", "location");
   });
 
   test("la marque ne repose pas sur la seule couleur", async ({ page }) => {
     await page.goto("/fr#realisations");
+    await expect(page.locator('.bar nav a[aria-current="location"]')).toHaveCount(1);
 
     const marked = await shapeOf(page, true);
     const other = await shapeOf(page, false);

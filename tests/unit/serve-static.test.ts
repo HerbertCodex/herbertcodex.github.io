@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { get, type IncomingMessage, type Server } from "node:http";
-import { connect, createServer as createProbe, type AddressInfo } from "node:net";
+import { createServer as createProbe, type AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { startServer } from "../../scripts/serve-static.mjs";
@@ -74,14 +74,17 @@ async function freePort(): Promise<number> {
   return port;
 }
 
+/**
+ * Probed by binding the port rather than by connecting to it: under WSL a
+ * loopback port closed a moment ago still accepts a connection for about a
+ * second, and a probe that connects reports a listener nobody started. A
+ * port that cannot be bound, for whatever reason, counts as taken.
+ */
 function listening(port: number): Promise<boolean> {
   return new Promise((answered) => {
-    const socket = connect({ host: "127.0.0.1", port });
-    socket.once("connect", () => {
-      socket.destroy();
-      answered(true);
-    });
-    socket.once("error", () => answered(false));
+    const probe = createProbe();
+    probe.once("error", () => answered(true));
+    probe.listen(port, "127.0.0.1", () => probe.close(() => answered(false)));
   });
 }
 

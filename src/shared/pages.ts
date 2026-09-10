@@ -1,4 +1,4 @@
-import type { Locale } from "./i18n";
+import type { Locale, Said } from "./i18n";
 
 /**
  * A part of the site, named by what it is rather than by where it lives.
@@ -25,24 +25,28 @@ export type NamedPage = Page & { readonly key: NamedPageKey };
 
 /**
  * The opening of the page, which carries no name and therefore no anchor.
- *
- * The names below were four ADDRESSES until 2026-09-10 and are now three ANCHORS
- * on one page per language. The approved mockup draws a single document that
- * opens on the work and scrolls through it, while its own menu pointed at four
- * addresses; the site had followed the menu. The operator settled it for the
- * document, and the menu of the mockup was corrected with it.
  */
 export const HOME: Page = { key: "home", slugs: { fr: "", en: "" } };
 
+const WORKS: Page = { key: "works", slugs: { fr: "realisations", en: "work" } };
+
+const JOURNEY: Page = { key: "journey", slugs: { fr: "parcours", en: "about" } };
+
+const CONTACT: Page = { key: "contact", slugs: { fr: "contact", en: "contact" } };
+
 /**
- * The parts of the site, the opening first, in the order the page carries them.
+ * The parts that carried an ADDRESS of their own until 2026-09-10.
+ *
+ * This table is what keeps those addresses answering: each named part is
+ * published as a document that redirects to its anchor, because a link already
+ * shared cannot be recalled. It is NOT what the menu reads — the menu names the
+ * sections the page shows, which `SECTIONS` below declares.
+ *
+ * `journey` is the one that no longer matches a section: what was one page is
+ * now three, so its anchor names the GROUP of the three, and `/fr/parcours`
+ * still leads there.
  */
-export const PAGES: readonly Page[] = [
-  HOME,
-  { key: "works", slugs: { fr: "realisations", en: "work" } },
-  { key: "journey", slugs: { fr: "parcours", en: "about" } },
-  { key: "contact", slugs: { fr: "contact", en: "contact" } },
-];
+export const PAGES: readonly Page[] = [HOME, WORKS, JOURNEY, CONTACT];
 
 function isNamed(page: Page): page is NamedPage {
   return page.key !== "home" && Object.values(page.slugs).every((slug) => slug.length > 0);
@@ -134,4 +138,51 @@ export function addressesToPrerender(pages: readonly Page[]): string[] {
 export function pageForSlug(locale: Locale, slug: string): NamedPage | undefined {
   if (slug.length === 0) return undefined;
   return NAMED_PAGES.find((page) => page.slugs[locale] === slug);
+}
+
+/**
+ * A section of the page, as the menu names it and as the reader sees it.
+ */
+export type Section = {
+  readonly key: string;
+  readonly slugs: Readonly<Record<Locale, string>>;
+  readonly label: Said;
+};
+
+/**
+ * The sections the page carries, in the order it carries them.
+ *
+ * The menu named three parts until 2026-09-10 — Réalisations, Parcours,
+ * Contact — while the page showed FIVE numbered sections, and « Parcours »
+ * matched no visible heading: it was the name of an address, kept after the
+ * address was gone. The operator read the page and said what was missing.
+ *
+ * The two that carried an address of their own take their name from the table
+ * above rather than writing it again: `works` and `contact` would otherwise be
+ * two strings able to disagree. The three others belong to the journey, and
+ * their labels are the ones their own heading shows — the same dictionary
+ * entry, so the menu and the section can never say it differently.
+ *
+ * Certifications are deliberately absent: that section exists only when there
+ * is one to show, and a menu entry leading to nothing would be worse than an
+ * unnamed section. It stays part of the journey, between Formation and
+ * Compétences.
+ */
+export const SECTIONS: readonly Section[] = [
+  { key: "works", slugs: WORKS.slugs, label: "nav.works" },
+  { key: "experience", slugs: { fr: "experience", en: "experience" }, label: "journey.sections.experience" },
+  { key: "education", slugs: { fr: "formation", en: "education" }, label: "journey.sections.education" },
+  { key: "skills", slugs: { fr: "competences", en: "skills" }, label: "journey.sections.skills" },
+  { key: "contact", slugs: CONTACT.slugs, label: "nav.contact" },
+];
+
+/**
+ * The address that leads to a section of the page, in one language.
+ *
+ * @param section - the section to reach
+ * @param locale - the language the address is written in
+ * @returns the page's address, carrying the section's anchor
+ */
+export function addressOfSection(section: Section, locale: Locale): string {
+  return `/${locale}#${section.slugs[locale]}`;
 }

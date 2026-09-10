@@ -78,19 +78,25 @@
  * dise. Les deux requêtes reprennent exactement les conditions ci-dessus.
  *
  * Aucune propriété CSS ne mesure la barre : la réserve est écrite comme une
- * somme de pas de l'échelle, au-dessus de la plus haute barre observée —
- * 186 px, repliée sur trois lignes à 320 px de large. Elle redescend d'un
- * cran dès que la barre tient sur une ligne.
+ * somme de pas de l'échelle, au-dessus de la plus haute barre observée. Elle
+ * redescend d'un cran dès que la barre tient sur peu de lignes.
+ *
+ * REMESURÉE le 2026-09-10, quand le menu est passé de trois liens à cinq —
+ * il ne nommait que trois parties quand la page en montre cinq. La barre monte
+ * de 186 à 226 px à 320 et 360 px de large, et de 72 à 112 px à 768. Les deux
+ * réserves montent donc d'un cran : sans cela, un titre cliqué se serait posé
+ * DERRIÈRE la barre restée en haut, ce qui est exactement le défaut que cette
+ * réserve existe pour empêcher.
  */
 @media (min-height: 768px) {
   html {
-    scroll-padding-top: calc(var(--space-8) + var(--space-6));
+    scroll-padding-top: calc(var(--space-8) + var(--space-7));
   }
 }
 
 @media (min-width: 768px) and (min-height: 420px) {
   html {
-    scroll-padding-top: var(--space-8);
+    scroll-padding-top: calc(var(--space-8) + var(--space-3));
   }
 }
 

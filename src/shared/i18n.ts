@@ -159,6 +159,17 @@ export const DICTIONARIES = {
 type Dictionary = ReturnType<typeof flatten<(typeof DICTIONARIES)["fr"]>>;
 
 /**
+ * A key the translator resolves to a SENTENCE, written as the dictionaries
+ * nest it. The intermediate keys are excluded on purpose: `bar` names a group,
+ * not something a component can display.
+ *
+ * Exported so a table can DECLARE which sentence it names instead of holding
+ * the sentence itself: a label written twice is a label able to disagree with
+ * itself, and only the type keeps such a declaration honest.
+ */
+export type Said = { [K in keyof Dictionary]: Dictionary[K] extends string ? K : never }[keyof Dictionary];
+
+/**
  * The language in force, and the translator bound to it.
  */
 export type I18n = {

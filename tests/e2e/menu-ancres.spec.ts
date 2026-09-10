@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { LOCALES } from "../../src/shared/i18n";
-import { NAMED_PAGES, PAGES, addressOf, anchorOf, publishedAddresses } from "../../src/shared/pages";
+import { PAGES, SECTIONS, addressOfSection, publishedAddresses } from "../../src/shared/pages";
 
 const ADDRESSES = publishedAddresses(PAGES);
 
@@ -74,14 +74,14 @@ function linkTo(page: Page, address: string) {
  * La marque se pose apres un defilement et une image d'animation : les
  * assertions l'ATTENDENT au lieu de la lire tout de suite.
  */
-test.describe("le menu mène aux trois sections de la page", () => {
+test.describe("le menu mène aux sections de la page", () => {
   test("chaque lien porte l'ancre de sa section, dans la langue de la page", async ({ page }) => {
     const wrong: string[] = [];
 
     for (const locale of LOCALES) {
       await page.goto(`/${locale}`);
       const links = await navLinks(page);
-      const expected = NAMED_PAGES.map((part) => addressOf(part, locale));
+      const expected = SECTIONS.map((section) => addressOfSection(section, locale));
 
       if (links.map((link) => link.href).join(" ") !== expected.join(" ")) {
         wrong.push(`/${locale} : ${links.map((link) => link.href).join(" ")} au lieu de ${expected.join(" ")}`);
@@ -105,8 +105,8 @@ test.describe("le menu mène aux trois sections de la page", () => {
 
   test("celui sur lequel on clique se marque, et lui seul, dans les deux langues", async ({ page }) => {
     for (const locale of LOCALES) {
-      for (const part of NAMED_PAGES) {
-        const address = `/${locale}#${anchorOf(part, locale)}`;
+      for (const section of SECTIONS) {
+        const address = addressOfSection(section, locale);
         await page.goto(`/${locale}`);
         await linkTo(page, address).click();
 
@@ -117,9 +117,9 @@ test.describe("le menu mène aux trois sections de la page", () => {
   });
 
   test("un lien partagé vers une section arrive déjà marqué", async ({ page }) => {
-    await page.goto("/fr#parcours");
+    await page.goto("/fr#formation");
 
-    await expect(linkTo(page, "/fr#parcours")).toHaveAttribute("aria-current", "location");
+    await expect(linkTo(page, "/fr#formation")).toHaveAttribute("aria-current", "location");
     await expect(page.locator('.bar nav a[aria-current="location"]')).toHaveCount(1);
   });
 
@@ -139,8 +139,8 @@ test.describe("le menu mène aux trois sections de la page", () => {
     for (const locale of LOCALES) {
       await page.goto(`/${locale}`);
 
-      for (const part of NAMED_PAGES) {
-        const anchor = anchorOf(part, locale);
+      for (const section of SECTIONS) {
+        const anchor = section.slugs[locale];
         await scrollPast(page, anchor);
 
         await expect(linkTo(page, `/${locale}#${anchor}`), `${locale} ${anchor}`).toHaveAttribute(
@@ -181,8 +181,8 @@ test.describe("le menu mène aux trois sections de la page", () => {
 
     for (const locale of LOCALES) {
       await page.goto(`/${locale}`);
-      for (const part of NAMED_PAGES) {
-        const anchor = anchorOf(part, locale);
+      for (const section of SECTIONS) {
+        const anchor = section.slugs[locale];
         const found = await page.locator(`#${anchor}`).count();
         if (found !== 1) missing.push(`/${locale}#${anchor} désigne ${found} élément(s)`);
       }

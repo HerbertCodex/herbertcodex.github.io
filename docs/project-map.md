@@ -147,6 +147,7 @@ required of every addition is judged against this document.
 - `LOCALES` — constant — The languages the site publishes, in the order the interface offers them.
 - `DEFAULT_LOCALE` — constant — The language an address carrying no prefix leads to.
 - `DICTIONARIES` — constant — What the interface says, one tree per published language.
+- `Said` — type — A key the translator resolves to a SENTENCE, written as the dictionaries nest it.
 - `I18n` — type — The language in force, and the translator bound to it.
 - `I18nContext` — constant — The context carrying the language in force down to every component.
 - `isLocale` — function — Answers whether a segment read from an address names a published language.
@@ -172,7 +173,7 @@ required of every addition is judged against this document.
 - `Page` — type — One part of the site, and the name it carries in each published language.
 - `NamedPage` — type — A part whose name is written in every language, therefore addressable.
 - `HOME` — constant — The opening of the page, which carries no name and therefore no anchor.
-- `PAGES` — constant — The parts of the site, the opening first, in the order the page carries them.
+- `PAGES` — constant — The parts that carried an ADDRESS of their own until 2026-09-10.
 - `NAMED_PAGES` — constant — The sections the single page carries, in the order the table declares them.
 - `anchorOf` — function — The name a section answers to inside a page, in one language.
 - `addressOf` — function — The address that leads a visitor to a part of the site, in one language.
@@ -180,6 +181,9 @@ required of every addition is judged against this document.
 - `redirectedAddresses` — function — The addresses that were pages until 2026-09-10 and now lead to an anchor.
 - `addressesToPrerender` — function — Every document a build must write for a table of parts.
 - `pageForSlug` — function — The section a name designates in one language, for the redirect route alone.
+- `Section` — type — A section of the page, as the menu names it and as the reader sees it.
+- `SECTIONS` — constant — The sections the page carries, in the order it carries them.
+- `addressOfSection` — function — The address that leads to a section of the page, in one language.
 
 ### src/shared/resume.ts
 
@@ -197,7 +201,7 @@ required of every addition is judged against this document.
 
 ### src/shared/SiteBar.tsx
 
-- `SiteBar` (default) — function — The bar every page carries: the way out, the three sections, the languages and the theme.
+- `SiteBar` (default) — function — The bar every page carries: the way out, the sections, the languages and the theme.
 
 ### src/shared/SiteFooter.css
 

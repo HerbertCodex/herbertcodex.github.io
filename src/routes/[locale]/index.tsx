@@ -6,7 +6,7 @@ import WorksSection from "~/features/works/WorksSection";
 import { contentFor } from "~/shared/content";
 import { useI18n } from "~/shared/i18n";
 import { PERSON } from "~/shared/identity";
-import { NAMED_PAGES, anchorOf } from "~/shared/pages";
+import { NAMED_PAGES, SECTIONS, anchorOf } from "~/shared/pages";
 
 /**
  * The page, and the only one the site publishes in each language.
@@ -29,13 +29,19 @@ import { NAMED_PAGES, anchorOf } from "~/shared/pages";
  */
 export default function SinglePage() {
   const { locale, t } = useI18n();
-  const anchors = () => {
-    const [works, journey, contact] = NAMED_PAGES;
-    return {
-      works: anchorOf(works!, locale()),
-      journey: anchorOf(journey!, locale()),
-      contact: anchorOf(contact!, locale()),
-    };
+  /*
+   * L'ancre de chaque section, prise dans la table qui les declare. Celle du
+   * PARCOURS est prise dans l'autre table : elle nomme le groupe des trois
+   * sections du parcours, et elle existe pour que /fr/parcours — une adresse
+   * partagee avant le 2026-09-10 — conduise encore quelque part.
+   */
+  const anchorFor = (key: string) => {
+    const section = SECTIONS.find((one) => one.key === key);
+    return section === undefined ? "" : section.slugs[locale()];
+  };
+  const journeyAnchor = () => {
+    const journey = NAMED_PAGES.find((page) => page.key === "journey");
+    return journey === undefined ? "" : anchorOf(journey, locale());
   };
   const after = () => 2 + journeyHeadCount(contentFor(locale()).journey);
 
@@ -50,9 +56,17 @@ export default function SinglePage() {
       */}
       <Title>{`${PERSON} — ${t("home.heading")}`}</Title>
       <Opening />
-      <WorksSection rank={1} anchor={anchors().works} />
-      <JourneySection from={2} anchor={anchors().journey} />
-      <ContactSection rank={after()} anchor={anchors().contact} />
+      <WorksSection rank={1} anchor={anchorFor("works")} />
+      <JourneySection
+        from={2}
+        anchor={journeyAnchor()}
+        anchors={{
+          experience: anchorFor("experience"),
+          education: anchorFor("education"),
+          skills: anchorFor("skills"),
+        }}
+      />
+      <ContactSection rank={after()} anchor={anchorFor("contact")} />
     </main>
   );
 }

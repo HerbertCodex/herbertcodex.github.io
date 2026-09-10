@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Donatien Koffi">
+  <!--
+    La marque de la barre, reduite a ses initiales : la plaque --accent-plate
+    portant --on-accent, en mono capitales grasses, comme `.mark` la rend dans
+    src/shared/SiteBar.css. Les deux valeurs sont ecrites en clair ici parce
+    qu un fichier de public/ est servi tel quel : il ne traverse ni le build ni
+    la feuille de style, et ne peut donc pas lire un jeton.
+
+    La plaque occupe tout le carre plutot qu un rond ou une pastille : a 16 px
+    un aplat plein reste lisible la ou une forme decoupee devient une tache.
+
+    Le trace vient d une police monospace du systeme, comme le site : aucune
+    police n est chargee, et un onglet ne doit pas attendre un reseau pour
+    afficher son icone.
+  -->
+  <rect x="-1" y="-1" width="34" height="34" fill="#c93a24" />
+  <text
+    x="16"
+    y="16"
+    fill="#f8f7f3"
+    font-family="ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace"
+    font-size="14"
+    font-weight="700"
+    text-anchor="middle"
+    dominant-baseline="central"
+  >DK</text>
+</svg>

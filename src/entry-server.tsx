@@ -26,7 +26,16 @@ export default createHandler(() => (
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          {/*
+           * La marque de la barre, reduite a ses initiales. Le SVG passe en
+           * premier : un navigateur qui le lit le prend a toute taille, et
+           * ignore le PNG. Celui qui ne le lit pas tombe sur le PNG, qui
+           * existe pour cette raison seule. Les deux sont rendus depuis le
+           * meme SVG, jamais dessines deux fois.
+           */}
+          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
           {/*
            * Bloquant, et avant les feuilles de style : le fil de rendu
            * s'arrete ici, pose l'attribut, et la page n'est jamais peinte

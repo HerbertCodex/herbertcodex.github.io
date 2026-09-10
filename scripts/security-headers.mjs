@@ -66,6 +66,14 @@ const RAW_TEXT_END = new Map([
   ["style", /<\/style(\s*>)?/gi],
 ]);
 
+/**
+ * A page is written back from its decoded text, so the decoding must be
+ * exact: a lenient one turns every byte that is not UTF-8 into U+FFFD and the
+ * page is rewritten outside its tags. A byte order mark is kept in the text so
+ * that it is written back too.
+ */
+const UTF8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
+
 function refusal(path, reason) {
   return new Error(`${path}: ${reason}`);
 }
@@ -167,7 +175,13 @@ function insertionPoint(tags, file) {
 }
 
 function readPage(file) {
-  const html = readFileSync(file, "utf8");
+  const bytes = readFileSync(file);
+  let html;
+  try {
+    html = UTF8.decode(bytes);
+  } catch {
+    throw refusal(file, "bytes that are not UTF-8, which the page written back could not keep as they are");
+  }
   const tags = tagsOfPage(html, file);
   const styled = tags.find((tag) => tag.attributes.has("style"));
   if (styled !== undefined) {
@@ -188,11 +202,20 @@ function readPage(file) {
   };
 }
 
+/**
+ * A page that is a link is served from wherever it points: tagging it would
+ * write outside the served folder, and skipping it would serve it with no
+ * policy while the list says every page carries one.
+ */
 function pagesUnder(root) {
-  return readdirSync(root, { recursive: true, withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".html"))
-    .map((entry) => join(entry.parentPath, entry.name))
-    .sort();
+  const pages = readdirSync(root, { recursive: true, withFileTypes: true }).filter(
+    (entry) => entry.name.endsWith(".html") && !entry.isDirectory(),
+  );
+  const irregular = pages.find((entry) => !entry.isFile());
+  if (irregular !== undefined) {
+    throw refusal(join(irregular.parentPath, irregular.name), "a page that is not a regular file, such as a link");
+  }
+  return pages.map((entry) => join(entry.parentPath, entry.name)).sort();
 }
 
 /**
@@ -245,10 +268,11 @@ function tagsOf(headers) {
  *
  * @param root - the served folder, whose pages are every `*.html` under it
  * @returns where the list was written, how many pages were tagged, and how many hashes each directive carries
- * @throws when there is no page, when a page carries a style attribute, when
- *   a page cannot receive the tags before its first script, or when a page
- *   holds markup this calculation cannot read — always naming the file, and
- *   having written nothing
+ * @throws when there is no page, when a page is not a regular file or not
+ *   UTF-8, when a page carries a style attribute, when a page cannot receive
+ *   the tags before its first script, or when a page holds markup this
+ *   calculation cannot read — always naming the file, and having written
+ *   nothing
  */
 export function writeSecurityHeaders(root) {
   const list = listPathOf(root);

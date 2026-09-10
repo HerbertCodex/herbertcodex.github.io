@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maquette de l'écran introuvable</title>
+    <style>
+      /*
+       * L'ÉCRAN INTROUVABLE, dans ses DEUX états.
+       *
+       * Il a été livré sans planche — en mode direct, à la demande de
+       * l'opérateur — et il est resté le seul écran du site qu'aucune maquette
+       * ne dessinait. Une référence manquante ne se voit pas : elle se
+       * découvre le jour où quelqu'un redessine l'écran de mémoire.
+       *
+       * POURQUOI DEUX ÉTATS. Cet écran est atteint par deux portes qui ne se
+       * ressemblent pas :
+       *
+       *  - sous un préfixe publié — /fr/inconnu — le repli de la route commune
+       *    le rend DANS la mise en page, qui porte la barre et le pied. Une
+       *    langue est en force, et le document la déclare ;
+       *  - hors de tout préfixe — /nimportequoi, /de/x — il est rendu par la
+       *    route de tête, HORS de cette mise en page : ni barre ni pied, et
+       *    aucune langue en force. Il ne devine pas celle du lecteur : il dit
+       *    la même chose dans les deux et offre les deux chemins, parce que se
+       *    tromper est une pire réponse que d'en offrir deux.
+       *
+       * CE QUE LE SECOND ÉTAT EXIGE, et que cette planche dessine : chaque
+       * moitié porte son `lang`. Un document ne déclare qu'une langue, et cet
+       * écran est le seul du site à en dire deux — sans l'attribut, les mots
+       * anglais sont annoncés avec la voix française que le document déclare.
+       * Le titre du document, lui, reste une chaîne unique : il ne peut porter
+       * qu'une langue, ce qu'aucun balisage ne change.
+       *
+       * DEUX MESURES portées par le dessin plutôt que par une note :
+       *
+       *  - le titre descend par un `clamp` dont le plancher est plus bas que
+       *    celui des autres écrans. « Page introuvable » débordait de 41 px à
+       *    320 px de large, mesuré le 2026-09-07, et le libellé hors langue en
+       *    dit deux fois plus ;
+       *  - l'écran hors préfixe pose lui-même le vide au-dessus de son titre.
+       *    Le cadre ne le lui donne pas, puisqu'il n'en porte aucun.
+       *
+       * L'hébergeur sert ce document en 404 : GitHub Pages rend le `404.html`
+       * de la racine pour toute adresse qu'il ne connaît pas. C'est un état de
+       * l'écran, pas une page de plus : il n'a ni adresse ni entrée de menu.
+       */
+
+      /* Jetons recopiés depuis src/shared/tokens.css, seule source de vérité. */
+      :root {
+        --paper: #eeece6;
+        --paper-raised: #f8f7f3;
+        --ink: #121110;
+        --ink-muted: #55524b;
+        --ink-inverse: #f8f7f3;
+        --rule: #c6c2b7;
+        --accent: #b3271a;
+        --accent-strong: #8b1d13;
+        --accent-plate: #b3271a;
+        --on-accent: #f8f7f3;
+        --focus: #1e40af;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 40px;
+        --space-6: 64px;
+        --space-7: 96px;
+        --space-8: 144px;
+        --font-grotesk: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+        --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 17px;
+        --text-lg: 22px;
+        --text-xl: 32px;
+        --text-2xl: 52px;
+        --text-3xl: 84px;
+        --leading-tight: 0.94;
+        --leading-snug: 1.15;
+        --leading-body: 1.55;
+        --track-tight: -0.03em;
+        --track-wide: 0.08em;
+        --weight-regular: 400;
+        --weight-bold: 700;
+        --radius-1: 0px;
+        --radius-2: 2px;
+        --page-max: 1440px;
+        --bp-md: 768px;
+        --bp-lg: 1024px;
+        --tap-min: 24px;
+        --measure: 64ch;
+        --border-hairline: 1px;
+        --border-heavy: 3px;
+        --motion-fast: 140ms;
+        --motion-base: 320ms;
+        --motion-slow: 620ms;
+        --motion-stagger: 70ms;
+        --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+        --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+        --motion-wipe: 900ms;
+        --shape-lg: 420px;
+        --shape-md: 260px;
+        --shape-bar: 620px;
+        --motion-float: 32000ms;
+        --motion-turn: 44000ms;
+        --motion-sweep: 18000ms;
+        --flow-stroke: 2px;
+        --flow-node: 3px;
+        --flow-dash: 6;
+        --motion-flow: 3200ms;
+        --motion-flow-slow: 5200ms;
+        --lift: 18px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-grotesk);
+        font-size: var(--text-base);
+        line-height: var(--leading-body);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .planche {
+        max-width: var(--page-max);
+        margin: 0 auto;
+        padding: var(--space-5) var(--space-4) var(--space-7);
+      }
+      .etiquette {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--accent);
+        margin: var(--space-7) 0 var(--space-2);
+      }
+      .etiquette:first-of-type {
+        margin-top: 0;
+      }
+      .glose {
+        max-width: var(--measure);
+        color: var(--ink-muted);
+        font-size: var(--text-sm);
+        margin: 0 0 var(--space-3);
+      }
+      .cadre {
+        border: var(--border-hairline) solid var(--rule);
+        background: var(--paper);
+        padding: var(--space-5) var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      /* La barre et le pied, identiques partout : l'acquis, pas le sujet de la planche. */
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-4);
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: var(--space-3);
+        border-bottom: var(--border-heavy) solid var(--ink);
+        margin-bottom: var(--space-5);
+      }
+      .mark {
+        background: var(--accent-plate);
+        color: var(--on-accent);
+        padding: 0 var(--space-2);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-bold);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+      .bar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+      }
+      .bar nav a,
+      .outils a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+      .outils {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+      .outils [aria-current="true"] {
+        background: var(--ink);
+        color: var(--ink-inverse);
+        padding: 0 var(--space-2);
+      }
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        justify-content: space-between;
+        margin-top: var(--space-5);
+        padding-top: var(--space-3);
+        padding-bottom: var(--space-4);
+        border-top: var(--border-heavy) solid var(--ink);
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: var(--track-wide);
+        color: var(--ink-muted);
+      }
+
+      /*
+       * L'écran lui-même. Le vide vertical est le SIEN : hors préfixe il n'a
+       * aucun cadre pour le lui donner, et sous un préfixe il s'ajoute à celui
+       * du cadre, comme sur le site.
+       */
+      .introuvable {
+        padding-block: var(--space-6);
+      }
+      /*
+       * Le plancher du clamp est plus bas que celui des autres écrans, et c'est
+       * mesuré : « Page introuvable » débordait de 41 px à 320 px de large, et
+       * le libellé hors langue porte les deux langues d'un coup.
+       */
+      .introuvable h1 {
+        margin: 0 0 var(--space-3);
+        font-size: clamp(var(--text-lg), 8vw, var(--text-2xl));
+        line-height: var(--leading-tight);
+        overflow-wrap: break-word;
+      }
+      .introuvable .lede {
+        margin: 0 0 var(--space-4);
+        font-size: var(--text-lg);
+        line-height: var(--leading-snug);
+        max-width: var(--measure);
+      }
+      /* La rangée de liens soulignés, primitive partagée : cf. src/app.css. */
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        font-size: var(--text-sm);
+        letter-spacing: var(--track-wide);
+        text-transform: uppercase;
+      }
+      .links a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--tap-min);
+        border-bottom: var(--border-heavy) solid var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="planche">
+      <p class="etiquette">Introuvable, sous un préfixe publié — /fr/inconnu</p>
+      <p class="glose">
+        Le repli de la route commune le rend dans la mise en page : la barre et le pied sont là. Une langue est en
+        force, le document la déclare, et un seul chemin de retour est offert. Aucun lien du menu ne porte de marque —
+        le lecteur n'est dans aucune section.
+      </p>
+      <div class="cadre">
+        <header class="bar">
+          <span class="mark">Donatien Koffi</span>
+          <nav><a href="#">Réalisations</a><a href="#">Parcours</a><a href="#">Contact</a></nav>
+          <div class="outils">
+            <a href="#" aria-current="true">FR</a><a href="#">EN</a>
+            <span class="icone" title="Passer en sombre"
+              ><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg
+            ></span>
+          </div>
+        </header>
+        <main class="introuvable">
+          <h1>Page introuvable</h1>
+          <p class="lede">Cette adresse ne correspond à aucune page de ce site.</p>
+          <div class="links"><a href="#">Retour à l'accueil</a></div>
+        </main>
+        <footer>
+          <span>Donatien Koffi, 2026</span>
+          <span>Rennes, France</span>
+        </footer>
+      </div>
+
+      <p class="etiquette">Introuvable, hors de tout préfixe — /nimportequoi</p>
+      <p class="glose">
+        La route de tête le rend hors de la mise en page : ni barre ni pied, et aucune langue en force. Il dit la même
+        chose dans les deux langues et offre les deux chemins. Chaque moitié porte son <code>lang</code> — sans lui, les
+        mots anglais sont annoncés avec la voix que le document déclare.
+      </p>
+      <div class="cadre">
+        <main class="introuvable">
+          <h1><span lang="fr">Page introuvable</span> · <span lang="en">Page not found</span></h1>
+          <p class="lede">
+            <span lang="fr">Cette adresse ne correspond à aucune page de ce site.</span> ·
+            <span lang="en">This address matches no page on this site.</span>
+          </p>
+          <div class="links"><a href="#" lang="fr">Retour à l'accueil</a><a href="#" lang="en">Back to home</a></div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

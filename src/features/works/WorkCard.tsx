@@ -70,6 +70,29 @@ function wiresOf(diagram: Diagram): Wire[] {
   });
 }
 
+function flowsOf(diagram: Diagram): Wire[] {
+  return wiresOf(diagram).filter((wire) => wire.kind === "flow");
+}
+
+/**
+ * The rules giving every moving point of these works' schemas its route, one rule per distinct route.
+ *
+ * A point names its route in `data-route`, whose value is the path data of the
+ * flow edge it travels; the rule for that value lays the same path on it. The
+ * routes are sorted, so the text depends on the shapes of the schemas alone,
+ * never on the order of the works nor on the language.
+ *
+ * @param works - the works whose schemas the page shows
+ * @returns the text of one style element, empty when no schema carries a flow
+ */
+export function routeSheetOf(works: readonly Work[]): string {
+  const routes = works.flatMap((work) => (work.diagram === undefined ? [] : flowsOf(work.diagram)));
+  return [...new Set(routes.map((wire) => wire.d))]
+    .sort()
+    .map((route) => `.packet[data-route="${route}"]{offset-path:path("${route}")}`)
+    .join("\n");
+}
+
 function Schema(props: { readonly diagram: Diagram }) {
   const wires = () => wiresOf(props.diagram);
   return (
@@ -97,13 +120,9 @@ function Schema(props: { readonly diagram: Diagram }) {
             </>
           )}
         </For>
-        <For each={wires().filter((wire) => wire.kind === "flow")}>
+        <For each={flowsOf(props.diagram)}>
           {(wire, rank) => (
-            <circle
-              class={`packet ${STAGGER[rank() % STAGGER.length]}`.trim()}
-              r={PACKET_R}
-              style={{ "offset-path": `path('${wire.d}')` }}
-            />
+            <circle class={`packet ${STAGGER[rank() % STAGGER.length]}`.trim()} r={PACKET_R} data-route={wire.d} />
           )}
         </For>
       </svg>

@@ -50,7 +50,7 @@ describe("the table of pages", () => {
   it("is the sole source of the addresses the build must produce", () => {
     const extra: Page = { key: "works", slugs: { fr: "essai", en: "trial" } };
 
-    expect(PRERENDERED).toEqual(["/", ...addressesToPrerender(PAGES)]);
+    expect(PRERENDERED).toEqual(["/", "/404.html", ...addressesToPrerender(PAGES)]);
     expect(addressesToPrerender([...PAGES, extra])).toEqual([...addressesToPrerender(PAGES), "/fr/essai", "/en/trial"]);
     expect(readFileSync("scripts/routes.mjs", "utf8")).not.toMatch(/["'`]\/(?:fr|en)\//);
   });

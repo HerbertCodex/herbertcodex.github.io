@@ -12,6 +12,14 @@ export default defineConfig({
         crawlLinks: true,
         routes: [...PRERENDERED],
       },
+      hooks: {
+        "prerender:generate"(route: { route: string; error?: unknown; skip?: boolean }) {
+          if (route.route === "/404.html") {
+            route.error = undefined;
+            route.skip = false;
+          }
+        },
+      },
     }),
   ],
 });

@@ -51,7 +51,7 @@ async function visitEveryAddress(page: Page): Promise<void> {
   }
 }
 
-test("servies sans aucun en-tête, les neuf adresses n'émettent aucune violation ni aucun message de la politique", async ({
+test("servies sans aucun en-tête, les dix adresses n'émettent aucune violation ni aucun message de la politique", async ({
   context,
   page,
 }) => {
@@ -60,7 +60,7 @@ test("servies sans aucun en-tête, les neuf adresses n'émettent aucune violatio
 
   await visitEveryAddress(page);
 
-  expect(PRERENDERED).toHaveLength(9);
+  expect(PRERENDERED).toHaveLength(10);
   expect(await reports()).toEqual({ violations: [], messages: [] });
 });
 

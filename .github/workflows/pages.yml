@@ -37,7 +37,7 @@ jobs:
       - name: install
         run: corepack enable && pnpm install --frozen-lockfile
 
-      # Le meme `build` que la CI : il prerend les neuf adresses declarees,
+      # Le meme `build` que la CI : il prerend les dix adresses declarees,
       # verifie qu'elles sont toutes ecrites, puis calcule la politique de
       # securite depuis le site construit et l'ecrit dans chaque page. Un
       # build qui ne peut pas la calculer echoue plutot que de publier un

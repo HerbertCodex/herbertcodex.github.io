@@ -47,7 +47,21 @@ export default defineConfig({
         "src/entry-server.tsx",
         "src/global.d.ts",
         "src/app.tsx",
-        "src/routes/**",
+        // Les routes sont nommees UNE A UNE, pour la raison que le paragraphe
+        // ci-dessus donne deja : `src/routes/**` etait une regle sur un DOSSIER,
+        // pas sur une preuve, et elle exemptait d avance toute route future sans
+        // que personne ait a la justifier. La decision 0009 a d ailleurs deplace
+        // les ecrans hors de ce dossier depuis que la ligne y a ete ecrite. Une
+        // route ajoutee demain COMPTE, au lieu d etre exemptee d avance. Mesure
+        // faite plutot que promise : une route neuve et courte ne fait pas
+        // basculer un seuil global a elle seule, donc la porte ne mord pas a
+        // coup sur. Ce qui change est qu il n existe plus d exemption que
+        // personne n a eu a ecrire.
+        "src/routes/index.tsx",
+        "src/routes/[locale].tsx",
+        "src/routes/[locale]/index.tsx",
+        "src/routes/[locale]/[slug].tsx",
+        "src/routes/[...404].tsx",
         "src/features/home/HomePage.tsx",
         "src/features/works/WorksPage.tsx",
         "src/features/journey/JourneyPage.tsx",
@@ -56,15 +70,23 @@ export default defineConfig({
         "src/shared/LanguageSwitch.tsx",
       ],
       reporter: ["text", "lcov"],
-      // Measured on this repository rather than chosen in advance. Lines,
-      // functions and statements sit at 100% on the covered scope, so 90 leaves
-      // one step of slack without stopping refusing. Branches sit at 50% because
-      // v8 counts the closing line of each Solid component as an uncovered
-      // branch — the two missing ones are `}` at Counter.tsx:16 and
-      // StarterNote.tsx:21, artefacts of the JSX transform and not code a test
-      // could reach. The bound is set just under that so the metric still moves
-      // if a real branch goes untested.
-      thresholds: { lines: 90, functions: 90, branches: 45, statements: 90 },
+      // Measured on this repository rather than chosen in advance, and measured
+      // again on 2026-09-10 over the scope the exclusions above leave: statements
+      // 94.76%, branches 77.53%, functions 96.42%, lines 96.19%. Each bound sits
+      // a few points under its measure, so a real regression moves the metric
+      // into a refusal instead of being absorbed by slack.
+      //
+      // Branches are the lowest of the four, and the uncovered ones are named
+      // rather than guessed: src/shared/theme.ts at 58.33% — the `catch` that
+      // answers a forbidden localStorage (line 47) and the absent-matchMedia
+      // path of watchSystemTheme (lines 90-92), both reachable only from a
+      // browser that refuses them — and src/shared/content.ts at 69.44%.
+      //
+      // The former bound of 45 was justified by `}` at Counter.tsx:16 and
+      // StarterNote.tsx:21. Both files were deleted, so that justification named
+      // nothing present in the repository: it could be neither checked nor
+      // refuted, and a floor whose reason has gone is a floor nobody raises again.
+      thresholds: { lines: 90, functions: 90, branches: 70, statements: 90 },
     },
   },
 });

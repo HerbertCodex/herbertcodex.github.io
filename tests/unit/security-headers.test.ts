@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { readSecurityHeaders, writeSecurityHeaders } from "../../scripts/security-headers.mjs";
@@ -51,13 +51,24 @@ const UNPLACEABLE = [
   ["a referrer policy tag already", page('<meta name="referrer" content="no-referrer">')],
 ];
 
+/**
+ * Saved as Latin-1, so the paragraph reads "caf", 0xE9, a space, then 0xFF:
+ * bytes no UTF-8 decoder accepts.
+ */
+const UNDECODABLE = Buffer.from(page("", "<p>café ÿ</p>"), "latin1");
+
+const UNREADABLE: [string, () => string][] = [
+  ["whose bytes are not UTF-8", () => siteOf({ ...VALID, [REFUSED]: UNDECODABLE })],
+  ["that is a symbolic link to a page outside the folder", linkedSite],
+];
+
 const sites: string[] = [];
 
 afterEach(() => {
   for (const site of sites.splice(0)) rmSync(site, { recursive: true, force: true });
 });
 
-function siteOf(files: Record<string, string>): string {
+function siteOf(files: Record<string, string | Buffer>): string {
   const parent = mkdtempSync(join(tmpdir(), "security-headers-"));
   sites.push(parent);
   for (const [path, text] of Object.entries(files)) {
@@ -68,8 +79,24 @@ function siteOf(files: Record<string, string>): string {
   return join(parent, "public");
 }
 
+function linkedSite(): string {
+  const root = siteOf(VALID);
+  const outside = siteOf({ "index.html": page() });
+  rmSync(join(root, REFUSED));
+  symlinkSync(join(outside, "index.html"), join(root, REFUSED));
+  return root;
+}
+
 function besideRoot(root: string): string[] {
   return readdirSync(dirname(root));
+}
+
+function bytesUnder(root: string): Record<string, Buffer> {
+  return Object.fromEntries(
+    readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => !entry.isDirectory())
+      .map((entry) => [join(entry.parentPath, entry.name), readFileSync(join(entry.parentPath, entry.name))]),
+  );
 }
 
 function hashOf(text: string): string {
@@ -171,6 +198,18 @@ describe("the refusals of the build", () => {
     expect(besideRoot(root)).toEqual(["public"]);
   });
 
+  it.each(UNREADABLE)(
+    "refuses a page %s, naming it, rewriting no page and writing no list (regression of 4)",
+    (_, siteWith) => {
+      const root = siteWith();
+      const before = bytesUnder(root);
+
+      expect(() => writeSecurityHeaders(root)).toThrow(join(root, REFUSED));
+      expect(bytesUnder(root)).toEqual(before);
+      expect(besideRoot(root)).toEqual(["public"]);
+    },
+  );
+
   it("exits 0 on a valid folder, and non-zero with no list on every refusal (8)", () => {
     const command = resolve("scripts/security-headers.mjs");
     const exitOf = (root: string) => spawnSync(process.execPath, [command, root], { encoding: "utf8" }).status;
@@ -179,6 +218,7 @@ describe("the refusals of the build", () => {
       siteOf({ ...VALID, [REFUSED]: page("", STYLED[0][1]) }),
       siteOf({ "_build/entry.js": "export {};" }),
       ...UNPLACEABLE.map(([, html]) => siteOf({ ...VALID, [REFUSED]: html })),
+      ...UNREADABLE.map(([, siteWith]) => siteWith()),
     ];
 
     expect(exitOf(valid)).toBe(0);

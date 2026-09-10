@@ -1,6 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const PATHS = ["/fr", "/en", "/fr/realisations", "/en/work", "/fr/parcours", "/en/about", "/fr/contact", "/en/contact"];
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
+
+/* Les deux pages publiees, lues dans la table. */
+const PATHS = publishedAddresses(PAGES);
 
 /*
  * Vingt tabulations font largement le tour de la barre, qui porte huit arrêts
@@ -54,7 +57,7 @@ test.describe("sans choix enregistré, le thème est celui du système", () => {
 
   test("un changement du système est suivi page ouverte, sans rechargement", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "light" });
-    await page.goto("/fr/parcours");
+    await page.goto("/fr");
     const before = await background(page);
 
     await page.emulateMedia({ colorScheme: "dark" });
@@ -106,8 +109,14 @@ test.describe("le choix du lecteur", () => {
     const chosen = await background(page);
     expect(lightness(chosen)).toBeLessThan(lightness(system));
 
-    await page.locator('header nav a[href="/fr/contact"]').click();
-    await page.waitForURL(/\/fr\/contact$/);
+    /*
+     * Le choix doit survivre a une NAVIGATION, et le menu n'en fait plus une :
+     * ses liens sont des ancres de la page courante. Le selecteur de langue est
+     * desormais le seul changement de document que la barre offre, donc c'est
+     * lui qui porte l'epreuve.
+     */
+    await page.locator('header a[hreflang="en"]').click();
+    await page.waitForURL(/\/en$/);
     expect(await background(page)).toBe(chosen);
 
     await page.reload();
@@ -137,7 +146,7 @@ test.describe("le choix du lecteur", () => {
   });
 });
 
-test("le bouton est atteint et actionné au clavier seul, sur chacune des huit adresses", async ({ page }) => {
+test("le bouton est atteint et actionné au clavier seul, sur chacune des pages publiées", async ({ page }) => {
   const verdicts: string[] = [];
   for (const address of PATHS) {
     await page.goto(address);

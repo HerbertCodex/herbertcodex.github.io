@@ -1,9 +1,14 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+/*
+ * Les realisations sont une SECTION de la page unique depuis le 2026-09-10, et
+ * non plus une page. L'adresse est donc celle de la page, l'ancre nomme la
+ * section, et son titre est un h2 — le h1 de la page appartient a l'ouverture.
+ */
 const ADDRESSES = [
-  { path: "/fr/realisations", heading: "Réalisations" },
-  { path: "/en/work", heading: "Work" },
+  { path: "/fr#realisations", heading: "Réalisations" },
+  { path: "/en#work", heading: "Work" },
 ];
 
 const WORKS = 4;
@@ -33,7 +38,7 @@ test.describe("la page des réalisations", () => {
     test(`${path} présente les quatre réalisations sans violation d'accessibilité @a11y`, async ({ page }) => {
       await page.goto(path);
 
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
+      await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
       await expect(page.locator("main article")).toHaveCount(WORKS);
 
       const audit = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();

@@ -5,7 +5,7 @@ import { collectPolicyReports } from "./politique";
 
 const FRAME_ANCESTORS = "frame-ancestors";
 
-const FRAMED = "/fr/parcours";
+const FRAMED = "/fr";
 
 async function themeOf(page: Page): Promise<string | null> {
   return page.evaluate(() => document.documentElement.getAttribute("data-theme"));
@@ -42,11 +42,11 @@ test("aucune violation ni aucun message de la politique, du chargement à la fin
   expect(await reports()).toEqual({ violations: [], messages: [] });
 });
 
-test("sur /fr/realisations, le bouton de thème change le thème du document, et le choix survit au rechargement", async ({
+test("sur /fr, le bouton de thème change le thème du document, et le choix survit au rechargement", async ({
   page,
 }) => {
   await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/fr/realisations");
+  await page.goto("/fr");
   const before = await themeOf(page);
 
   await page.locator("header button").click();
@@ -57,11 +57,11 @@ test("sur /fr/realisations, le bouton de thème change le thème du document, et
   expect(await themeOf(page)).toBe(chosen);
 });
 
-test("depuis /fr/realisations, le sélecteur de langue conduit à /en/work", async ({ page }) => {
-  await page.goto("/fr/realisations");
+test("depuis /fr, le sélecteur de langue conduit à /en", async ({ page }) => {
+  await page.goto("/fr");
   await page.locator('header a[hreflang="en"]').click();
 
-  await expect(page).toHaveURL(/\/en\/work$/);
+  await expect(page).toHaveURL(/\/en$/);
 });
 
 test("la balise porte la politique de l'en-tête moins frame-ancestors, et les empreintes sont celles des pages servies", async ({

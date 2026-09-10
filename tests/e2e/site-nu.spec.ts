@@ -19,7 +19,7 @@ const POLICY_TAG = /<meta http-equiv="Content-Security-Policy"[^>]*>/;
 /* Un nom que le site n'emploie nulle part : s'il est posé, c'est par le script inséré. */
 const INTRUDER = "intrusDuSiteNu";
 
-const WORKS = ["/fr/realisations", "/en/work"];
+const WORKS = ["/fr", "/en"];
 
 function securityHeadersIn(headers: Record<string, string>): string[] {
   return SECURITY_HEADERS.filter((name) => name in headers);
@@ -70,7 +70,7 @@ test("servi sans en-tête, le site s'hydrate : le bouton de thème change le th�
 }) => {
   await serveBare(context);
   await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/en/work");
+  await page.goto("/en");
   const theme = () => page.locator("html").getAttribute("data-theme");
   const system = await theme();
 

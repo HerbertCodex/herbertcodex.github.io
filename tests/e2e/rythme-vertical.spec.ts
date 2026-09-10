@@ -1,24 +1,22 @@
 import { test, expect, type Page } from "@playwright/test";
-import { PAGES, addressesToPrerender } from "../../src/shared/pages";
+import { PAGES, publishedAddresses } from "../../src/shared/pages";
 
-const ADDRESSES = addressesToPrerender(PAGES);
-
-const HOMES = ["/fr", "/en"];
-
-const CONTACT = ["/fr/contact", "/en/contact"];
-
-/* Les deux pages plus longues que toute fenêtre, dont un bandeau de section ouvre le contenu. */
-const WORKS = ["/fr/realisations", "/en/work"];
-
-/* Les quatre adresses dont le titre est suivi d'un bloc qui pose lui-même sa respiration. */
-const BLOCKED = ["/fr/parcours", "/en/about", ...CONTACT];
+const ADDRESSES = publishedAddresses(PAGES);
 
 /*
- * Une fenêtre plus COURTE que la plus courte des huit pages — la fiche de
- * contact, mesurée à 570 px. Le rythme naturel du cadre ne se lit que là : dès
- * que la fenêtre dépasse la page, le pied descend la fermer et la distance
- * entre le dernier contenu et son filet cesse d'être celle que les règles
- * posent. Les critères qui portent sur cette descente la mesurent à part.
+ * Le site publiait huit pages jusqu'au 2026-09-10 : quatre par langue, dont
+ * quatre tenaient dans une fenêtre. Il en publie deux, chacune portant toutes
+ * les sections, et chacune plus longue que toute fenêtre.
+ */
+const HOMES = ADDRESSES;
+
+/*
+ * Une fenêtre plus COURTE que la page. Le rythme naturel du cadre ne se lit que
+ * là : dès que la fenêtre dépasse la page, le pied descend la fermer et la
+ * distance entre le dernier contenu et son filet cesse d'être celle que les
+ * règles posent. Depuis que le site publie une page unique, toute fenêtre est
+ * plus courte qu'elle — cette hauteur reste écrite pour que la mesure ne
+ * dépende pas de ce fait.
  */
 const SHORT = { width: 1440, height: 500 };
 
@@ -31,28 +29,23 @@ const WIDE = { width: 1440, height: 900 };
  */
 const CRAMPED = { width: 1440, height: 400 };
 
-/* Les trois hauteurs auxquelles le pied doit fermer une page courte. */
+/* Les trois hauteurs de fenêtre auxquelles le pied est mesuré. */
 const HEIGHTS = [640, 900, 1200];
 
-/* Les quatre largeurs auxquelles les hauteurs de page sont plafonnées. */
-const WIDTHS = [1278, 1440, 1704, 1920];
-
 /*
- * Le plafond de chaque page, largeur par largeur, dans l'ordre de WIDTHS.
- * Ces nombres sont des MESURES du 2026-09-08 diminuées de ce que cette issue
- * retire, écrites en clair : les recalculer ici par la même soustraction que
- * la feuille ferait un test qui répète le code au lieu de le contredire.
+ * Le tableau des plafonds de hauteur a été retiré le 2026-09-10, et son retrait
+ * est une décision plutôt qu'un oubli. Il donnait une hauteur mesurée par page
+ * et par largeur ; les huit pages qu'il nommait sont devenues deux, et la
+ * hauteur d'une page qui porte TOUT ne peut pas être remesurée ici : cette
+ * station ne résout aucune des quatre faces de `--font-grotesk` et sert le site
+ * en DejaVu Sans, plus large. Un plafond mesuré ici contredirait la CI et le
+ * visiteur, ce qui est exactement l'erreur des 606 px du round 2.
+ *
+ * Ce qui garde l'intention sans dépendre d'une police : le pied reste à la
+ * suite du contenu et la page défile, mesurés plus bas ; et 640 px de fenêtre
+ * suffisent à voir le premier bandeau de section, mesuré par
+ * tests/e2e/rythme-accueil.spec.ts.
  */
-const CEILINGS: Readonly<Record<string, readonly number[]>> = {
-  "/fr": [640, 640, 640, 640],
-  "/en": [640, 640, 640, 640],
-  "/fr/realisations": [2538, 2464, 2451, 2451],
-  "/en/work": [2540, 2438, 2425, 2425],
-  "/fr/parcours": [1848, 1760, 1760, 1760],
-  "/en/about": [1822, 1760, 1760, 1760],
-  "/fr/contact": [570, 570, 570, 570],
-  "/en/contact": [570, 570, 570, 570],
-};
 
 /* L'écran introuvable sous un préfixe de langue publié, puis hors de tout préfixe. */
 const UNKNOWN = { under: "/fr/inconnu", outside: "/nawak" };
@@ -204,26 +197,21 @@ test.describe("le cadre ne compte plus l'espace deux fois", () => {
     expect(faults).toEqual([]);
   });
 
-  test("le titre appelle son chapô de près, et laisse les blocs poser leur propre respiration", async ({ page }) => {
+  test("le titre appelle son chapô de près, et chaque bandeau laisse son bloc respirer", async ({ page }) => {
     const faults: string[] = [];
     await page.setViewportSize(SHORT);
-    await page.goto(ADDRESSES[0]);
-    const { three, five, six } = await stepsOf(page);
+    await page.goto(ADDRESSES[0]!);
+    const { three, five } = await stepsOf(page);
 
-    for (const address of HOMES) {
+    for (const address of ADDRESSES) {
       await page.goto(address);
-      const gap = await gapBetween(page, "main h1", "main h1 + *");
-      if (gap !== three) faults.push(`${address} : ${gap} px entre le titre et le chapô, au lieu de ${three}`);
-    }
-    for (const address of BLOCKED) {
-      await page.goto(address);
-      const gap = await gapBetween(page, "main h1", "main h1 + *");
-      if (gap !== six) faults.push(`${address} : ${gap} px sous le titre, au lieu des ${six} que le bloc pose`);
-    }
-    for (const address of WORKS) {
-      await page.goto(address);
-      const gap = await gapBetween(page, "main .section-head", "main .work");
-      if (gap !== five) faults.push(`${address} : ${gap} px sous le bandeau de section, au lieu de ${five}`);
+
+      const underTitle = await gapBetween(page, "main h1", "main h1 + *");
+      if (underTitle !== three)
+        faults.push(`${address} : ${underTitle} px entre le titre et le chapô, au lieu de ${three}`);
+
+      const underHead = await gapBetween(page, "main .section-head", "main .work");
+      if (underHead !== five) faults.push(`${address} : ${underHead} px sous le premier bandeau, au lieu de ${five}`);
     }
 
     expect(faults).toEqual([]);
@@ -231,13 +219,21 @@ test.describe("le cadre ne compte plus l'espace deux fois", () => {
 });
 
 test.describe("le pied ferme la page", () => {
-  test("il se pose au bas de la fenêtre sur les quatre pages courtes, aux trois hauteurs", async ({ page }) => {
+  /*
+   * Deux critères ont été retirés ici le 2026-09-10, et le document signé
+   * docs/decisions/perimetre-approuve-rythme-vertical-round2.json porte
+   * l'amendement qui le dit : « le pied se pose au bas de la fenêtre sur les
+   * quatre pages courtes » et « la page ne défile pas pour autant » portaient
+   * sur des pages qui n'existent plus. Une page unique défile par construction,
+   * et un critère qu'aucune page ne peut satisfaire se lit comme une régression.
+   */
+  test("la page garde son pied à sa suite, et son défilement, aux trois hauteurs", async ({ page }) => {
     const faults: string[] = [];
 
     for (const height of HEIGHTS) {
       await page.setViewportSize({ width: WIDE.width, height });
 
-      for (const address of [...HOMES, ...CONTACT]) {
+      for (const address of HOMES) {
         await page.goto(address);
         const frame = await frameOf(page);
 
@@ -246,88 +242,26 @@ test.describe("le pied ferme la page", () => {
           continue;
         }
         const bottom = Math.round(frame.foot.bottom);
-        if (bottom !== frame.clientHeight) {
+
+        if (frame.scrollHeight <= frame.clientHeight) {
           faults.push(
-            `${address} à ${height} px : le pied finit à ${bottom} px, la fenêtre à ${frame.clientHeight} px`,
+            `${address} à ${height} px : la page ne défile pas (${frame.scrollHeight} px pour ${frame.clientHeight} px)`,
+          );
+        }
+        if (bottom <= frame.clientHeight) {
+          faults.push(
+            `${address} à ${height} px : le pied s'est posé à ${bottom} px dans une fenêtre de ${frame.clientHeight} px`,
+          );
+        }
+        if (Math.abs(frame.scrollHeight - bottom) > 1) {
+          faults.push(
+            `${address} à ${height} px : le pied finit à ${bottom} px pour une page de ${frame.scrollHeight} px`,
           );
         }
       }
     }
 
     expect(faults).toEqual([]);
-  });
-
-  test("et la page ne défile pas pour autant, aux trois mêmes hauteurs", async ({ page }) => {
-    const scrolling: string[] = [];
-
-    for (const height of HEIGHTS) {
-      await page.setViewportSize({ width: WIDE.width, height });
-
-      for (const address of [...HOMES, ...CONTACT]) {
-        await page.goto(address);
-        const frame = await frameOf(page);
-
-        if (frame.scrollHeight !== frame.clientHeight) {
-          scrolling.push(
-            `${address} à ${height} px : ${frame.scrollHeight - frame.clientHeight} px de défilement ` +
-              `(${frame.scrollHeight} px de page pour ${frame.clientHeight} px de fenêtre)`,
-          );
-        }
-      }
-    }
-
-    expect(scrolling).toEqual([]);
-  });
-
-  test("une page plus longue que la fenêtre garde son pied à sa suite, et son défilement", async ({ page }) => {
-    const faults: string[] = [];
-    await page.setViewportSize(WIDE);
-
-    for (const address of WORKS) {
-      await page.goto(address);
-      const frame = await frameOf(page);
-
-      if (frame.foot === null) {
-        faults.push(`${address} : aucun pied à mesurer`);
-        continue;
-      }
-      const bottom = Math.round(frame.foot.bottom);
-      if (frame.scrollHeight <= frame.clientHeight) {
-        faults.push(`${address} : la page ne défile plus (${frame.scrollHeight} px pour ${frame.clientHeight} px)`);
-      }
-      if (bottom <= frame.clientHeight) {
-        faults.push(`${address} : le pied s'est posé à ${bottom} px, dans une fenêtre de ${frame.clientHeight} px`);
-      }
-      if (Math.abs(frame.scrollHeight - bottom) > 1) {
-        faults.push(`${address} : le pied finit à ${bottom} px pour une page de ${frame.scrollHeight} px`);
-      }
-    }
-
-    expect(faults).toEqual([]);
-  });
-
-  test("aucune des huit pages ne dépasse la hauteur annoncée, aux quatre largeurs", async ({ page }) => {
-    const tall: string[] = [];
-
-    for (const [rank, width] of WIDTHS.entries()) {
-      await page.setViewportSize({ width, height: SHORT.height });
-
-      for (const address of ADDRESSES) {
-        await page.goto(address);
-        const frame = await frameOf(page);
-        const ceiling = CEILINGS[address][rank];
-
-        if (frame.foot === null) {
-          tall.push(`${address} à ${width} px : aucun pied à mesurer`);
-          continue;
-        }
-        const bottom = Math.round(frame.foot.bottom);
-        if (bottom > ceiling)
-          tall.push(`${address} à ${width} px : le pied finit à ${bottom} px, plafond ${ceiling} px`);
-      }
-    }
-
-    expect(tall).toEqual([]);
   });
 });
 

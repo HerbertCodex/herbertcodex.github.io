@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MetaProvider } from "@solidjs/meta";
 import { render, cleanup, within } from "@solidjs/testing-library";
-import JourneyPage from "~/features/journey/JourneyPage";
+import JourneySection from "~/features/journey/JourneySection";
 import { contentFor, type Journey } from "~/shared/content";
 import { createI18n, I18nContext, type Locale } from "~/shared/i18n";
 
@@ -11,7 +11,7 @@ function shown(locale: Locale, journey?: Journey) {
   return render(() => (
     <MetaProvider>
       <I18nContext.Provider value={createI18n(() => locale)}>
-        <JourneyPage journey={journey} />
+        <JourneySection from={2} anchor="parcours" journey={journey} />
       </I18nContext.Provider>
     </MetaProvider>
   ));

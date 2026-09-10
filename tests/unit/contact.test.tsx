@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { render, cleanup } from "@solidjs/testing-library";
 import { MetaProvider } from "@solidjs/meta";
-import ContactPage from "~/features/contact/ContactPage";
+import ContactSection from "~/features/contact/ContactSection";
 import { createI18n, DICTIONARIES, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
 
 /*
@@ -18,7 +18,7 @@ const LINKEDIN = "https://linkedin.com/in/donatien-koffi";
 
 const TERMS = ["contract", "place", "start"] as const;
 
-const SOURCES = ["src/features/contact/ContactPage.tsx", "src/features/contact/ContactLinks.tsx"];
+const SOURCES = ["src/features/contact/ContactSection.tsx", "src/features/contact/ContactLinks.tsx"];
 
 const MOCKUP = "mockups/accueil-contact.html";
 
@@ -29,7 +29,7 @@ function contactPage(locale: Locale) {
   return render(() => (
     <MetaProvider>
       <I18nContext.Provider value={createI18n(() => locale)}>
-        <ContactPage />
+        <ContactSection rank={5} anchor="contact" />
       </I18nContext.Provider>
     </MetaProvider>
   ));

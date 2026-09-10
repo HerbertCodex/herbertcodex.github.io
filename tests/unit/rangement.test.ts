@@ -6,10 +6,10 @@ const SOURCE = "src";
 const SHARED = "src/shared";
 
 const MOVED = [
-  "src/features/home/HomePage.tsx",
-  "src/features/works/WorksPage.tsx",
-  "src/features/journey/JourneyPage.tsx",
-  "src/features/contact/ContactPage.tsx",
+  "src/features/home/Opening.tsx",
+  "src/features/works/WorksSection.tsx",
+  "src/features/journey/JourneySection.tsx",
+  "src/features/contact/ContactSection.tsx",
   "src/features/works/WorkCard.tsx",
   "src/features/contact/ContactLinks.tsx",
 ];
@@ -42,7 +42,7 @@ function walk(dir: string): string[] {
 
 /*
  * Le specificateur est ramene a un chemin du depot, jamais compare tel quel :
- * `~/features/works/WorksPage` et `../features/works/WorksPage` designent le
+ * `~/features/works/WorksSection` et `../features/works/WorksSection` designent le
  * meme fichier, et une comparaison de chaines n'en refuserait qu'un des deux.
  */
 function targetOf(specifier: string, from: string): string | null {

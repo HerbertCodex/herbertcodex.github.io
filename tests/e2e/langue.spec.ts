@@ -1,20 +1,16 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const PAIRS = [
-  { fr: "/fr", en: "/en" },
-  { fr: "/fr/realisations", en: "/en/work" },
-  { fr: "/fr/parcours", en: "/en/about" },
-  { fr: "/fr/contact", en: "/en/contact" },
-];
+import { LOCALES } from "../../src/shared/i18n";
+import { NAMED_PAGES, PAGES, addressOf, publishedAddresses } from "../../src/shared/pages";
 
-const ADDRESSES = [...PAIRS.map((pair) => pair.fr), ...PAIRS.map((pair) => pair.en)];
+const ADDRESSES = publishedAddresses(PAGES);
 
 /*
- * Le budget de tabulations. La barre porte au plus sept arrêts : l'évitement,
- * quatre pages, deux langues. L'accueil en ajoute trois. Quatorze fait donc un
- * tour complet, ce qui prouve une absence plutôt que de la mesurer trop tôt.
+ * Le budget de tabulations. La barre porte huit arrêts : l'évitement, trois
+ * sections, deux langues, le thème. Douze fait donc un tour complet de la
+ * barre, ce qui prouve une absence plutôt que de la mesurer trop tôt.
  */
-const TAB_BUDGET = 14;
+const TAB_BUDGET = 12;
 
 async function tabUntil(page: Page, href: string): Promise<boolean> {
   for (let step = 0; step < TAB_BUDGET; step += 1) {
@@ -25,16 +21,14 @@ async function tabUntil(page: Page, href: string): Promise<boolean> {
   return false;
 }
 
-test.describe("changer de langue conduit à la même page", () => {
-  test("depuis /fr/realisations, l'anglais conduit à /en/work", async ({ page }) => {
-    await page.goto("/fr/realisations");
-    await page.locator('a[hreflang="en"]').click();
-
-    await page.waitForURL(/\/en\/work$/);
-    expect(new URL(page.url()).pathname).toBe("/en/work");
-  });
-
-  test("depuis l'accueil /fr, l'anglais conduit à /en", async ({ page }) => {
+test.describe("changer de langue conduit à l'autre page", () => {
+  /*
+   * Le sélecteur conduisait à la MÊME page dans l'autre langue quand il y en
+   * avait quatre. Il n'y en a plus qu'une, et il ne reporte pas l'endroit où le
+   * lecteur a défilé : le document prérendu ne peut pas le savoir, et l'y
+   * renvoyer au hasard serait pire que de l'accueillir en haut.
+   */
+  test("depuis /fr, l'anglais conduit à /en", async ({ page }) => {
     await page.goto("/fr");
     await page.locator('a[hreflang="en"]').click();
 
@@ -43,17 +37,17 @@ test.describe("changer de langue conduit à la même page", () => {
   });
 
   test("le sélecteur est atteint et actionné au clavier seul", async ({ page }) => {
-    await page.goto("/fr/parcours");
+    await page.goto("/fr");
 
-    expect(await tabUntil(page, "/en/about"), "aucun arrêt de tabulation ne porte /en/about").toBe(true);
+    expect(await tabUntil(page, "/en"), "aucun arrêt de tabulation ne porte /en").toBe(true);
     await page.keyboard.press("Enter");
 
-    await page.waitForURL(/\/en\/about$/);
-    expect(new URL(page.url()).pathname).toBe("/en/about");
+    await page.waitForURL(/\/en$/);
+    expect(new URL(page.url()).pathname).toBe("/en");
   });
 
   test("la langue en cours est annoncée et marquée autrement que par la couleur", async ({ page }) => {
-    await page.goto("/fr/contact");
+    await page.goto("/fr");
     const inForce = page.locator('a[hreflang="fr"]');
     const other = page.locator('a[hreflang="en"]');
 
@@ -91,11 +85,11 @@ test.describe("la barre que porte chaque page", () => {
     expect(verdicts).toEqual(ADDRESSES.map((address) => `${address}: ok`));
   });
 
-  test("la barre donne accès aux quatre pages depuis n'importe quelle page", async ({ page }) => {
+  test("la barre donne accès aux trois sections depuis chaque page", async ({ page }) => {
     const verdicts: string[] = [];
-    for (const address of ADDRESSES) {
-      const locale = address.startsWith("/en") ? "en" : "fr";
-      const expected = PAIRS.map((pair) => pair[locale]);
+    for (const locale of LOCALES) {
+      const address = `/${locale}`;
+      const expected = NAMED_PAGES.map((part) => addressOf(part, locale));
       await page.goto(address);
       const reached = new Set<string>();
       for (let step = 0; step < TAB_BUDGET; step += 1) {
@@ -113,10 +107,12 @@ test.describe("la barre que porte chaque page", () => {
 
     expect(verdicts).toEqual(ADDRESSES.map((address) => `${address}: ok`));
 
-    await page.goto("/en/work");
-    expect(await tabUntil(page, "/en/contact"), "aucun arrêt de tabulation ne porte /en/contact").toBe(true);
+    // Et l'ancre conduit bien au contenu qu'elle nomme, pas seulement à une
+    // adresse : le clavier seul, depuis le haut de la page anglaise.
+    await page.goto("/en");
+    expect(await tabUntil(page, "/en#contact"), "aucun arrêt de tabulation ne porte /en#contact").toBe(true);
     await page.keyboard.press("Enter");
-    await page.waitForURL(/\/en\/contact$/);
-    expect(new URL(page.url()).pathname).toBe("/en/contact");
+    await page.waitForURL(/\/en#contact$/);
+    await expect(page.locator("#contact")).toBeVisible();
   });
 });

@@ -938,14 +938,22 @@
     <div class="sheet">
       <header class="bar">
         <span class="mark">Donatien Koffi</span>
+        <!--
+          Les ancres de CE document, et non quatre adresses. Ce menu a dit
+          « /fr/realisations » jusqu'au 2026-09-10, alors que la planche qu'il
+          surmonte est une page unique — son lien d'évitement pointe d'ailleurs
+          vers #realisations. Le site avait suivi le menu, et publiait quatre
+          pages par langue ; la décision 0018 l'a ramené sur le document. Aucun
+          lien n'est « la page en cours » : elles le sont toutes.
+        -->
         <nav aria-label="Navigation principale">
-          <a href="/fr/realisations" aria-current="page">Réalisations</a>
-          <a href="/fr/parcours">Parcours</a>
-          <a href="/fr/contact">Contact</a>
+          <a href="/fr#realisations">Réalisations</a>
+          <a href="/fr#parcours">Parcours</a>
+          <a href="/fr#contact">Contact</a>
         </nav>
         <div class="langs">
-          <a href="/fr/realisations" aria-current="true">FR</a>
-          <a href="/en/work" hreflang="en">EN</a>
+          <a href="/fr" aria-current="true">FR</a>
+          <a href="/en" hreflang="en">EN</a>
         </div>
         <button class="theme" type="button" aria-pressed="false">Sombre</button>
       </header>

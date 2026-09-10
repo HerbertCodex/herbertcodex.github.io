@@ -38,33 +38,34 @@ required of every addition is judged against this document.
 - `malformedContactLinks` — function — The contact targets stated empty or malformed, which are never published.
 - `ContactLinks` (default) — function — The second rank of the contact block: the profiles, then the résumé.
 
-### src/features/contact/ContactPage.css
+### src/features/contact/ContactSection.css
 
 - stylesheet
 
-### src/features/contact/ContactPage.tsx
+### src/features/contact/ContactSection.tsx
 
-- `ContactPage` (default) — function — The page saying how to get in touch, and under which conditions.
+- `ContactSection` (default) — function — The section saying how to get in touch, and under which conditions.
 
 ## src/features/home
 
-### src/features/home/HomePage.css
+### src/features/home/Opening.css
 
 - stylesheet
 
-### src/features/home/HomePage.tsx
+### src/features/home/Opening.tsx
 
-- `HomePage` (default) — function — The opening of the portfolio, and the way into each of the other pages.
+- `Opening` (default) — function — The opening of the page: who is speaking, in one sentence and four facts.
 
 ## src/features/journey
 
-### src/features/journey/JourneyPage.css
+### src/features/journey/JourneySection.css
 
 - stylesheet
 
-### src/features/journey/JourneyPage.tsx
+### src/features/journey/JourneySection.tsx
 
-- `JourneyPage` (default) — function — The page presenting experience, education, certifications and skills.
+- `journeyHeadCount` — function — How many section heads the journey draws for a given journey.
+- `JourneySection` (default) — function — The sections presenting experience, education, certifications and skills.
 
 ## src/features/not-found
 
@@ -87,13 +88,13 @@ required of every addition is judged against this document.
 - `routeSheetOf` — function — The rules giving every moving point of these works' schemas its route, one rule per distinct route.
 - `WorkCard` (default) — function — One work: the schema of what it does, then what it was and what came of it.
 
-### src/features/works/WorksPage.css
+### src/features/works/WorksSection.css
 
 - stylesheet
 
-### src/features/works/WorksPage.tsx
+### src/features/works/WorksSection.tsx
 
-- `WorksPage` (default) — function — The page presenting what has been built, in the order the content declares.
+- `WorksSection` (default) — function — The section presenting what has been built, in the order the content declares.
 
 ## src/routes
 
@@ -114,11 +115,11 @@ required of every addition is judged against this document.
 
 ### src/routes/[locale]/[slug].tsx
 
-- `NamedPageRoute` (default) — function — The route serving every page the table names, home excepted.
+- `SectionRedirect` (default) — function — The addresses that were pages until 2026-09-10, and now lead to an anchor.
 
 ### src/routes/[locale]/index.tsx
 
-- `Home` (default) — function — The home route, which the common route never serves: the language prefix alone carries no page name for it to match.
+- `SinglePage` (default) — function — The page, and the only one the site publishes in each language.
 
 ## src/shared
 
@@ -155,6 +156,7 @@ required of every addition is judged against this document.
 ### src/shared/identity.ts
 
 - `PERSON` — constant — The person this site is, written once for every place that shows it.
+- `SITE` — constant — Where the site is published, written once for the addresses that must be absolute.
 
 ### src/shared/LanguageSwitch.css
 
@@ -162,25 +164,32 @@ required of every addition is judged against this document.
 
 ### src/shared/LanguageSwitch.tsx
 
-- `LanguageSwitch` (default) — function — The links leading to the page being read, in each published language.
+- `LanguageSwitch` (default) — function — The links leading to the site in each published language.
 
 ### src/shared/pages.ts
 
-- `PageKey` — type — A page of the site, named by what it is rather than by where it lives.
-- `NamedPageKey` — type — A page the common route serves, which home is never one of.
-- `Page` — type — One page, and the name it carries in each published language.
-- `NamedPage` — type — A page whose name is written in every language, therefore addressable.
-- `PAGES` — constant — The pages the site publishes, and the only place their names are written.
-- `NAMED_PAGES` — constant — The pages the common route serves, in the order the table declares them.
-- `addressOf` — function — The address of a page in one language.
-- `addressesToPrerender` — function — The addresses a build must produce for a table of pages.
-- `pageForSlug` — function — The page a name designates in one language, for the common route alone.
+- `PageKey` — type — A part of the site, named by what it is rather than by where it lives.
+- `Page` — type — One part of the site, and the name it carries in each published language.
+- `NamedPage` — type — A part whose name is written in every language, therefore addressable.
+- `HOME` — constant — The opening of the page, which carries no name and therefore no anchor.
+- `PAGES` — constant — The parts of the site, the opening first, in the order the page carries them.
+- `NAMED_PAGES` — constant — The sections the single page carries, in the order the table declares them.
+- `anchorOf` — function — The name a section answers to inside a page, in one language.
+- `addressOf` — function — The address that leads a visitor to a part of the site, in one language.
+- `publishedAddresses` — function — The pages a visitor reads: one per language, each carrying every section.
+- `redirectedAddresses` — function — The addresses that were pages until 2026-09-10 and now lead to an anchor.
+- `addressesToPrerender` — function — Every document a build must write for a table of parts.
+- `pageForSlug` — function — The section a name designates in one language, for the redirect route alone.
 
 ### src/shared/resume.ts
 
 - `Resume` — type — Where the résumé of a language is served, and the file that must carry it.
 - `RESUME_FOLDER` — constant — The directory of the repository the published résumés are read from.
 - `resumeOf` — function — The résumé of one language.
+
+### src/shared/SectionHead.tsx
+
+- `SectionHead` (default) — function — The head of a section: its number, its name, and how many things it holds.
 
 ### src/shared/SiteBar.css
 

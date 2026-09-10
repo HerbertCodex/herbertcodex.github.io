@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MetaProvider } from "@solidjs/meta";
 import { cleanup, render } from "@solidjs/testing-library";
-import WorksPage from "~/features/works/WorksPage";
+import WorksSection from "~/features/works/WorksSection";
 import { contentFor, type Work } from "~/shared/content";
 import { createI18n, I18nContext, LOCALES, type Locale } from "~/shared/i18n";
 
@@ -17,7 +17,7 @@ function shown(locale: Locale = "fr") {
   return render(() => (
     <MetaProvider>
       <I18nContext.Provider value={createI18n(() => locale)}>
-        <WorksPage />
+        <WorksSection rank={1} anchor="realisations" />
       </I18nContext.Provider>
     </MetaProvider>
   ));
@@ -25,7 +25,7 @@ function shown(locale: Locale = "fr") {
 
 function cardOf(root: HTMLElement, work: Work): HTMLElement {
   const found = [...root.querySelectorAll("article")].find(
-    (card) => card.querySelector("h2")?.textContent === work.title,
+    (card) => card.querySelector("h3")?.textContent === work.title,
   );
   if (found === undefined) throw new Error(`aucune réalisation intitulée « ${work.title} » n'est rendue`);
   return found;
@@ -57,7 +57,7 @@ describe("la page des réalisations", () => {
   it("présente les quatre réalisations dans l'ordre déclaré par le contenu, jamais dans un ordre calculé", () => {
     const { container } = shown();
 
-    const titles = [...container.querySelectorAll("article h2")].map((node) => node.textContent);
+    const titles = [...container.querySelectorAll("article h3")].map((node) => node.textContent);
 
     expect(titles).toEqual(FRENCH.map((work) => work.title));
     expect(titles).not.toEqual([...titles].sort());

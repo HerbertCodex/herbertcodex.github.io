@@ -1,6 +1,6 @@
 import { For } from "solid-js";
 import { LOCALES, useI18n, type Locale } from "~/shared/i18n";
-import { addressOf, type Page } from "~/shared/pages";
+import { HOME, addressOf } from "~/shared/pages";
 import "./LanguageSwitch.css";
 
 /*
@@ -11,21 +11,20 @@ import "./LanguageSwitch.css";
  */
 const ENDONYMS: Readonly<Record<Locale, string>> = { fr: "Français", en: "English" };
 
-type LanguageSwitchProps = {
-  readonly page: Page;
-};
-
 /**
- * The links leading to the page being read, in each published language.
+ * The links leading to the site in each published language.
  *
- * The page is received rather than read from the address: the switch leads
- * to the same page in the other language, and a component that guessed it
- * from the address would lead home the day a name changed.
+ * The site publishes ONE page per language since 2026-09-10, so there is no
+ * longer a page to receive: the switch leads to the other language's page.
  *
- * @param props - the page the address designates, whose other names the links carry
+ * What it deliberately does NOT do is carry the reader's place over. The
+ * sections are named differently in each language — `#realisations` and
+ * `#work` — and a prerendered document cannot know which one the reader has
+ * scrolled to. Guessing would land them somewhere they were not.
+ *
  * @returns one link per published language, the one in force marked as current
  */
-export default function LanguageSwitch(props: LanguageSwitchProps) {
+export default function LanguageSwitch() {
   const { locale } = useI18n();
   return (
     <div class="langs">
@@ -33,7 +32,7 @@ export default function LanguageSwitch(props: LanguageSwitchProps) {
         {(candidate) => (
           <a
             class="lang"
-            href={addressOf(props.page, candidate)}
+            href={addressOf(HOME, candidate)}
             hreflang={candidate}
             lang={candidate}
             aria-current={candidate === locale() ? "true" : undefined}

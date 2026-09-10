@@ -1,11 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-const PAGES = [
-  { fr: "/fr", en: "/en" },
-  { fr: "/fr/realisations", en: "/en/work" },
-  { fr: "/fr/parcours", en: "/en/about" },
-  { fr: "/fr/contact", en: "/en/contact" },
-];
+/* La page de chaque langue. Il y en avait quatre par langue jusqu'au 2026-09-10. */
+const PAGES = [{ fr: "/fr", en: "/en" }];
 
 test.describe("every page is addressed by its language", () => {
   for (const page_addresses of PAGES) {
@@ -29,12 +25,19 @@ test.describe("every page is addressed by its language", () => {
 test.describe("a shared link opens in the language it names", () => {
   test.use({ locale: "fr-FR", extraHTTPHeaders: { "Accept-Language": "fr-FR,fr;q=0.9" } });
 
+  /*
+   * /en/about est precisement un lien deja partage : il etait une page, il est
+   * devenu un document de renvoi. Il doit donc rester anglais de bout en bout —
+   * le document servi comme la page d'arrivee — pour un navigateur francais.
+   */
   test("/en/about is english for a french browser that has stored nothing", async ({ page }) => {
     const served = await page.request.get("/en/about");
     expect(served.status()).toBe(200);
     expect(await served.text()).toContain('lang="en"');
 
     await page.goto("/en/about");
+    await page.waitForURL(/\/en#about$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("navigation").getByRole("link", { name: "About" })).toBeVisible();
     expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
   });

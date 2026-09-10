@@ -9,7 +9,10 @@ import {
   PAGES,
   addressOf,
   addressesToPrerender,
+  anchorOf,
   pageForSlug,
+  publishedAddresses,
+  redirectedAddresses,
   type Page,
   type PageKey,
 } from "~/shared/pages";
@@ -37,14 +40,42 @@ function exitOfCompiling(row: string): { status: number; output: string } {
   }
 }
 
-describe("the table of pages", () => {
-  it("carries home under an empty name, read like the other three", () => {
+describe("the table of parts", () => {
+  it("carries the opening under an empty name, read like the other three", () => {
     const home = pageOf("home");
 
     expect(home.slugs).toEqual({ fr: "", en: "" });
     expect(addressOf(home, "fr")).toBe("/fr");
     expect(addressOf(home, "en")).toBe("/en");
-    expect(addressesToPrerender(PAGES)).toEqual(expect.arrayContaining(["/fr", "/en"]));
+    expect(anchorOf(home, "fr")).toBe("");
+    expect(publishedAddresses(PAGES)).toEqual(["/fr", "/en"]);
+  });
+
+  it("names the three sections as anchors on the page, not as addresses of their own", () => {
+    const works = pageOf("works");
+
+    expect(anchorOf(works, "fr")).toBe("realisations");
+    expect(anchorOf(works, "en")).toBe("work");
+    expect(addressOf(works, "fr")).toBe("/fr#realisations");
+    expect(addressOf(works, "en")).toBe("/en#work");
+  });
+
+  /*
+   * Un lien deja partage ne se rappelle pas. Le CV et le profil LinkedIn
+   * portent /fr/realisations dehors, et l'hebergeur est statique : il n'offre
+   * aucune redirection, donc chacune de ces adresses doit rester un document
+   * que le build ecrit. Ce test est ce qui refuse de les laisser tomber.
+   */
+  it("garde les six adresses qui etaient des pages, comme documents de renvoi", () => {
+    expect(redirectedAddresses(PAGES)).toEqual([
+      "/fr/realisations",
+      "/en/work",
+      "/fr/parcours",
+      "/en/about",
+      "/fr/contact",
+      "/en/contact",
+    ]);
+    for (const address of redirectedAddresses(PAGES)) expect(PRERENDERED).toContain(address);
   });
 
   it("is the sole source of the addresses the build must produce", () => {
@@ -55,7 +86,7 @@ describe("the table of pages", () => {
     expect(readFileSync("scripts/routes.mjs", "utf8")).not.toMatch(/["'`]\/(?:fr|en)\//);
   });
 
-  it("keeps home out of the common route, which therefore produces no address for it", () => {
+  it("keeps the opening out of the redirect route, which therefore produces no stub for it", () => {
     expect(pageForSlug("fr", "")).toBeUndefined();
     expect(pageForSlug("en", "")).toBeUndefined();
     expect(NAMED_PAGES.map((page) => page.key)).not.toContain("home");

@@ -115,16 +115,24 @@ a:hover {
 }
 
 /*
- * Le bandeau qui OUVRE une page perd son filet superieur : il annoncait une
- * separation d'avec une section qui n'existe pas, et depuis que la barre est
- * fixe il doublait le sien a cent pixels de lui — mesure a y=68 et y=172 sur
- * /fr/realisations. Celui qui SUIT du contenu le garde, parce que la
- * separation qu'il annonce, elle, existe : une regle ecrite pour tout bandeau
- * casserait la seule chose qui separe deux blocs du parcours.
+ * L'echelle du titre de section, ici et non dans une feuille de section,
+ * parce que la page unique en aligne cinq a la suite et que la maquette les
+ * dessine identiques. Ecrite deux fois — une par section qui en portait un —
+ * elle pouvait differer d'elle-meme, et `duplication` avait raison de le dire.
+ *
+ * L'exception qui retirait le filet au bandeau OUVRANT une page a ete retiree
+ * le 2026-09-10 : depuis que le site publie une page unique, aucun bandeau
+ * n'ouvre plus rien — le premier suit la rangee de faits, donc la separation
+ * qu'il annonce existe vraiment. Une regle qui ne peut plus s'appliquer est
+ * une regle que le prochain lecteur croira active.
  */
-main > .section-head:first-child {
-  border-top: 0;
-  padding-top: 0;
+.section-head h2 {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
 }
 
 .num,

@@ -26,10 +26,10 @@ export const DEFAULT_LOCALE: Locale = "fr";
 export const DICTIONARIES = {
   fr: {
     bar: { skip: "Aller au contenu", nav: "Navigation principale", theme: "Sombre" },
-    nav: { home: "Accueil", works: "Réalisations", journey: "Parcours", contact: "Contact" },
+    nav: { works: "Réalisations", journey: "Parcours", contact: "Contact" },
     footer: { label: "Pied de page", place: "Rennes, France" },
+    moved: { call: "Continuer vers la page" },
     home: {
-      title: "Accueil",
       heading: "Ingénieur logiciel",
       lede:
         "Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail " +
@@ -48,7 +48,6 @@ export const DICTIONARIES = {
       },
     },
     works: {
-      title: "Réalisations",
       heading: "Réalisations",
       personal: "Projet personnel",
       openSource: "Projet personnel, open source",
@@ -60,7 +59,6 @@ export const DICTIONARIES = {
       demo: "Voir le site",
     },
     journey: {
-      title: "Parcours",
       heading: "Parcours",
       sections: {
         experience: "Expérience",
@@ -74,7 +72,6 @@ export const DICTIONARIES = {
       resume: "CV en PDF",
     },
     contact: {
-      title: "Contact",
       heading: "Contact",
       lede: "Disponible immédiatement",
       call: "Me joindre sur LinkedIn",
@@ -94,10 +91,10 @@ export const DICTIONARIES = {
   },
   en: {
     bar: { skip: "Skip to content", nav: "Main navigation", theme: "Dark" },
-    nav: { home: "Home", works: "Work", journey: "About", contact: "Contact" },
+    nav: { works: "Work", journey: "About", contact: "Contact" },
     footer: { label: "Site footer", place: "Rennes, France" },
+    moved: { call: "Continue to the page" },
     home: {
-      title: "Home",
       heading: "Software engineer",
       lede:
         "I put assistants in the hands of business users, and I write the framework that makes that work " +
@@ -116,7 +113,6 @@ export const DICTIONARIES = {
       },
     },
     works: {
-      title: "Work",
       heading: "Work",
       personal: "Personal project",
       openSource: "Personal project, open source",
@@ -128,7 +124,6 @@ export const DICTIONARIES = {
       demo: "View the site",
     },
     journey: {
-      title: "About",
       heading: "About",
       sections: {
         experience: "Experience",
@@ -142,7 +137,6 @@ export const DICTIONARIES = {
       resume: "Résumé (PDF)",
     },
     contact: {
-      title: "Contact",
       heading: "Contact",
       lede: "Available immediately",
       call: "Reach me on LinkedIn",

@@ -1,7 +1,14 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { PAGES as PARTS, publishedAddresses } from "../../src/shared/pages";
 
-const PAGES = ["/fr", "/en", "/fr/realisations", "/en/work", "/fr/parcours", "/en/about", "/fr/contact", "/en/contact"];
+/*
+ * Les pages publiees, lues dans la table plutot que recopiees : depuis que le
+ * site en publie UNE par langue, une liste ecrite ici aurait continue a nommer
+ * six adresses devenues des documents de renvoi, que le balayage aurait quittes
+ * en cours de mesure.
+ */
+const PAGES = publishedAddresses(PARTS);
 
 for (const path of PAGES) {
   test(`${path} has no detectable accessibility violation @a11y`, async ({ page }) => {

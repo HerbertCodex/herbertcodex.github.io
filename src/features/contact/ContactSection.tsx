@@ -1,22 +1,27 @@
-import { Title } from "@solidjs/meta";
 import { For } from "solid-js";
 import ContactLinks, { CONTACT_CALL } from "./ContactLinks";
+import SectionHead from "~/shared/SectionHead";
 import { useI18n } from "~/shared/i18n";
-import "./ContactPage.css";
+import "./ContactSection.css";
 
 const TERMS = ["contract", "place", "start"] as const;
 
+type ContactSectionProps = {
+  readonly rank: number;
+  readonly anchor: string;
+};
+
 /**
- * The page saying how to get in touch, and under which conditions.
+ * The section saying how to get in touch, and under which conditions.
  *
- * @returns the contact page, in the language in force
+ * @param props - the rank this section carries in the page, and its anchor
+ * @returns the contact section, in the language in force
  */
-export default function ContactPage() {
+export default function ContactSection(props: ContactSectionProps) {
   const { t } = useI18n();
   return (
-    <main>
-      <Title>{t("contact.title")}</Title>
-      <h1>{t("contact.heading")}</h1>
+    <section class="contact" aria-labelledby={props.anchor}>
+      <SectionHead rank={props.rank} name={t("contact.heading")} headingId={props.anchor} />
       <section class="card">
         <div class="reach">
           <span class="status">{t("contact.lede")}</span>
@@ -36,6 +41,6 @@ export default function ContactPage() {
           </For>
         </dl>
       </section>
-    </main>
+    </section>
   );
 }

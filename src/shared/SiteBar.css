@@ -105,6 +105,24 @@
   border-bottom: 0;
 }
 
+/*
+ * La section qu'on lit, dite deux fois. `aria-current="location"` l'annonce aux
+ * lecteurs d'écran ; la graisse et le trait vermillon la montrent à qui
+ * regarde. La couleur SEULE ne conviendrait pas — elle laisse dehors qui
+ * distingue mal deux teintes, et c'est le critère 1.4.1.
+ *
+ * Le soulignement est choisi plutôt qu'un filet parce qu'il ne prend aucune
+ * place : un `border-bottom` aurait grandi la barre, dont la hauteur de 72 px
+ * est mesurée par la suite du rythme vertical.
+ */
+.bar nav a[aria-current="location"] {
+  font-weight: var(--weight-bold);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: var(--border-heavy);
+  text-underline-offset: var(--space-1);
+}
+
 .bar nav a {
   font-size: var(--text-sm);
   letter-spacing: var(--track-wide);

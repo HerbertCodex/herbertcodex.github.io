@@ -3,7 +3,27 @@
   "source": "https://owasp.org/Top10/2025/",
   "categories": {
     "A01": { "name": "Broken Access Control", "status": "unverified", "controls": [], "limitations": [] },
-    "A02": { "name": "Security Misconfiguration", "status": "unverified", "controls": [], "limitations": [] },
+    "A02": {
+      "name": "Security Misconfiguration",
+      "status": "partial",
+      "controls": [
+        {
+          "gate": "dast_baseline",
+          "description": "Le serveur de la CI (scripts/serve-static.mjs) pose sur chaque réponse les cinq en-têtes que le build calcule : Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy et Permissions-Policy. Il refuse de démarrer sans eux, et la porte dast_baseline les mesure par le scan passif de ZAP."
+        },
+        {
+          "gate": "test_e2e",
+          "description": "Le build écrit dans chaque page prérendue deux balises, seules à atteindre un visiteur de GitHub Pages : <meta http-equiv=\"Content-Security-Policy\">, la politique de l'en-tête moins frame-ancestors, et <meta name=\"referrer\">. Servi sans aucun en-tête, le site s'hydrate sans violation et refuse un script inline injecté (tests/e2e/site-nu.spec.ts)."
+        }
+      ],
+      "limitations": [
+        "Seul le serveur de la CI est mesuré : dast_baseline et la suite navigateur le traversent, jamais l'hébergeur de production.",
+        "GitHub Pages, l'hébergeur de production, n'envoie aucun en-tête de sécurité et n'offre aucun moyen d'en configurer (curl -sI https://pages.github.com/, le 2026-09-10) : ce qui atteint le visiteur est ce que le HTML porte.",
+        "Sur GitHub Pages, le refus de mise en cadre (frame-ancestors, X-Frame-Options), nosniff (X-Content-Type-Options) et la Permissions-Policy ne sont pas délivrés : aucun n'a de forme en balise.",
+        "L'impact d'une mise en cadre est borné au choix de thème du visiteur : le site n'a ni formulaire, ni appel réseau, ni compte. Aucun script de défense contre la mise en cadre n'est ajouté (décision D-5, spec s-5d3y).",
+        "Un rapport ZAP vert ne couvre que ce que le scan a atteint : il ne fait pas passer la catégorie à vérifiée."
+      ]
+    },
     "A03": { "name": "Software Supply Chain Failures", "status": "unverified", "controls": [], "limitations": [] },
     "A04": { "name": "Cryptographic Failures", "status": "unverified", "controls": [], "limitations": [] },
     "A05": { "name": "Injection", "status": "unverified", "controls": [], "limitations": [] },

@@ -293,6 +293,7 @@
       /* ---- Ouverture --------------------------------------------------- */
 
       h1 {
+        text-wrap: balance;
         font-size: clamp(var(--text-2xl), 10vw, var(--text-3xl));
         line-height: var(--leading-tight);
         letter-spacing: var(--track-tight);
@@ -302,7 +303,13 @@
         margin: 0 0 var(--space-3);
       }
 
+      /*
+       * `pretty` evite le mot seul sur la derniere ligne ; l'espace insecable
+       * avant le deux-points, dans le texte, evite qu'une ligne se coupe entre
+       * le mot et sa ponctuation.
+       */
       .lede {
+        text-wrap: pretty;
         font-size: var(--text-lg);
         line-height: var(--leading-snug);
         color: var(--ink-muted);
@@ -1018,9 +1025,9 @@
       -->
       <div class="opening">
         <p class="lede">
-          Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui rend ce travail vérifiable :
-          exigences écrites, rôles séparés, portes exécutables. Avec ou sans IA. Cette page en est la démonstration,
-          puisqu'elle est construite par ce cadre.
+          Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui le rend vérifiable : exigences
+          écrites, rôles séparés, portes exécutables. Avec ou sans IA. Cette page en est la preuve — ce cadre l'a
+          construite.
         </p>
         <div class="facts">
           <span class="now">CDI ou freelance</span>

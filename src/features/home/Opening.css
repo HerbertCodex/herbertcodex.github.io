@@ -52,10 +52,24 @@
   }
 }
 
+/*
+ * `pretty` sur le chapo, et non `balance` : `balance` est fait pour quelques
+ * lignes, `pretty` pour un paragraphe. Il evite le mot seul sur la derniere
+ * ligne et les coupures qui laissent une ligne trop courte — c'est ce que
+ * l'operateur a vu le 2026-09-11, « cadre. » tout seul sous trois lignes
+ * pleines.
+ *
+ * Ce que le CSS ne peut pas faire, le TEXTE le fait : l'espace avant le
+ * deux-points est insecable dans les dictionnaires, comme la typographie
+ * francaise le demande. Sans elle, la ligne pouvait se couper entre le mot et
+ * son deux-points — et le formateur de ce depot l'avait fait lui-meme dans la
+ * maquette.
+ */
 .lede {
   font-size: var(--text-lg);
   line-height: var(--leading-snug);
   max-width: var(--measure);
+  text-wrap: pretty;
 }
 
 /*

@@ -32,9 +32,9 @@ export const DICTIONARIES = {
     home: {
       heading: "Ingénieur Logiciel",
       lede:
-        "Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui rend ce travail " +
-        "vérifiable : exigences écrites, rôles séparés, portes exécutables. Avec ou sans IA. Cette page en " +
-        "est la démonstration, puisqu'elle est construite par ce cadre.",
+        "Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui le rend " +
+        "vérifiable : exigences écrites, rôles séparés, portes exécutables. Avec ou sans IA. " +
+        "Cette page en est la preuve — ce cadre l'a construite.",
       facts: {
         contract: "CDI ou freelance",
         place: "Rennes, mobile en France",
@@ -97,9 +97,9 @@ export const DICTIONARIES = {
     home: {
       heading: "Software Engineer",
       lede:
-        "I ship business software on distributed systems, and I write the framework that makes that work " +
-        "verifiable: written requirements, separated roles, executable gates. With or without AI. This page " +
-        "is that demonstration, since it is built by that framework.",
+        "I deliver business software on distributed systems, and I write the frame that makes it " +
+        "verifiable: written requirements, separated roles, executable gates. With or without AI. " +
+        "This page is the proof — that frame built it.",
       facts: {
         contract: "Permanent or freelance",
         place: "Rennes, mobile across France",

@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import { LOCALES } from "../../src/shared/i18n";
-import { NAMED_PAGES, PAGES, addressOf, publishedAddresses } from "../../src/shared/pages";
+import { PAGES, SECTIONS, addressOfSection, publishedAddresses } from "../../src/shared/pages";
 
 const ADDRESSES = publishedAddresses(PAGES);
 
@@ -85,11 +85,11 @@ test.describe("la barre que porte chaque page", () => {
     expect(verdicts).toEqual(ADDRESSES.map((address) => `${address}: ok`));
   });
 
-  test("la barre donne accès aux trois sections depuis chaque page", async ({ page }) => {
+  test("la barre donne accès à chaque section depuis chaque page", async ({ page }) => {
     const verdicts: string[] = [];
     for (const locale of LOCALES) {
       const address = `/${locale}`;
-      const expected = NAMED_PAGES.map((part) => addressOf(part, locale));
+      const expected = SECTIONS.map((section) => addressOfSection(section, locale));
       await page.goto(address);
       const reached = new Set<string>();
       for (let step = 0; step < TAB_BUDGET; step += 1) {

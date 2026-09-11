@@ -38,7 +38,7 @@ test.describe("a shared link opens in the language it names", () => {
     await page.goto("/en/about");
     await page.waitForURL(/\/en#about$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.getByRole("navigation").getByRole("link", { name: "About" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "Experience" })).toBeVisible();
     expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
   });
 });

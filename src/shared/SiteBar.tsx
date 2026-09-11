@@ -3,7 +3,7 @@ import LanguageSwitch from "~/shared/LanguageSwitch";
 import ThemeToggle from "~/shared/ThemeToggle";
 import { useI18n, type Locale } from "~/shared/i18n";
 import { PERSON } from "~/shared/identity";
-import { NAMED_PAGES, addressOf, anchorOf } from "~/shared/pages";
+import { SECTIONS, addressOfSection } from "~/shared/pages";
 import "./SiteBar.css";
 
 type SiteBarProps = {
@@ -40,7 +40,7 @@ function anchorInForce(locale: () => Locale) {
       asked = false;
       const reserve = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
       const line = Number.isNaN(reserve) ? 0 : reserve;
-      const anchors = NAMED_PAGES.map((page) => anchorOf(page, locale())).filter(
+      const anchors = SECTIONS.map((section) => section.slugs[locale()]).filter(
         (anchor) => document.getElementById(anchor) != null,
       );
       let current = "";
@@ -91,7 +91,7 @@ function anchorInForce(locale: () => Locale) {
 }
 
 /**
- * The bar every page carries: the way out, the three sections, the languages and the theme.
+ * The bar every page carries: the way out, the sections, the languages and the theme.
  *
  * The link of the section being read carries `aria-current="location"` — the
  * value ARIA defines for a place WITHIN a document, where `page` names a
@@ -112,13 +112,13 @@ export default function SiteBar(props: SiteBarProps) {
       <header class="bar">
         <span class="mark">{PERSON}</span>
         <nav aria-label={t("bar.nav")}>
-          <For each={NAMED_PAGES}>
-            {(page) => (
+          <For each={SECTIONS}>
+            {(section) => (
               <a
-                href={addressOf(page, locale())}
-                aria-current={anchorOf(page, locale()) === reached() ? "location" : undefined}
+                href={addressOfSection(section, locale())}
+                aria-current={section.slugs[locale()] === reached() ? "location" : undefined}
               >
-                {t(`nav.${page.key}`)}
+                {t(section.label)}
               </a>
             )}
           </For>

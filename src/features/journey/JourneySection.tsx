@@ -8,6 +8,7 @@ import "./JourneySection.css";
 type JourneySectionProps = {
   readonly from: number;
   readonly anchor: string;
+  readonly anchors: Readonly<Record<"experience" | "education" | "skills", string>>;
   readonly journey?: Journey;
   readonly resume?: Resume;
 };
@@ -171,7 +172,8 @@ function Row(props: RowProps) {
  * knows is broken.
  *
  * @param props - the rank to start numbering at, the anchor the menu points
- *   to, and optionally the journey to show and the résumé to offer
+ *   to, the anchor of each of its three permanent sections, and optionally the
+ *   journey to show and the résumé to offer
  * @returns the journey sections, in the language in force
  */
 export default function JourneySection(props: JourneySectionProps) {
@@ -183,14 +185,20 @@ export default function JourneySection(props: JourneySectionProps) {
   const period = (start: string, end: string | null) =>
     `${asMonth(start)}–${end === null ? t("journey.present") : asMonth(end)}`;
 
-  const named = { education: createUniqueId(), certifications: createUniqueId(), skills: createUniqueId() };
+  /*
+   * Les certifications sont la seule section sans ancre declaree : elle
+   * n'apparait que s'il en existe une, et le menu ne peut pas nommer ce qui
+   * n'est pas toujours la. Son titre garde donc un identifiant genere, qui
+   * suffit a `aria-labelledby`.
+   */
+  const named = createUniqueId();
 
   return (
-    <div class="journey">
+    <div class="journey" id={props.anchor}>
       <Section
         rank={props.from}
         name={t("journey.sections.experience")}
-        headingId={props.anchor}
+        headingId={props.anchors.experience}
         count={journey().experiences.length}
       >
         <Experiences journey={journey()} period={period} current={t("journey.current")} />
@@ -199,7 +207,7 @@ export default function JourneySection(props: JourneySectionProps) {
       <Section
         rank={props.from + 1}
         name={t("journey.sections.education")}
-        headingId={named.education}
+        headingId={props.anchors.education}
         count={journey().education.length}
       >
         <Education journey={journey()} ongoing={t("journey.ongoing")} />
@@ -209,7 +217,7 @@ export default function JourneySection(props: JourneySectionProps) {
         <Section
           rank={props.from + 2}
           name={t("journey.sections.certifications")}
-          headingId={named.certifications}
+          headingId={named}
           count={certifications().length}
         >
           <Rows of={certifications()} as={(row) => ({ when: row.obtainedAt, name: row.body, detail: row.subject })} />
@@ -219,7 +227,7 @@ export default function JourneySection(props: JourneySectionProps) {
       <Section
         rank={props.from + journeyHeadCount(journey()) - 1}
         name={t("journey.sections.skills")}
-        headingId={named.skills}
+        headingId={props.anchors.skills}
         count={groups().reduce((total, group) => total + group.skills.length, 0)}
       >
         <Skills groups={groups()} />

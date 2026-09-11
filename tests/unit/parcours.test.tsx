@@ -11,7 +11,12 @@ function shown(locale: Locale, journey?: Journey) {
   return render(() => (
     <MetaProvider>
       <I18nContext.Provider value={createI18n(() => locale)}>
-        <JourneySection from={2} anchor="parcours" journey={journey} />
+        <JourneySection
+          from={2}
+          anchor="parcours"
+          anchors={{ experience: "experience", education: "formation", skills: "competences" }}
+          journey={journey}
+        />
       </I18nContext.Provider>
     </MetaProvider>
   ));

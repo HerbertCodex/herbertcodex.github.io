@@ -71,19 +71,21 @@ if (FAULTS.length > 0) {
 /**
  * The second rank of the contact block: the profiles, then the résumé.
  *
+ * They are list ITEMS and no longer a list of their own: the plate draws one
+ * row of links, the primary call first, and two lists side by side would have
+ * been two rows that a reader reads as two ranks.
+ *
  * @returns the secondary contact links, in the language in force
  */
 export default function ContactLinks() {
   const { locale, t } = useI18n();
   return (
-    <ul class="links">
-      <For each={contactMeans(locale())}>
-        {(mean) => (
-          <li>
-            <a href={mean.href}>{t(`contact.links.${mean.key}`)}</a>
-          </li>
-        )}
-      </For>
-    </ul>
+    <For each={contactMeans(locale())}>
+      {(mean) => (
+        <li>
+          <a href={mean.href}>{t(`contact.links.${mean.key}`)}</a>
+        </li>
+      )}
+    </For>
   );
 }

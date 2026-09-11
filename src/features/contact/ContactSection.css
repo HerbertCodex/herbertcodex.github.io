@@ -1,82 +1,102 @@
 /*
- * Le bandeau de la derniere section respire comme ceux du parcours : la page
- * unique les aligne, et un dernier bandeau plus serre que les autres se lirait
- * comme une fin de page involontaire.
+ * Le contact ferme la page sur un APLAT PLEIN, comme la maquette de référence
+ * le dessine. Les valeurs sont transcrites de `mockups/portfolio-v1.html`,
+ * jamais réinventées.
+ *
+ * Il avait été ramené à une fiche sur papier au round 9 de s-5bjp, pour une
+ * raison écrite : « un aplat rouge plein qui couvre les deux tiers de la page
+ * et repousse les conditions plus bas ». Cette raison portait sur une PAGE de
+ * contact. Depuis la décision 0018, le contact est la dernière SECTION d'une
+ * page unique : l'aplat n'y couvre plus une page, il la ferme, et les
+ * conditions restent dessus. L'opérateur a tranché le 2026-09-11 ; la décision
+ * 0021 le consigne, et le périmètre signé du round 9 porte l'amendement.
  */
-.contact .section-head {
-  margin: var(--space-6) 0 var(--space-4);
-}
-
-/*
- * Le contact est une FICHE posee sur le papier : l'appel d'un cote, les
- * conditions de l'autre. L'aplat vermillon plein qui portait toute la page a
- * disparu — un aplat qui couvre les deux tiers d'un ecran n'est plus un
- * signal, c'est un fond, et il repoussait les conditions hors de la premiere
- * lecture.
- */
-.card {
-  display: grid;
-  /*
-   * minmax(0, 1fr) et non le defaut : une piste de grille en `auto` ne descend
-   * pas sous la largeur de son contenu, et l'appel, compose au corps le plus
-   * gros de la fiche, faisait deborder le bloc de 122 px a 375 du temps ou il
-   * portait une adresse. Piege deja paye trois fois dans ce depot.
-   */
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
+.contact {
+  background: var(--accent-plate);
+  color: var(--on-accent);
+  padding: var(--space-5);
   margin-top: var(--space-6);
 }
 
-/* Une requete de media ne peut pas lire var() : 768 px est le jeton --bp-md. */
+/*
+ * Le bandeau de section est POSÉ SUR l'aplat. Il garde sa marge du haut, il
+ * ouvrirait une bande rouge vide ; et son filet d'encre comme son numéro
+ * vermillon disparaîtraient dans le fond. Sur l'aplat, tout passe en encre
+ * inverse.
+ */
+.contact .section-head {
+  /*
+   * La marge du haut disparait — elle ouvrirait une bande rouge vide — et
+   * celle du bas est celle que la maquette pose sous tout bandeau de section.
+   * `src/app.css` n'en declare aucune : chaque section pose la sienne, et
+   * celle-ci pose donc les deux.
+   */
+  margin: 0 0 var(--space-4);
+  border-top-color: var(--on-accent);
+}
+
+.contact .num {
+  color: var(--on-accent);
+}
+
+/*
+ * La disponibilité est dite en grand, et non plus par une pastille : sur un
+ * aplat, une pastille du même aplat ne signale plus rien.
+ */
+.panel-title {
+  margin: 0 0 var(--space-4);
+  font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--track-tight);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  overflow-wrap: break-word;
+}
+
+/*
+ * Les conditions sont écrites, pas sous-entendues : un titre seul laisserait un
+ * chargé de recrutement deviner si sa proposition a une chance. Elles restent
+ * en graisse normale — le contrat est déjà annoncé en grand juste au-dessus, et
+ * répéter du gras ferait de la mobilité une revendication.
+ */
+.terms {
+  display: grid;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-4);
+  max-width: var(--measure);
+}
+
+/* Une requête de média ne peut pas lire var() : 768 px est le jeton --bp-md. */
 @media (min-width: 768px) {
-  .card {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  .terms {
+    grid-template-columns: auto 1fr;
   }
 }
 
 /*
- * L'appel porte le filet lourd et les conditions le filet fin : la hierarchie
- * de la fiche tient au trait, donc elle tient aussi sans la couleur.
+ * Les libelles reprennent l'encre inverse, et RIEN D'AUTRE : `src/app.css` les
+ * compose deja comme le petit texte mono en capitales, et recopier ces quatre
+ * declarations ici en ferait deux qui peuvent diverger — `duplication` l'a
+ * refuse, a juste titre. Seule la couleur change, parce que le gris du papier
+ * disparait dans l'aplat : mesure a l'ecran avant d'etre corrige.
  */
-.reach {
-  border-top: var(--border-heavy) solid var(--ink);
-  padding-top: var(--space-3);
-}
-
-.terms {
-  display: grid;
-  gap: var(--space-3);
-  margin: 0;
-  border-top: var(--border-hairline) solid var(--rule);
-  padding-top: var(--space-3);
-}
-
-.terms dd {
-  margin: var(--space-1) 0 0;
-}
-
-/*
- * La disponibilite est un SIGNAL, pas un fond : elle tient dans une pastille
- * au bas de l'echelle typographique, dont `src/app.css` porte deja le corps,
- * la casse et l'interlettrage. Ne reste ici que l'aplat et le texte clair
- * qu'il exige — la decision 0012 tient les deux jetons distincts de l'accent
- * pour que le rapport clair-sur-sature vaille dans les deux themes.
- */
-.card .status {
-  display: inline-block;
-  margin-bottom: var(--space-3);
-  padding: var(--space-1) var(--space-2);
-  background: var(--accent-plate);
+.terms dt {
+  align-self: baseline;
   color: var(--on-accent);
 }
 
-.reach-call {
-  display: block;
-  margin-bottom: var(--space-4);
-  min-height: var(--tap-min);
-  font-size: clamp(var(--text-lg), 3vw, var(--text-xl));
-  line-height: var(--leading-tight);
-  font-weight: var(--weight-bold);
-  overflow-wrap: break-word;
-  text-decoration: none;
+.terms dd {
+  margin: 0;
+}
+
+/*
+ * Les liens prennent l'encre inverse, et leur filet avec : `src/app.css` le
+ * pose en `--accent`, qui sur cet aplat est la même couleur que le fond.
+ */
+.contact a {
+  color: var(--on-accent);
+}
+
+.contact .links a {
+  border-bottom-color: var(--on-accent);
 }

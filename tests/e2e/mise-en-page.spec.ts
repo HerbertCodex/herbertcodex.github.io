@@ -61,11 +61,6 @@ async function boxesOf(page: Page, selector: string): Promise<Box[]> {
   );
 }
 
-/* Les boîtes rangées de la gauche vers la droite, pour lire un recouvrement horizontal. */
-function acrossThePage(boxes: readonly Box[]): Box[] {
-  return [...boxes].sort((one, other) => one.left - other.left);
-}
-
 /*
  * Le bloc « l'accueil ouvre sur trois cellules » a été retiré le 2026-09-10
  * avec la liste qu'il mesurait. Cette liste conduisait aux trois autres pages ;
@@ -74,80 +69,97 @@ function acrossThePage(boxes: readonly Box[]): Box[] {
  * tests/e2e/menu-ancres.spec.ts, et l'ordre des cinq sections par
  * tests/e2e/adressage.spec.ts.
  */
-test.describe("le contact se lit comme une fiche", () => {
-  test("l'appel et les conditions sont côte à côte à 1440 px, dans les deux langues", async ({ page }) => {
-    const apart: string[] = [];
+test.describe("le contact ferme la page sur un aplat", () => {
+  /*
+   * Il se lisait comme une FICHE posée sur le papier depuis le round 9 de
+   * s-5bjp, qui avait fait disparaître l'aplat plein. L'opérateur est revenu
+   * dessus le 2026-09-11 : la raison écrite au round 9 — « un aplat qui couvre
+   * les deux tiers de la page » — portait sur une page de contact, et le
+   * contact est depuis la dernière SECTION d'une page unique. Le périmètre
+   * signé porte l'amendement, et la décision 0021 le consigne.
+   *
+   * Ces trois critères sont l'exact retournement de ceux qu'ils remplacent, et
+   * c'est voulu : ce qui était interdit est maintenant exigé, à l'endroit même
+   * où l'interdiction était écrite.
+   */
+  test("la section entière porte l'aplat et l'encre inverse, dans les deux langues", async ({ page }) => {
     await page.setViewportSize(WIDE);
+    await page.goto(CONTACT[0]!);
+    const plate = await resolved(page, "background-color: var(--accent-plate)", "background-color");
+    const onPlate = await resolved(page, "color: var(--on-accent)", "color");
+    const wrong: string[] = [];
 
     for (const address of CONTACT) {
       await page.goto(address);
-      const [call] = await boxesOf(page, "main .reach");
-      const [terms] = await boxesOf(page, "main .terms");
+      const worn = await page.evaluate(() => {
+        const section = document.querySelector("main section.contact");
+        if (section === null) return null;
+        const style = getComputedStyle(section);
+        return {
+          background: style.backgroundColor,
+          color: style.color,
+          height: section.getBoundingClientRect().height,
+        };
+      });
 
-      if (call === undefined || terms === undefined) {
-        apart.push(`${address} : l'appel ou les conditions manquent à la fiche`);
-        continue;
-      }
-      if (call.top !== terms.top) {
-        apart.push(`${address} : bords supérieurs à ${call.top} px et ${terms.top} px`);
-      }
-      const [first, second] = acrossThePage([call, terms]);
-      if (second.left < first.right) {
-        apart.push(`${address} : une boîte commence à ${second.left} px, l'autre finit à ${first.right} px`);
-      }
+      if (worn === null) wrong.push(`${address} : aucune section de contact`);
+      else if (worn.background !== plate) wrong.push(`${address} : fond ${worn.background} au lieu de ${plate}`);
+      else if (worn.color !== onPlate) wrong.push(`${address} : encre ${worn.color} au lieu de ${onPlate}`);
+      else if (worn.height < 200) wrong.push(`${address} : l'aplat ne mesure que ${Math.round(worn.height)} px`);
     }
 
-    expect(apart).toEqual([]);
+    expect(wrong).toEqual([]);
   });
 
-  test("la disponibilité est dite par une pastille en aplat, dans les deux langues", async ({ page }) => {
+  /*
+   * Rien de ce qui est posé SUR l'aplat ne doit garder une couleur pensée pour
+   * le papier. Les libellés des conditions sont le cas mesuré : `src/app.css`
+   * les compose en gris, et ce gris disparaissait dans le fond.
+   */
+  test("rien de ce qui est posé dessus ne garde une couleur de papier, dans les deux langues", async ({ page }) => {
     await page.setViewportSize(WIDE);
-    await page.goto(CONTACT[0]);
-    const plate = await resolved(page, "background-color: var(--accent-plate)", "background-color");
+    await page.goto(CONTACT[0]!);
     const onPlate = await resolved(page, "color: var(--on-accent)", "color");
-    const absent: string[] = [];
+    const muted = await resolved(page, "color: var(--ink-muted)", "color");
+    const ink = await resolved(page, "color: var(--ink)", "color");
+    const wrong: string[] = [];
 
     for (const address of CONTACT) {
       await page.goto(address);
       const worn = await page.evaluate(
-        ({ plate: aplat, onPlate: over }) =>
-          [...document.querySelectorAll("*")].filter((node) => {
-            const style = getComputedStyle(node);
-            return style.backgroundColor === aplat && style.color === over;
-          }).length,
-        { plate, onPlate },
+        ({ paper }) =>
+          [...document.querySelectorAll("main section.contact *")]
+            .filter((node) => node.textContent !== null && node.textContent.trim().length > 0)
+            .map((node) => ({ tag: node.tagName, color: getComputedStyle(node).color }))
+            .filter((seen) => paper.includes(seen.color)),
+        { paper: [muted, ink] },
       );
 
-      if (worn === 0) absent.push(`${address} : aucun élément ne porte l'aplat ${plate} avec le texte ${onPlate}`);
+      for (const seen of worn) wrong.push(`${address} : ${seen.tag} écrit en ${seen.color}, pas en ${onPlate}`);
     }
 
-    expect(absent).toEqual([]);
+    expect(wrong).toEqual([]);
   });
 
-  test("plus aucun aplat vermillon ne fait un bandeau, à 1440 px dans les deux langues", async ({ page }) => {
+  test("le filet des liens se voit sur l'aplat, dans les deux langues", async ({ page }) => {
     await page.setViewportSize(WIDE);
-    await page.goto(CONTACT[0]);
-    const vermillon = await resolved(page, "background-color: var(--accent-plate)", "background-color");
-    const ceiling = Number.parseFloat(await resolved(page, "height: var(--space-5)", "height"));
-    const banners: string[] = [];
+    await page.goto(CONTACT[0]!);
+    const onPlate = await resolved(page, "color: var(--on-accent)", "color");
+    const wrong: string[] = [];
 
     for (const address of CONTACT) {
       await page.goto(address);
-      const tall = await page.evaluate(
-        ({ vermillon: aplat, ceiling: limit }) =>
-          [...document.querySelectorAll("*")]
-            .filter((node) => getComputedStyle(node).backgroundColor === aplat)
-            .map((node) => ({ tag: node.tagName, height: Math.round(node.getBoundingClientRect().height) }))
-            .filter((seen) => seen.height >= limit),
-        { vermillon, ceiling },
-      );
+      const rules = await page
+        .locator("main section.contact .links a")
+        .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).borderBottomColor));
 
-      for (const seen of tall) {
-        banners.push(`${address} : ${seen.tag} en aplat mesure ${seen.height} px, pour un plafond de ${ceiling} px`);
+      if (rules.length === 0) wrong.push(`${address} : aucun lien dans la rangée`);
+      for (const rule of rules) {
+        if (rule !== onPlate) wrong.push(`${address} : un filet en ${rule}, invisible sur l'aplat`);
       }
     }
 
-    expect(banners).toEqual([]);
+    expect(wrong).toEqual([]);
   });
 });
 

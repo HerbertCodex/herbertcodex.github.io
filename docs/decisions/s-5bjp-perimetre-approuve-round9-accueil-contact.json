@@ -3,6 +3,14 @@
   "document": "perimetre_approuve",
   "spec_id": "s-5bjp",
   "round": 9,
+  "amendment": {
+    "at": "2026-09-11",
+    "by": "operateur",
+    "what": "Le point 2 du perimetre fonctionnel — « CONTACT EN FICHE. L adresse et les liens a gauche sur fond papier, les conditions a droite. Le bandeau vermillon plein disparait. Une pastille Disponible immediatement en aplat. » — est RENVERSE. Le contact ferme de nouveau la page sur un aplat vermillon plein, comme la maquette de reference le dessine, et la pastille disparait : la disponibilite y est dite en grand.",
+    "because": "La raison ecrite au round 9 est citee mot pour mot dans ce document : « au lieu d un aplat rouge plein qui couvre les deux tiers de la page et repousse les conditions plus bas ». Elle portait sur une PAGE de contact. Depuis la decision 0018 du 2026-09-10, le site publie une page unique et le contact en est la derniere SECTION : l aplat n y couvre plus une page, il la ferme, et les conditions restent dessus. La premisse du critere a change, pas le jugement de l operateur. Il a montre la maquette et dit qu il preferait cette forme.",
+    "measured": "Le contraste n est pas suppose : la porte accessibility passe axe avec les etiquettes wcag2a, wcag2aa, wcag21a et wcag21aa sur les deux pages publiees, aplat compris, apres le changement. Un defaut a ete trouve a l ecran et corrige avant la livraison — les libelles des conditions, que src/app.css compose en gris, disparaissaient dans le fond ; ils prennent l encre inverse, et un critere l exige desormais pour TOUT texte pose sur l aplat.",
+    "consequence": "Les trois criteres de tests/e2e/mise-en-page.spec.ts qui decrivaient la fiche sont retournes a l endroit meme ou ils etaient ecrits : ce qui etait interdit — un aplat vermillon plus haut que --space-5 — est desormais exige. La decision 0021 consigne le tout."
+  },
   "title": "L accueil en grille, le contact en fiche, la page a sa largeur, le filet en trop et l icone de theme",
   "approved_at": "2026-09-07T06:03:26Z",
   "approved_by": "operator",

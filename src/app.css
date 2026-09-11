@@ -79,13 +79,13 @@ a:hover {
  * juste au-dessus donne deja : une primitive recopiee par composant est une
  * primitive qui divergera.
  *
- * La pastille de disponibilite en est le meme objet a une chose pres : elle se
- * pose sur un aplat, donc elle reprend le corps, la casse et l'interlettrage
- * ici et ne redeclare que la couleur, dans la feuille de sa page.
+ * La pastille de disponibilite en faisait partie jusqu'au 2026-09-11. Le
+ * contact ferme desormais la page sur un aplat plein, et une pastille du meme
+ * aplat, posee dessus, ne signalait plus rien : la disponibilite y est dite en
+ * grand. La classe est retiree d'ici plutot que laissee sans porteur.
  */
 .facts,
 .foot,
-.status,
 .terms dt {
   font-family: var(--font-mono);
   font-size: var(--text-xs);

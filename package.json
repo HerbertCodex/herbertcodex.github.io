@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "node scripts/clean-output.mjs && vite build && node scripts/check-build.mjs && node scripts/security-headers.mjs",
-    "start": "node .output/server/index.mjs",
-    "preview": "pnpm run build && node .output/server/index.mjs",
+    "start": "node scripts/serve-static.mjs",
+    "preview": "pnpm run build && node scripts/serve-static.mjs",
     "check": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",

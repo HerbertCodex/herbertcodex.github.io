@@ -10,7 +10,7 @@ const PUBLISHED = publishedAddresses(PAGES);
 
 const REDIRECTED = redirectedAddresses(PAGES);
 
-const FACTS = ["CDI ou freelance", "Rennes", "Master MIAGE", "FR · EN"];
+const FACTS = ["CDI ou freelance", "Rennes", "Master MIAGE · DLIS", "FR · EN"];
 
 test.describe("the addresses of the site", () => {
   test("the build writes one page per language, and a document for each address that was one", () => {

@@ -111,7 +111,10 @@ export const FRENCH: Words = {
     },
   },
   education: {
-    "master-miage": { degree: "Master MIAGE", institution: "Université de Rennes" },
+    "master-miage": {
+      degree: "Master MIAGE, parcours DLIS",
+      institution: "Université de Rennes — développement des logiciels et intégration de systèmes",
+    },
     "licence-miage": { degree: "Licence MIAGE", institution: "Université Félix Houphouët-Boigny, Abidjan" },
   },
   certifications: [],

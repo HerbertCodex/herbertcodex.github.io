@@ -73,6 +73,28 @@
 }
 
 /*
+ * Le chapo est JUSTIFIE, mais seulement la ou la colonne peut le porter.
+ *
+ * Mesure a 375 px : la colonne fait 327 px, soit environ vingt-huit signes.
+ * Justifiee, elle ecarte les mots jusqu'a « roles   separes,   portes » —
+ * des rivieres blanches au milieu du texte. La justification demande une
+ * colonne d'au moins une quarantaine de signes ; en deca, le drapeau a droite
+ * se lit mieux, et c'est ce qui est servi.
+ *
+ * La cesure automatique a ete essayee et retiree : elle coupait « ve-rifiable »
+ * en deux, ce qui est exactement ce que l'operateur ne veut pas. Sans elle, la
+ * justification n'a que les espaces pour combler, d'ou la largeur minimale
+ * ci-dessus plutot qu'une cesure.
+ *
+ * Une requete de media ne peut pas lire var() : 768 px est le jeton --bp-md.
+ */
+@media (min-width: 768px) {
+  .lede {
+    text-align: justify;
+  }
+}
+
+/*
  * La marge du bas revient au bloc : voir `.opening`. Celle du chapô reste
  * celle de tout paragraphe, et elle sépare les deux quand ils sont l'un sous
  * l'autre.

@@ -18,7 +18,7 @@ export const FRENCH: Words = {
         "Un développement assisté par IA produit vite et sans trace. Rien ne dit qui a décidé quoi, ni ce qui a " +
         "été vérifié avant que le code entre.",
       did:
-        "Séparé les rôles — Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle " +
+        "Séparé les rôles : Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle " +
         "les transitions. Une machine d'état borne les mouvements, des portes exécutables refusent, et chaque " +
         "preuve est attachée à un commit par son empreinte.",
       result:
@@ -113,7 +113,7 @@ export const FRENCH: Words = {
   education: {
     "master-miage": {
       degree: "Master MIAGE, parcours DLIS",
-      institution: "Université de Rennes — développement des logiciels et intégration de systèmes",
+      institution: "Université de Rennes, développement des logiciels et intégration de systèmes",
     },
     "licence-miage": { degree: "Licence MIAGE", institution: "Université Félix Houphouët-Boigny, Abidjan" },
   },

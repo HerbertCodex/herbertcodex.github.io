@@ -1,14 +1,73 @@
+/*
+ * L'ouverture : la phrase et les faits.
+ *
+ * Le bloc porte la respiration du bas — ni le chapô ni les faits — parce que
+ * sur un écran large les deux sont CÔTE À CÔTE et que le plus haut des deux
+ * déciderait sinon du rythme de ce qui suit.
+ */
+.opening {
+  margin: 0 0 var(--space-5);
+}
+
+/*
+ * Deux colonnes dès que la place existe. Mesuré sur le site publié : dans une
+ * colonne de 1392 px, le chapô s'arrête à 896 px — sa ligne de lecture de 64
+ * caractères — et laissait 500 px de vide à sa droite, alors que le titre, les
+ * faits et les cartes prennent toute la largeur. Les faits viennent l'occuper,
+ * ce qui remplit le vide avec ce que la page dit déjà et répond aux cartes de
+ * réalisation, elles aussi en deux colonnes.
+ *
+ * Deux tiers, un tiers : les faits commencent à une ligne de la grille, juste
+ * après la mesure du chapô, au lieu d'être poussés contre le bord droit. Pris
+ * en `auto`, ils s'y collaient et le vide se déplaçait simplement entre les
+ * deux colonnes — mesuré à 1920 px avant d'être corrigé.
+ *
+ * Une requête de média ne peut pas lire var() : 1024 px est le jeton --bp-lg.
+ */
+@media (min-width: 1024px) {
+  .opening {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  /*
+   * Le chapô rend sa marge du bas au bloc. Elle sépare deux blocs EMPILÉS ;
+   * côte à côte, elle ne sépare plus rien et s'ajoutait sous le plus haut des
+   * deux — mesuré à 1024 px, elle repoussait le premier bandeau de 24 px.
+   */
+  .lede {
+    margin-bottom: 0;
+  }
+
+  /*
+   * Empilés, les faits deviennent une colonne de quatre lignes dont le filet
+   * vermillon aligne les débuts : la rangée horizontale n'a plus de sens dès
+   * qu'elle a sa propre colonne.
+   */
+  .facts {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
 .lede {
   font-size: var(--text-lg);
   line-height: var(--leading-snug);
   max-width: var(--measure);
 }
 
+/*
+ * La marge du bas revient au bloc : voir `.opening`. Celle du chapô reste
+ * celle de tout paragraphe, et elle sépare les deux quand ils sont l'un sous
+ * l'autre.
+ */
 .facts {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-3);
-  margin: 0 0 var(--space-5);
+  margin: 0;
   padding: 0;
   list-style: none;
 }

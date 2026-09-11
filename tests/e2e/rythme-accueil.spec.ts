@@ -63,34 +63,90 @@ test.describe("l'ouverture laisse voir le travail sans défilement", () => {
     expect(hidden).toEqual([]);
   });
 
-  test("la rangée de faits appelle le premier bandeau au pas qui sépare deux blocs, dans les deux langues", async ({
-    page,
-  }) => {
+  test("la dernière ligne de l'ouverture appelle le premier bandeau au pas qui sépare deux blocs", async ({ page }) => {
     await page.setViewportSize({ width: DRAWN_AT, height: 900 });
     await page.goto(PAGES[0]!);
+    /*
+     * Deux largeurs, et c'est ce qui fait mordre : à 1440 les faits sont la
+     * colonne la plus basse, à 1024 c'est le chapô. Une seule des deux aurait
+     * laissé passer une marge oubliée sur l'autre — mesuré en la remettant.
+     */
 
     /*
      * Le pas est lu sur la page plutôt qu'écrit ici : déplacé dans les jetons,
-     * il déplace le rythme. C'est --space-6, le pas entre deux BLOCS, et non le
-     * --space-5 que la planche posait sous les faits : ce qui suit la rangée
-     * n'est plus une grille de cellules mais la première section de la page, et
-     * les marges des deux se recouvrent — la plus grande l'emporte.
+     * il déplace le rythme. C'est --space-6, le pas entre deux BLOCS.
+     *
+     * Et la mesure part du BLOC, non de la rangée de faits : depuis que le
+     * chapô et les faits sont côte à côte, le plus bas des deux dépend de la
+     * largeur et de la langue. Mesurer l'un des deux serait mesurer un hasard.
      */
     const step = await page.evaluate(() =>
       Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--space-6")),
     );
     const wrong: string[] = [];
 
-    for (const address of PAGES) {
-      await page.goto(address);
-      const gap = await page.evaluate(() => {
-        const facts = document.querySelector("main .facts");
-        const head = document.querySelector("main .section-head");
-        if (facts === null || head === null) return null;
-        return Math.round(head.getBoundingClientRect().top - facts.getBoundingClientRect().bottom);
-      });
+    for (const width of [DRAWN_AT, 1024]) {
+      await page.setViewportSize({ width, height: 900 });
 
-      if (gap !== step) wrong.push(`${address} : ${gap} px sous la rangée de faits, au lieu de ${step}`);
+      for (const address of PAGES) {
+        await page.goto(address);
+        const gap = await page.evaluate(() => {
+          const lede = document.querySelector("main .lede")?.getBoundingClientRect();
+          const facts = document.querySelector("main .facts")?.getBoundingClientRect();
+          const head = document.querySelector("main .section-head")?.getBoundingClientRect();
+          if (lede === undefined || facts === undefined || head === undefined) return null;
+          /*
+           * La DERNIERE ENCRE des deux colonnes, et non le bord du bloc : une
+           * marge oubliee sur l'une d'elles gonfle le bloc sans que son bord le
+           * dise, et c'est pourtant ce que l'oeil voit. Mesure en remettant la
+           * marge du chapo : le bord ne bougeait pas, l'ecart si.
+           */
+          return Math.round(head.top - Math.max(lede.bottom, facts.bottom));
+        });
+
+        if (gap !== step) {
+          wrong.push(`${address} à ${width} px : ${gap} px sous la dernière ligne de l'ouverture, au lieu de ${step}`);
+        }
+      }
+    }
+
+    expect(wrong).toEqual([]);
+  });
+
+  /*
+   * Le chapô s'arrête à sa mesure de lecture — 64 caractères — et laissait
+   * 500 px de vide à sa droite dans une colonne de 1392, alors que le titre,
+   * les faits et les cartes prennent toute la largeur. Mesuré sur le site
+   * publié, et signalé par l'opérateur.
+   *
+   * Les faits viennent l'occuper dès que la place existe, et repassent dessous
+   * quand elle manque. Les deux largeurs encadrent le jeton --bp-lg.
+   */
+  test("les faits se posent à côté du chapô au-delà de la bascule, et dessous en deçà", async ({ page }) => {
+    const wrong: string[] = [];
+
+    for (const [width, beside] of [
+      [1024, true],
+      [900, false],
+    ] as const) {
+      await page.setViewportSize({ width, height: 900 });
+
+      for (const address of PAGES) {
+        await page.goto(address);
+        const seen = await page.evaluate(() => {
+          const lede = document.querySelector("main .lede")?.getBoundingClientRect();
+          const facts = document.querySelector("main .facts")?.getBoundingClientRect();
+          if (lede === undefined || facts === undefined) return null;
+          return { beside: facts.left >= lede.right, under: facts.top >= lede.bottom };
+        });
+
+        if (seen === null) wrong.push(`${address} à ${width} px : le chapô ou les faits manquent`);
+        else if (seen.beside !== beside) {
+          wrong.push(`${address} à ${width} px : les faits sont ${seen.beside ? "à côté" : "dessous"}`);
+        } else if (!beside && !seen.under) {
+          wrong.push(`${address} à ${width} px : les faits ne sont ni à côté ni dessous`);
+        }
+      }
     }
 
     expect(wrong).toEqual([]);

@@ -310,6 +310,39 @@
         margin: 0 0 var(--space-4);
       }
 
+      /*
+       * Le bloc porte la respiration du bas, et non l'une des deux colonnes :
+       * côte à côte, la plus haute des deux déciderait sinon du rythme de ce
+       * qui suit.
+       */
+      .opening {
+        margin-bottom: var(--space-6);
+      }
+
+      /*
+       * Deux tiers, un tiers : les faits commencent à une ligne de la grille,
+       * juste après la mesure du chapô. Une requête de média ne peut pas lire
+       * var() : 1024 px est le jeton --bp-lg.
+       */
+      @media (min-width: 1024px) {
+        .opening {
+          display: grid;
+          grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+          gap: var(--space-6);
+          align-items: start;
+        }
+
+        /* Le chapô rend sa marge au bloc : côte à côte, elle ne sépare plus rien. */
+        .opening .lede {
+          margin-bottom: 0;
+        }
+
+        .facts {
+          flex-direction: column;
+          align-items: start;
+        }
+      }
+
       .facts {
         display: flex;
         flex-wrap: wrap;
@@ -318,7 +351,7 @@
         font-size: var(--text-xs);
         text-transform: uppercase;
         letter-spacing: var(--track-wide);
-        margin-bottom: var(--space-6);
+        margin-bottom: 0;
       }
 
       .facts span {
@@ -977,16 +1010,24 @@
       </p>
 
       <h1>Ingénieur logiciel</h1>
-      <p class="lede">
-        Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail vérifiable
-        : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, puisqu'elle est construite
-        par lui.
-      </p>
-      <div class="facts">
-        <span class="now">CDI ou freelance</span>
-        <span>Rennes, mobile en France</span>
-        <span>Master MIAGE</span>
-        <span>FR · EN</span>
+      <!--
+        Le chapô et les faits dans un même bloc, parce qu'un écran large les
+        pose CÔTE À CÔTE. La ligne de lecture s'arrête à 64 caractères, et les
+        500 px qu'elle laissait vides à sa droite ont été mesurés sur le site
+        publié puis signalés par l'opérateur — décision 0022.
+      -->
+      <div class="opening">
+        <p class="lede">
+          Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail
+          vérifiable : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, puisqu'elle
+          est construite par lui.
+        </p>
+        <div class="facts">
+          <span class="now">CDI ou freelance</span>
+          <span>Rennes, mobile en France</span>
+          <span>Master MIAGE</span>
+          <span>FR · EN</span>
+        </div>
       </div>
 
       <div class="section-head">

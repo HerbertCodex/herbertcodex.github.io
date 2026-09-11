@@ -30,7 +30,7 @@ export const DICTIONARIES = {
     footer: { label: "Pied de page", place: "Rennes, France" },
     moved: { call: "Continuer vers la page" },
     home: {
-      heading: "Ingénieur logiciel",
+      heading: "Ingénieur Logiciel",
       lede:
         "Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui rend ce travail " +
         "vérifiable : exigences écrites, rôles séparés, portes exécutables. Avec ou sans IA. Cette page en " +
@@ -95,7 +95,7 @@ export const DICTIONARIES = {
     footer: { label: "Site footer", place: "Rennes, France" },
     moved: { call: "Continue to the page" },
     home: {
-      heading: "Software engineer",
+      heading: "Software Engineer",
       lede:
         "I ship business software on distributed systems, and I write the framework that makes that work " +
         "verifiable: written requirements, separated roles, executable gates. With or without AI. This page " +

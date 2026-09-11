@@ -66,7 +66,7 @@ test.describe("the addresses of the site", () => {
     await page.goto("/fr/realisations");
     await page.waitForURL(/\/fr#realisations$/);
 
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur logiciel");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur Logiciel");
     await expect(page.locator("#realisations")).toBeVisible();
   });
 
@@ -89,7 +89,7 @@ test.describe("the addresses of the site", () => {
   test("the page opens on the name, the sentence and the facts, then on the work", async ({ page }) => {
     await page.goto("/fr");
 
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur logiciel");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ingénieur Logiciel");
     await expect(page.locator("main p").first()).not.toBeEmpty();
     for (const fact of FACTS) {
       await expect(page.locator("main").getByText(fact).first()).toBeVisible();

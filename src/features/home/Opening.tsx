@@ -4,6 +4,12 @@ import "./Opening.css";
 
 const FACTS = ["contract", "place", "education", "languages"] as const;
 
+/*
+ * Le fait qui porte l'aplat : la disponibilite. C'est ce qu'un recruteur
+ * cherche en premier, et le seul des quatre qui appelle une reponse.
+ */
+const SIGNAL: (typeof FACTS)[number] = "contract";
+
 /**
  * The opening of the page: who is speaking, in one sentence and four facts.
  *
@@ -28,7 +34,7 @@ export default function Opening() {
       <div class="opening">
         <p class="lede">{t("home.lede")}</p>
         <ul class="facts">
-          <For each={FACTS}>{(fact) => <li>{t(`home.facts.${fact}`)}</li>}</For>
+          <For each={FACTS}>{(fact) => <li classList={{ now: fact === SIGNAL }}>{t(`home.facts.${fact}`)}</li>}</For>
         </ul>
       </div>
     </>

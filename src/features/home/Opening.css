@@ -52,10 +52,46 @@
   }
 }
 
+/*
+ * `pretty` sur le chapo, et non `balance` : `balance` est fait pour quelques
+ * lignes, `pretty` pour un paragraphe. Il evite le mot seul sur la derniere
+ * ligne et les coupures qui laissent une ligne trop courte — c'est ce que
+ * l'operateur a vu le 2026-09-11, « cadre. » tout seul sous trois lignes
+ * pleines.
+ *
+ * Ce que le CSS ne peut pas faire, le TEXTE le fait : l'espace avant le
+ * deux-points est insecable dans les dictionnaires, comme la typographie
+ * francaise le demande. Sans elle, la ligne pouvait se couper entre le mot et
+ * son deux-points — et le formateur de ce depot l'avait fait lui-meme dans la
+ * maquette.
+ */
 .lede {
   font-size: var(--text-lg);
   line-height: var(--leading-snug);
   max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+/*
+ * Le chapo est JUSTIFIE, mais seulement la ou la colonne peut le porter.
+ *
+ * Mesure a 375 px : la colonne fait 327 px, soit environ vingt-huit signes.
+ * Justifiee, elle ecarte les mots jusqu'a « roles   separes,   portes » —
+ * des rivieres blanches au milieu du texte. La justification demande une
+ * colonne d'au moins une quarantaine de signes ; en deca, le drapeau a droite
+ * se lit mieux, et c'est ce qui est servi.
+ *
+ * La cesure automatique a ete essayee et retiree : elle coupait « ve-rifiable »
+ * en deux, ce qui est exactement ce que l'operateur ne veut pas. Sans elle, la
+ * justification n'a que les espaces pour combler, d'ou la largeur minimale
+ * ci-dessus plutot qu'une cesure.
+ *
+ * Une requete de media ne peut pas lire var() : 768 px est le jeton --bp-md.
+ */
+@media (min-width: 768px) {
+  .lede {
+    text-align: justify;
+  }
 }
 
 /*
@@ -66,13 +102,32 @@
 .facts {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
+  align-items: start;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/*
+ * Chaque fait est une PASTILLE encadree, comme la maquette de reference les
+ * dessine. Le site portait un filet vermillon a gauche : quatre traits de meme
+ * poids, qui donnaient a « Master MIAGE » le meme signal qu'a la
+ * disponibilite. Une boite les met sur un pied d'egalite, et libere l'aplat
+ * pour dire ce qui compte.
+ */
 .facts li {
-  border-left: var(--border-heavy) solid var(--accent);
-  padding-left: var(--space-2);
+  border: var(--border-hairline) solid var(--rule);
+  padding: var(--space-1) var(--space-2);
+}
+
+/*
+ * Un seul fait porte l'aplat : celui qu'un recruteur cherche en premier. La
+ * classe le nomme plutot que de compter — `:first-child` aurait deplace le
+ * signal le jour ou l'ordre des faits change.
+ */
+.facts .now {
+  background: var(--accent-plate);
+  border-color: var(--accent-plate);
+  color: var(--on-accent);
 }

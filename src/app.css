@@ -165,16 +165,26 @@ a:hover {
  * titre est suivi d'un BLOC posent deja leur respiration au-dessus de lui, et
  * c'est la leur, plus large, qui l'emporte.
  */
+/*
+ * `balance` sur les titres : le navigateur egalise les longueurs des lignes au
+ * lieu de remplir la premiere et de laisser un mot seul sur la derniere. C'est
+ * fait pour les textes courts — quelques lignes au plus — et un titre en est un.
+ *
+ * Il n'y a rien a prevoir si le navigateur l'ignore : il coupe alors comme
+ * avant, ni mieux ni pire.
+ */
 h1 {
   font-size: var(--text-2xl);
   line-height: var(--leading-tight);
   margin: 0 0 var(--space-3);
+  text-wrap: balance;
 }
 
 h2 {
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
   margin: var(--space-6) 0 var(--space-3);
+  text-wrap: balance;
 }
 
 p {

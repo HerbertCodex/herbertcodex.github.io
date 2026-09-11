@@ -216,6 +216,52 @@ test.describe("la page prend la largeur de page", () => {
   });
 });
 
+/*
+ * Les quatre faits de l'ouverture sont des PASTILLES, et une seule porte
+ * l'aplat. Le site les a longtemps rendus avec un filet vermillon a gauche :
+ * quatre traits du meme poids, qui donnaient a « Master MIAGE » le meme signal
+ * qu'a la disponibilite. La maquette de reference, elle, les a toujours
+ * dessines encadres, l'aplat reserve au premier — l'operateur l'a montre le
+ * 2026-09-11, et c'est une divergence de plus entre elle et le site.
+ */
+test.describe("les faits de l'ouverture sont des pastilles", () => {
+  test("une seule porte l'aplat, les trois autres une boîte, dans les deux langues", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto(ADDRESSES[0]!);
+    const plate = await resolved(page, "background-color: var(--accent-plate)", "background-color");
+    const onPlate = await resolved(page, "color: var(--on-accent)", "color");
+    const hairline = await resolved(page, "border-top: var(--border-hairline) solid", "border-top-width");
+    const wrong: string[] = [];
+
+    for (const address of ADDRESSES) {
+      await page.goto(address);
+      const worn = await page.locator("main .facts li").evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const style = getComputedStyle(node);
+          return {
+            texte: (node.textContent ?? "").slice(0, 16),
+            fond: style.backgroundColor,
+            encre: style.color,
+            filet: style.borderTopWidth,
+          };
+        }),
+      );
+
+      if (worn.length !== 4) wrong.push(`${address} : ${worn.length} fait(s) au lieu de quatre`);
+
+      const marques = worn.filter((fait) => fait.fond === plate);
+      if (marques.length !== 1) wrong.push(`${address} : ${marques.length} fait(s) en aplat au lieu d'un`);
+      else if (marques[0]!.encre !== onPlate) wrong.push(`${address} : l'aplat porte ${marques[0]!.encre}`);
+
+      for (const fait of worn) {
+        if (fait.filet !== hairline) wrong.push(`${address} : « ${fait.texte} » porte un filet de ${fait.filet}`);
+      }
+    }
+
+    expect(wrong).toEqual([]);
+  });
+});
+
 test.describe("le filet du bandeau de section", () => {
   /*
    * L'exception qui retirait le filet au bandeau OUVRANT une page a été retirée

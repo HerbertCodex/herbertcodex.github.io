@@ -30,15 +30,14 @@ export const DICTIONARIES = {
     footer: { label: "Pied de page", place: "Rennes, France" },
     moved: { call: "Continuer vers la page" },
     home: {
-      heading: "Ingénieur logiciel",
+      heading: "Ingénieur Logiciel",
       lede:
-        "Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail " +
-        "vérifiable : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, " +
-        "puisqu'elle est construite par lui.",
+        "Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui le rend " +
+        "vérifiable : exigences écrites, rôles séparés, portes exécutables.",
       facts: {
         contract: "CDI ou freelance",
         place: "Rennes, mobile en France",
-        education: "Master MIAGE",
+        education: "Master MIAGE · DLIS",
         languages: "FR · EN",
       },
       entries: {
@@ -95,15 +94,14 @@ export const DICTIONARIES = {
     footer: { label: "Site footer", place: "Rennes, France" },
     moved: { call: "Continue to the page" },
     home: {
-      heading: "Software engineer",
+      heading: "Software Engineer",
       lede:
-        "I put assistants in the hands of business users, and I write the framework that makes that work " +
-        "verifiable: separated roles, executable gates, traceability. This page is that demonstration, " +
-        "since it is built by it.",
+        "I deliver business software on distributed systems, and I write the frame that makes it " +
+        "verifiable: written requirements, separated roles, executable gates.",
       facts: {
         contract: "Permanent or freelance",
         place: "Rennes, mobile across France",
-        education: "MIAGE master's degree",
+        education: "MIAGE master's · DLIS",
         languages: "FR · EN",
       },
       entries: {

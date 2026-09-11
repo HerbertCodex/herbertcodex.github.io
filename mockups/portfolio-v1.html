@@ -293,6 +293,7 @@
       /* ---- Ouverture --------------------------------------------------- */
 
       h1 {
+        text-wrap: balance;
         font-size: clamp(var(--text-2xl), 10vw, var(--text-3xl));
         line-height: var(--leading-tight);
         letter-spacing: var(--track-tight);
@@ -302,7 +303,14 @@
         margin: 0 0 var(--space-3);
       }
 
+      /*
+       * `pretty` evite le mot seul sur la derniere ligne ; l'espace insecable
+       * avant le deux-points, dans le texte, evite qu'une ligne se coupe entre
+       * le mot et sa ponctuation.
+       */
       .lede {
+        text-align: justify;
+        text-wrap: pretty;
         font-size: var(--text-lg);
         line-height: var(--leading-snug);
         color: var(--ink-muted);
@@ -1009,7 +1017,7 @@
         résultats chiffrés restent à renseigner.
       </p>
 
-      <h1>Ingénieur logiciel</h1>
+      <h1>Ingénieur Logiciel</h1>
       <!--
         Le chapô et les faits dans un même bloc, parce qu'un écran large les
         pose CÔTE À CÔTE. La ligne de lecture s'arrête à 64 caractères, et les
@@ -1018,14 +1026,13 @@
       -->
       <div class="opening">
         <p class="lede">
-          Je mets des assistants entre les mains d'utilisateurs métier, et j'écris le cadre qui rend ce travail
-          vérifiable : rôles séparés, portes exécutables, traçabilité. Cette page en est la démonstration, puisqu'elle
-          est construite par lui.
+          Je livre du logiciel métier sur des systèmes répartis, et j'écris le cadre qui le rend vérifiable : exigences
+          écrites, rôles séparés, portes exécutables.
         </p>
         <div class="facts">
           <span class="now">CDI ou freelance</span>
           <span>Rennes, mobile en France</span>
-          <span>Master MIAGE</span>
+          <span>Master MIAGE · DLIS</span>
           <span>FR · EN</span>
         </div>
       </div>
@@ -1083,7 +1090,7 @@
             </dd>
             <dt>Ce que j'ai fait</dt>
             <dd>
-              Séparé les rôles — Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle
+              Séparé les rôles : Produit définit, l'implémenteur écrit, QA valide sans écrire, l'orchestrateur contrôle
               les transitions. Une machine d'état borne les mouvements, des portes exécutables refusent, et chaque
               preuve est attachée à un commit par son empreinte.
             </dd>
@@ -1346,7 +1353,7 @@
           <span class="when">2026</span>
           <span class="rail" aria-hidden="true"></span>
           <div>
-            <strong>Master MIAGE</strong>
+            <strong>Master MIAGE · DLIS</strong>
             <p>Université de Rennes. Informatique et gestion d'entreprise.</p>
           </div>
           <div class="used"><span>Architecture</span><span>Bases de données</span><span>Gestion de projet</span></div>

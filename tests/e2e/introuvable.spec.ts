@@ -12,8 +12,8 @@ const DEMONSTRATION = "start.solidjs.com";
  * `page.goto('/fr/inconnu')` rend « not found » en texte brut, jamais l'ecran.
  */
 const HOME_HEADING: Readonly<Record<string, string>> = {
-  fr: "Ingénieur logiciel",
-  en: "Software engineer",
+  fr: "Ingénieur Logiciel",
+  en: "Software Engineer",
 };
 
 async function reachUnknown(page: Page, locale: string, address: string): Promise<string> {

@@ -11,7 +11,7 @@ export const ENGLISH: Words = {
         "AI-assisted development delivers fast and leaves no trace. Nothing says who decided what, nor what was " +
         "verified before the code went in.",
       did:
-        "Separated the roles — Product defines, the implementer writes, QA validates without writing, the " +
+        "Separated the roles: Product defines, the implementer writes, QA validates without writing, the " +
         "orchestrator controls the transitions. A state machine bounds the moves, executable gates refuse, and " +
         "every proof is attached to a commit by its digest.",
       result:
@@ -102,7 +102,10 @@ export const ENGLISH: Words = {
     },
   },
   education: {
-    "master-miage": { degree: "MIAGE master's degree", institution: "University of Rennes" },
+    "master-miage": {
+      degree: "MIAGE master's degree, DLIS track",
+      institution: "University of Rennes, software development and systems integration",
+    },
     "licence-miage": { degree: "MIAGE bachelor's degree", institution: "Félix Houphouët-Boigny University, Abidjan" },
   },
   certifications: [],

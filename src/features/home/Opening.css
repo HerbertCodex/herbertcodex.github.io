@@ -102,13 +102,32 @@
 .facts {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-3);
+  align-items: start;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/*
+ * Chaque fait est une PASTILLE encadree, comme la maquette de reference les
+ * dessine. Le site portait un filet vermillon a gauche : quatre traits de meme
+ * poids, qui donnaient a « Master MIAGE » le meme signal qu'a la
+ * disponibilite. Une boite les met sur un pied d'egalite, et libere l'aplat
+ * pour dire ce qui compte.
+ */
 .facts li {
-  border-left: var(--border-heavy) solid var(--accent);
-  padding-left: var(--space-2);
+  border: var(--border-hairline) solid var(--rule);
+  padding: var(--space-1) var(--space-2);
+}
+
+/*
+ * Un seul fait porte l'aplat : celui qu'un recruteur cherche en premier. La
+ * classe le nomme plutot que de compter — `:first-child` aurait deplace le
+ * signal le jour ou l'ordre des faits change.
+ */
+.facts .now {
+  background: var(--accent-plate);
+  border-color: var(--accent-plate);
+  color: var(--on-accent);
 }

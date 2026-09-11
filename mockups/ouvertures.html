@@ -349,14 +349,22 @@
         text-wrap: pretty;
         max-width: var(--measure);
       }
+      /* Un seul fait porte l'aplat : celui qu'un recruteur cherche en premier. */
+      .now {
+        background: var(--accent-plate);
+        border-color: var(--accent-plate);
+        color: var(--on-accent);
+      }
+
       .colonne-faits {
         display: flex;
         flex-direction: column;
+        align-items: start;
         gap: var(--space-2);
       }
       .colonne-faits span {
-        border-left: var(--border-heavy) solid var(--accent);
-        padding-left: var(--space-2);
+        border: var(--border-hairline) solid var(--rule);
+        padding: var(--space-1) var(--space-2);
         font-family: var(--font-mono);
         font-size: var(--text-xs);
         text-transform: uppercase;
@@ -462,8 +470,8 @@
         gap: var(--space-2) var(--space-3);
       }
       .rangee-faits span {
-        border-left: var(--border-heavy) solid var(--accent);
-        padding-left: var(--space-2);
+        border: var(--border-hairline) solid var(--rule);
+        padding: var(--space-1) var(--space-2);
         font-family: var(--font-mono);
         font-size: var(--text-xs);
         text-transform: uppercase;
@@ -665,8 +673,8 @@
               exigences écrites, rôles séparés, portes exécutables.
             </p>
             <div class="colonne-faits">
-              <span>CDI ou freelance</span><span>Rennes, mobile en France</span><span>Master MIAGE · DLIS</span
-              ><span>FR · EN</span>
+              <span class="now">CDI ou freelance</span><span>Rennes, mobile en France</span
+              ><span>Master MIAGE · DLIS</span><span>FR · EN</span>
             </div>
           </div>
         </div>
@@ -699,7 +707,7 @@
           <div class="outils"><a href="#" aria-current="true">FR</a><a href="#">EN</a></div>
         </header>
         <div class="dateline">
-          <span class="cle">CDI ou freelance</span><span class="cle">Rennes, mobile en France</span
+          <span class="cle now">CDI ou freelance</span><span class="cle">Rennes, mobile en France</span
           ><span class="cle">Master MIAGE · DLIS</span><span class="cle">FR · EN</span>
         </div>
         <h1 class="manifeste">
@@ -740,8 +748,8 @@
               exigences écrites, rôles séparés, portes exécutables.
             </p>
             <div class="rangee-faits">
-              <span>CDI ou freelance</span><span>Rennes, mobile en France</span><span>Master MIAGE · DLIS</span
-              ><span>FR · EN</span>
+              <span class="now">CDI ou freelance</span><span>Rennes, mobile en France</span
+              ><span>Master MIAGE · DLIS</span><span>FR · EN</span>
             </div>
           </div>
           <figure class="schema">
